@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>치과 광고 콘텐츠 생성기 - 신뢰가 광고 콘텐츠를 대신하다</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 65px 20px 0 20px;
+        }
+
+        /* Header Navigation Styles */
+        .top-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 15px 30px;
+        }
+
+        .top-header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            gap: 12px;
+        }
+
+        .header-logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        .header-logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .header-nav a {
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .header-nav a:hover {
+            color: #667eea;
+        }
+
+        .header-nav a.active {
+            color: #667eea;
+        }
+
+        .header-nav a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #667eea;
+            border-radius: 2px;
+        }
+
+        .header-nav .cardnews-nav-btn {
+            background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 100%);
+            color: white !important;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
+            transition: all 0.3s;
+        }
+
+        .header-nav .cardnews-nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 157, 0.5);
+            color: white !important;
+        }
+
+        @media (max-width: 768px) {
+            .top-header {
+                padding: 12px 20px;
+            }
+
+            .header-logo-text {
+                font-size: 14px;
+            }
+
+            .header-logo img {
+                height: 30px;
+            }
+
+            .header-nav {
+                gap: 15px;
+            }
+
+            .header-nav a {
+                font-size: 14px;
+            }
+
+            body {
+                padding: 70px 20px 0 20px;
+            }
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            margin-bottom: 25px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 25px;
+        }
+
+        .logo {
+            font-size: 80px;
+            margin-bottom: 12px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .menu-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px 24px;
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+
+        .menu-card.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            grid-column: 1 / -1;
+        }
+
+        .menu-card-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .menu-card h2 {
+            font-size: 24px;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .menu-card p {
+            font-size: 14px;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        .stats {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            color: white;
+        }
+
+        .stats-number {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stats-label {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .sample-banner {
+            background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 100%);
+            border-radius: 16px;
+            padding: 18px 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+            50% { box-shadow: 0 8px 20px rgba(255, 107, 157, 0.4); }
+        }
+
+        .sample-banner h3 {
+            color: white;
+            font-size: 20px;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .sample-banner p {
+            color: white;
+            font-size: 14px;
+            opacity: 0.95;
+            margin-bottom: 10px;
+        }
+
+        .sample-btn {
+            background: white;
+            color: #ff6b9d;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .sample-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        /* Performance Section Styles */
+        .performance-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            margin: 30px 0;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .performance-title {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .performance-title h2 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .performance-title p {
+            font-size: 16px;
+            color: #666;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
+            margin-bottom: 35px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px 10px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            border-radius: 16px;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+            display: block;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes statBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .stat-item:hover .stat-icon {
+            animation: statBounce 0.6s ease-in-out;
+        }
+
+        .stat-number {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #666;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-item {
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s;
+        }
+
+        .feature-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .feature-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .feature-desc {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        @keyframes countUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-item {
+            animation: countUp 0.6s ease-out forwards;
+        }
+
+        .stat-item:nth-child(1) { animation-delay: 0.1s; }
+        .stat-item:nth-child(2) { animation-delay: 0.2s; }
+        .stat-item:nth-child(3) { animation-delay: 0.3s; }
+        .stat-item:nth-child(4) { animation-delay: 0.4s; }
+        .stat-item:nth-child(5) { animation-delay: 0.5s; }
+        .stat-item:nth-child(6) { animation-delay: 0.6s; }
+
+        /* Tablet - 3개씩 표시 */
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+            }
+
+            .stat-item {
+                padding: 18px 8px;
+            }
+
+            .stat-icon {
+                font-size: 28px;
+            }
+
+            .stat-number {
+                font-size: 36px;
+            }
+
+            .stat-label {
+                font-size: 12px;
+            }
+        }
+
+        /* Mobile - 2개씩 표시 */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .header p {
+                font-size: 16px;
+            }
+
+            .logo {
+                font-size: 60px;
+            }
+
+            .menu-card {
+                padding: 30px 20px;
+            }
+
+            .menu-card h2 {
+                font-size: 20px;
+            }
+
+            .performance-section {
+                padding: 30px 20px;
+            }
+
+            .performance-title h2 {
+                font-size: 24px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .stat-item {
+                padding: 16px 8px;
+            }
+
+            .stat-icon {
+                font-size: 26px;
+                margin-bottom: 8px;
+            }
+
+            .stat-number {
+                font-size: 32px;
+            }
+
+            .stat-label {
+                font-size: 11px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Footer Styles */
+        .footer {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 28px 20px;
+            margin-top: auto;
+            width: 100%;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+        }
+
+        .footer-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 18px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .footer-info-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .footer-info-icon {
+            font-size: 18px;
+        }
+
+        .footer-brand {
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .footer-link {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .footer-link:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        .footer-admin-btn {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .footer-admin-btn:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .footer {
+                padding: 22px 15px;
+                margin-top: 28px;
+            }
+
+            .footer-title {
+                font-size: 20px;
+            }
+
+            .footer-info {
+                font-size: 14px;
+            }
+
+            .footer-brand {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Header Navigation -->
+    <header class="top-header">
+        <div class="top-header-content">
+            <a href="index.html" class="header-logo">
+                <img src="로고3.png" alt="치과 맞춤식 광고 콘텐츠 생성기 로고">
+                <span class="header-logo-text">치과 맞춤식 광고 콘텐츠 생성기</span>
+            </a>
+            <nav class="header-nav">
+                <a href="index.html" class="active">홈</a>
+                <a href="input.html">생성시작</a>
+                <a href="profiles.html">내 프로필</a>
+                <a href="cases.html">내 결과 보기</a>
+                <a href="cardnews.html" target="_blank" class="cardnews-nav-btn">🎨 카드뉴스 생성기</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="header">
+            <div class="logo">🦷</div>
+            <h1>치과 광고 콘텐츠 생성기</h1>
+            <p>신뢰가 광고 콘텐츠를 대신하다</p>
+        </div>
+
+        <!-- Sample Banner -->
+        <div class="sample-banner">
+            <h3>✨ 실제 케이스로 미리 체험하기</h3>
+            <p>화이트서울치과 임영일 원장의 실제 진단 결과를 기반으로 생성된 샘플을 확인해보세요</p>
+            <button class="sample-btn" onclick="loadSampleCase()">🎯 샘플 케이스 보기</button>
+        </div>
+
+        <!-- Performance Section -->
+        <div class="performance-section">
+            <div class="performance-title">
+                <h2>🎯 단 한 번에 완성되는 광고 콘텐츠</h2>
+                <p>과학적 진단부터 맞춤형 콘텐츠 생성까지, 우리의 검증된 성과</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-icon">🎨</div>
+                    <div class="stat-number" data-target="48">0</div>
+                    <div class="stat-label">가지 콘텐츠<br>조합 생성</div>
+                </div>
+
+                <div class="stat-item">
+                    <div class="stat-icon">💬</div>
+                    <div class="stat-number" data-target="5">0</div>
+                    <div class="stat-label">단계 환자<br>상담 전략</div>
+                </div>
+
+                <div class="stat-item">
+                    <div class="stat-icon">📏</div>
+                    <div class="stat-number" data-target="3">0</div>
+                    <div class="stat-label">가지 콘텐츠<br>분량 선택</div>
+                </div>
+
+                <div class="stat-item">
+                    <div class="stat-icon">🎚️</div>
+                    <div class="stat-number" data-target="6">0</div>
+                    <div class="stat-label">단계 허용<br>레벨 조절</div>
+                </div>
+
+                <div class="stat-item">
+                    <div class="stat-icon">⏱️</div>
+                    <div class="stat-number" data-target="3">0</div>
+                    <div class="stat-label">분 안에<br>즉시 생성</div>
+                </div>
+
+                <div class="stat-item">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-number" data-target="6">0</div>
+                    <div class="stat-label">가지 신뢰<br>점수 분석</div>
+                </div>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">🎭</div>
+                    <div class="feature-title">5단계 환자 상담 전략</div>
+                    <div class="feature-desc">공감형, 이해형, 결정형, 가치전달형, 신뢰형성용</div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-title">과학적 진단 시스템</div>
+                    <div class="feature-desc">DF-AI 신뢰 점수 6개 항목 기반 맞춤 분석</div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">✏️</div>
+                    <div class="feature-title">실시간 AI 수정</div>
+                    <div class="feature-desc">원하는 방향으로 즉시 콘텐츠 커스터마이징</div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">🔒</div>
+                    <div class="feature-title">프로필 보안 관리</div>
+                    <div class="feature-desc">비밀번호 보호, 검색 기능, 자동 일련번호</div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">📱</div>
+                    <div class="feature-title">채널별 최적화</div>
+                    <div class="feature-desc">SNS, 블로그, 유튜브 등 플랫폼별 추천</div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">🛡️</div>
+                    <div class="feature-title">데이터 보안</div>
+                    <div class="feature-desc">로컬 저장, 외부 전송 없음, 개인정보 보호</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-grid">
+            <a href="input.html" class="menu-card primary" onclick="clearPreviousData(event)">
+                <div class="menu-card-icon">🚀</div>
+                <h2>새로 시작하기</h2>
+                <p>치과 정보를 입력하고 맞춤 광고 콘텐츠 전략을 받아보세요</p>
+            </a>
+
+            <a href="cases.html" class="menu-card">
+                <div class="menu-card-icon">📂</div>
+                <h2>내 결과 보기</h2>
+                <p>이전에 생성한 결과 확인</p>
+            </a>
+
+            <a href="clear-data.html" class="menu-card">
+                <div class="menu-card-icon">🔧</div>
+                <h2>데이터 초기화</h2>
+                <p>저장된 데이터 확인 및 삭제</p>
+            </a>
+        </div>
+
+        <div class="stats">
+            <div class="stats-number" id="totalCases">0</div>
+            <div class="stats-label">총 생성된 케이스</div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-title">심재우 대표</div>
+            <div class="footer-info">
+                <div class="footer-info-item">
+                    <span class="footer-info-icon">📞</span>
+                    <a href="tel:01023975734" class="footer-link">010-2397-5734</a>
+                </div>
+                <div class="footer-info-item">
+                    <span class="footer-info-icon">📧</span>
+                    <a href="mailto:jaiwshim@gmail.com" class="footer-link">jaiwshim@gmail.com</a>
+                </div>
+            </div>
+            <div class="footer-brand">덴탈 클리닉 파인더</div>
+            <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <a href="user-guide.html" class="footer-admin-btn">📖 사용자 가이드</a>
+                <a href="admin-dashboard.html" class="footer-admin-btn">🎛️ 관리자 대시보드</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Sample Data -->
+    <script src="sample-data.js"></script>
+
+    <script>
+        // Load statistics
+        function loadStats() {
+            const cases = JSON.parse(localStorage.getItem('dentalCases') || '[]');
+            document.getElementById('totalCases').textContent = cases.length;
+        }
+
+        // Load sample case
+        function loadSampleCase() {
+            // Save sample data to localStorage
+            localStorage.setItem('dentalFormData', JSON.stringify(sampleData));
+
+            // Redirect to result page
+            window.location.href = 'result.html';
+        }
+
+        // Clear previous data when starting new case
+        function clearPreviousData(event) {
+            // Clear the form data from localStorage
+            localStorage.removeItem('dentalFormData');
+            // Let the link navigate normally
+            return true;
+        }
+
+        // Counting animation for stats
+        function animateCountUp() {
+            const statNumbers = document.querySelectorAll('.stat-number');
+
+            statNumbers.forEach(stat => {
+                const target = parseInt(stat.getAttribute('data-target'));
+                const duration = 2000; // 2 seconds
+                const increment = target / (duration / 16); // 60fps
+                let current = 0;
+
+                const updateCount = () => {
+                    current += increment;
+                    if (current < target) {
+                        stat.textContent = Math.floor(current);
+                        requestAnimationFrame(updateCount);
+                    } else {
+                        stat.textContent = target;
+                    }
+                };
+
+                updateCount();
+            });
+        }
+
+        // Intersection Observer for animation trigger
+        function setupIntersectionObserver() {
+            const performanceSection = document.querySelector('.performance-section');
+
+            if (!performanceSection) return;
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateCountUp();
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.3
+            });
+
+            observer.observe(performanceSection);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStats();
+            setupIntersectionObserver();
+        });
+    </script>
+
+    <!-- TalkerSDK Chatbot -->
+    <script src="https://chatbot-sdk.aitalker.co.kr/talker-sdk.umd.js"></script>
+    <script>
+        TalkerSDK.initializeTalkerSDK({ code: "biz018", position: "right" });
+    </script>
+</body>
+</html>

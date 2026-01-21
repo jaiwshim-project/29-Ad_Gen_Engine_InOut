@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프랜차이즈 가맹점 운영 가이드라인 - 덴탈클리닉파인더</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
+            background: #f5f7fa;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header .subtitle {
+            font-size: 1.3em;
+            opacity: 0.95;
+            margin-bottom: 20px;
+        }
+
+        .back-link {
+            display: inline-block;
+            padding: 12px 30px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .pdf-button {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #f44336;
+            border: 2px solid #f44336;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-left: 15px;
+        }
+
+        .pdf-button:hover {
+            background: #d32f2f;
+            border-color: #d32f2f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+        }
+
+        .pdf-button:active {
+            transform: translateY(0);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: -40px auto 30px;
+            padding: 0 20px;
+        }
+
+        .philosophy-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .philosophy-card h2 {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .philosophy-quote {
+            font-size: 1.5em;
+            font-weight: 600;
+            line-height: 1.6;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        }
+
+        .section-title {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 4px solid #667eea;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-subtitle {
+            font-size: 1.5em;
+            color: #667eea;
+            margin: 20px 0 15px;
+            font-weight: 700;
+        }
+
+        .danger-box {
+            background: #ffebee;
+            border-left: 5px solid #f44336;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .danger-box h3 {
+            color: #c62828;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .warning-box {
+            background: #fff3e0;
+            border-left: 5px solid #ff9800;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .warning-box h3 {
+            color: #e65100;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .success-box {
+            background: #e8f5e9;
+            border-left: 5px solid #4caf50;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .success-box h3 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 5px solid #2196f3;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .info-box h3 {
+            color: #1565c0;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tr:hover {
+            background: #f8f9ff;
+        }
+
+        .forbidden-word {
+            display: inline-block;
+            padding: 6px 12px;
+            background: #ffcdd2;
+            color: #c62828;
+            border-radius: 20px;
+            margin: 5px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .do-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #4caf50;
+            color: white;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .dont-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #f44336;
+            color: white;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .warning-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #ff9800;
+            color: white;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            line-height: 1.6;
+        }
+
+        .block-structure {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .block-item {
+            padding: 12px;
+            margin: 8px 0;
+            background: white;
+            border-left: 4px solid #667eea;
+            border-radius: 5px;
+        }
+
+        .block-item strong {
+            color: #667eea;
+        }
+
+        ul, ol {
+            margin: 10px 0 10px 25px;
+        }
+
+        li {
+            margin: 6px 0;
+            color: #555;
+        }
+
+        .script-box {
+            background: #fff9c4;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 5px solid #fbc02d;
+            margin: 15px 0;
+        }
+
+        .script-box h4 {
+            color: #f57f17;
+            margin-bottom: 10px;
+        }
+
+        .script-content {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            color: #333;
+            font-style: italic;
+            line-height: 1.8;
+        }
+
+        .faq-item {
+            background: white;
+            padding: 18px;
+            margin: 12px 0;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .faq-question {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 12px;
+        }
+
+        .faq-answer {
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .contact-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .contact-section h3 {
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+
+        .contact-item {
+            padding: 12px 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+        }
+
+        .pledge-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 2px dashed #667eea;
+        }
+
+        .pledge-title {
+            text-align: center;
+            font-size: 1.8em;
+            color: #667eea;
+            margin-bottom: 18px;
+            font-weight: 700;
+        }
+
+        .pledge-items {
+            margin: 15px 0;
+        }
+
+        .pledge-item {
+            padding: 10px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #667eea;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .signature-area {
+            background: white;
+            padding: 18px;
+            border-radius: 10px;
+            margin-top: 18px;
+        }
+
+        .signature-fields {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .signature-field {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .signature-field label {
+            font-weight: 600;
+            color: #666;
+            min-width: 80px;
+        }
+
+        .signature-line {
+            flex: 1;
+            border-bottom: 2px solid #ccc;
+            height: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .header .subtitle {
+                font-size: 1.1em;
+            }
+
+            .content-card {
+                padding: 25px;
+            }
+
+            .section-title {
+                font-size: 1.5em;
+            }
+
+            .contact-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .signature-fields {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📚 프랜차이즈 가맹점 운영 가이드라인</h1>
+        <p class="subtitle">덴탈클리닉파인더 신뢰 기반 마케팅 필수 규정</p>
+        <div>
+            <a href="admin-dashboard.html" class="back-link">← 관리자 대시보드로 돌아가기</a>
+            <button onclick="downloadPDF()" class="pdf-button">📄 PDF 다운로드</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 핵심 철학 -->
+        <div class="philosophy-card">
+            <h2>📌 핵심 철학</h2>
+            <div class="philosophy-quote">
+                "우리는 댓글을 사지 않습니다.<br>
+                댓글이 달릴 수밖에 없는 신뢰를 만듭니다."
+            </div>
+        </div>
+
+        <!-- 절대 금지 행동 -->
+        <div class="content-card">
+            <h2 class="section-title">🚫 절대 금지 행동 리스트</h2>
+
+            <div class="danger-box">
+                <h3>❌ 금지 행위 1: 반응 조작</h3>
+                <p style="margin-bottom: 15px; color: #c62828; font-weight: 600;">다음 행위는 즉시 계약 해지 사유에 해당합니다</p>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>금지 행위</th>
+                                <th>설명</th>
+                                <th>위험도</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>댓글·공감 대행 업체 사용</td>
+                                <td>사람을 모아 댓글/좋아요를 생성하는 서비스</td>
+                                <td style="color: #c62828; font-weight: 600;">⚠️⚠️⚠️ 매우 높음</td>
+                            </tr>
+                            <tr>
+                                <td>리워드 기반 참여 유도</td>
+                                <td>댓글 작성 시 리워드 제공</td>
+                                <td style="color: #c62828; font-weight: 600;">⚠️⚠️⚠️ 매우 높음</td>
+                            </tr>
+                            <tr>
+                                <td>직원·지인에게 댓글 요청</td>
+                                <td>가족, 친구, 직원에게 댓글 작성 부탁</td>
+                                <td style="color: #d84315; font-weight: 600;">⚠️⚠️ 높음</td>
+                            </tr>
+                            <tr>
+                                <td>후기 요청을 조건화</td>
+                                <td>"후기 작성 시 할인" 등 조건부 요청</td>
+                                <td style="color: #d84315; font-weight: 600;">⚠️⚠️ 높음</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p style="margin-top: 20px; font-weight: 600; color: #c62828;">왜 금지하는가?</p>
+                <ul style="color: #666;">
+                    <li>한 곳의 적발로 전체 프랜차이즈 신뢰 붕괴</li>
+                    <li>네이버 플레이스 알고리즘 제재 (검색 순위 급락)</li>
+                    <li>법적 리스크 (부정 클릭 방지법 위반 가능성)</li>
+                </ul>
+            </div>
+
+            <div class="danger-box" style="margin-top: 30px;">
+                <h3>❌ 금지 행위 2: 금지 단어 사용</h3>
+                <p style="margin-bottom: 15px; color: #c62828; font-weight: 600;">다음 단어들은 자동 필터링되며, 사용 시 콘텐츠가 게시되지 않습니다</p>
+
+                <h4 style="margin-top: 20px; color: #d84315;">보장/확약 표현</h4>
+                <div>
+                    <span class="forbidden-word">반드시</span>
+                    <span class="forbidden-word">무조건</span>
+                    <span class="forbidden-word">완치</span>
+                    <span class="forbidden-word">보장</span>
+                    <span class="forbidden-word">100%</span>
+                    <span class="forbidden-word">확실히</span>
+                    <span class="forbidden-word">틀림없이</span>
+                </div>
+
+                <h4 style="margin-top: 20px; color: #d84315;">과장 표현</h4>
+                <div>
+                    <span class="forbidden-word">최고</span>
+                    <span class="forbidden-word">최상</span>
+                    <span class="forbidden-word">유일</span>
+                    <span class="forbidden-word">독보적</span>
+                    <span class="forbidden-word">업계 1위</span>
+                    <span class="forbidden-word">지역 1위</span>
+                </div>
+
+                <h4 style="margin-top: 20px; color: #d84315;">상업적 표현</h4>
+                <div>
+                    <span class="forbidden-word">이벤트</span>
+                    <span class="forbidden-word">할인</span>
+                    <span class="forbidden-word">혜택</span>
+                    <span class="forbidden-word">특가</span>
+                    <span class="forbidden-word">프로모션</span>
+                    <span class="forbidden-word">무료</span>
+                    <span class="forbidden-word">최저가</span>
+                </div>
+
+                <h4 style="margin-top: 20px; color: #d84315;">비교/경쟁 표현</h4>
+                <div>
+                    <span class="forbidden-word">Before/After</span>
+                    <span class="forbidden-word">타 병원</span>
+                    <span class="forbidden-word">다른 곳</span>
+                    <span class="forbidden-word">경쟁 병원</span>
+                    <span class="forbidden-word">비교 불가</span>
+                </div>
+
+                <h4 style="margin-top: 20px; color: #d84315;">의료법 위반 소지</h4>
+                <div>
+                    <span class="forbidden-word">치료 보장</span>
+                    <span class="forbidden-word">효과 보장</span>
+                    <span class="forbidden-word">부작용 없음</span>
+                    <span class="forbidden-word">100% 안전</span>
+                    <span class="forbidden-word">무통</span>
+                </div>
+            </div>
+
+            <div class="danger-box" style="margin-top: 30px;">
+                <h3>❌ 금지 행위 3: 콘텐츠 반복 업로드</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>금지 행위</th>
+                                <th>예시</th>
+                                <th>대안</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>동일 문구 반복</td>
+                                <td>같은 내용을 매일 업로드</td>
+                                <td>STAGE별 다른 콘텐츠</td>
+                            </tr>
+                            <tr>
+                                <td>제목만 바꾸기</td>
+                                <td>본문은 동일, 제목만 변경</td>
+                                <td>4단계 블록 구조 활용</td>
+                            </tr>
+                            <tr>
+                                <td>복사-붙여넣기</td>
+                                <td>다른 병원 콘텐츠 복사</td>
+                                <td>자동 생성 시스템 사용</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 고위험 행동 -->
+        <div class="content-card">
+            <h2 class="section-title">⚠️ 고위험 행동 (STAGE별 제한)</h2>
+
+            <div class="warning-box">
+                <h3>STAGE 1-2 (공감·이해 단계)</h3>
+                <p style="font-weight: 600; margin-bottom: 15px;">절대 하지 말아야 할 것:</p>
+                <ul>
+                    <li><span class="dont-badge">❌</span> 원장 1인칭 남용 ("제가", "저는")</li>
+                    <li><span class="dont-badge">❌</span> 철학 선언형 문장</li>
+                    <li><span class="dont-badge">❌</span> "신뢰", "책임" 직접 언급</li>
+                    <li><span class="dont-badge">❌</span> 장기 관계 암시 ("함께", "오래", "평생")</li>
+                </ul>
+                <p style="margin-top: 15px; color: #e65100;"><strong>이유:</strong> 신뢰를 아직 쌓지 않은 상태에서 관계 언어 사용 시 거부감 발생, 광고로 인식되어 이탈률 증가</p>
+            </div>
+
+            <div class="warning-box">
+                <h3>STAGE 3 (결정권 제공 단계)</h3>
+                <p style="font-weight: 600; margin-bottom: 15px;">제한적 허용:</p>
+                <ul>
+                    <li><span class="warning-badge">⚠️</span> 원장 1인칭 사용 (최대 1회)</li>
+                    <li><span class="warning-badge">⚠️</span> 가치 언급 (철학 선언은 금지)</li>
+                </ul>
+                <p style="font-weight: 600; margin-top: 20px; margin-bottom: 10px;">권장 표현:</p>
+                <ul>
+                    <li><span class="do-badge">✅</span> "환자분의 선택을 존중합니다"</li>
+                    <li><span class="do-badge">✅</span> "결정은 환자분의 몫입니다"</li>
+                    <li><span class="do-badge">✅</span> "충분히 생각해보셔도 괜찮습니다"</li>
+                </ul>
+            </div>
+
+            <div class="success-box">
+                <h3>STAGE 4-5 (가치·신뢰 단계)</h3>
+                <p style="font-weight: 600; margin-bottom: 15px;">허용:</p>
+                <ul>
+                    <li><span class="do-badge">✅</span> 원장 1인칭 사용 (최대 2-3회)</li>
+                    <li><span class="do-badge">✅</span> 철학·가치 언급</li>
+                    <li><span class="do-badge">✅</span> 장기 관계 언어</li>
+                </ul>
+                <p style="font-weight: 600; margin-top: 20px; margin-bottom: 10px; color: #c62828;">단, 여전히 금지:</p>
+                <ul>
+                    <li><span class="dont-badge">❌</span> 보장/확약 표현</li>
+                    <li><span class="dont-badge">❌</span> 상업적 표현</li>
+                    <li><span class="dont-badge">❌</span> 과장 표현</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 권장 행동 -->
+        <div class="content-card">
+            <h2 class="section-title">✅ 권장 행동</h2>
+
+            <div class="success-box">
+                <h3>1. 네이버 플레이스 콘텐츠 작성 시</h3>
+                <p style="font-weight: 600; margin-bottom: 20px;">반드시 지켜야 할 4단계 구조:</p>
+
+                <div class="block-structure">
+                    <div class="block-item">
+                        <strong>[Block 1] 공감 시작</strong><br>
+                        → 환자의 불안·고민을 언급<br>
+                        <em>예: "임플란트를 앞두고 걱정이 생기는 것은 자연스러운 일입니다."</em>
+                    </div>
+
+                    <div class="block-item">
+                        <strong>[Block 2] 선택 기준 설명</strong><br>
+                        → 2-3가지 선택 기준을 객관적으로 설명<br>
+                        <em>예: "치료 방법을 선택할 때는 과정, 기간, 그리고 본인에게 맞는 방향을 충분히 이해하는 것이 중요합니다."</em>
+                    </div>
+
+                    <div class="block-item">
+                        <strong>[Block 3] 결론 유보</strong><br>
+                        → 정답을 제시하지 않음<br>
+                        <em>예: "이 부분은 상황에 따라 다를 수 있습니다. 서두르지 않고 생각해보셔도 괜찮습니다."</em>
+                    </div>
+
+                    <div class="block-item" style="background: #fff3cd; border-left-color: #ffc107;">
+                        <strong>[Block 4] 질문형 종결 (필수!)</strong><br>
+                        → 반드시 물음표(?)로 끝나야 함<br>
+                        <em>예: "여러분은 어떤 기준이 더 중요하셨나요?"</em>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h3>2. 댓글 관리</h3>
+                <p style="font-weight: 600; margin-bottom: 15px;">DO (해야 할 것):</p>
+                <ul>
+                    <li><span class="do-badge">✅</span> 환자 댓글에 성실히 답변만 하기</li>
+                    <li><span class="do-badge">✅</span> 24시간 이내 응답 (평일 기준)</li>
+                    <li><span class="do-badge">✅</span> 객관적이고 정보 중심의 답변</li>
+                </ul>
+
+                <p style="font-weight: 600; margin-top: 20px; margin-bottom: 15px;">DON'T (하지 말아야 할 것):</p>
+                <ul>
+                    <li><span class="dont-badge">❌</span> 댓글 작성 유도 ("댓글 남겨주세요")</li>
+                    <li><span class="dont-badge">❌</span> 좋아요 요청 ("공감 부탁드려요")</li>
+                    <li><span class="dont-badge">❌</span> 공유 요청 ("지인에게 공유해주세요")</li>
+                </ul>
+            </div>
+
+            <div class="info-box">
+                <h3>3. 콘텐츠 업로드 주기</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>STAGE</th>
+                                <th>권장 주기</th>
+                                <th>콘텐츠 유형</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1-2</td>
+                                <td>주 2-3회</td>
+                                <td>공감형, 설명형</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>주 3-4회</td>
+                                <td>결정 지원형</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>주 4-5회</td>
+                                <td>가치 전달형</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>주 5-7회</td>
+                                <td>관계 중심형</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p style="margin-top: 15px; color: #1565c0; font-weight: 600;">⚠️ 중요: 양보다 질! 하루에 10개 올리는 것보다 일주일에 3개를 제대로 올리는 것이 효과적입니다.</p>
+            </div>
+        </div>
+
+        <!-- 외부 제안 대응 스크립트 -->
+        <div class="content-card">
+            <h2 class="section-title">📞 외부 제안 대응 스크립트</h2>
+            <p style="margin-bottom: 25px; color: #666;">광고 대행사, 마케팅 업체에서 다음과 같은 제안이 올 수 있습니다:</p>
+
+            <div class="script-box">
+                <h4>상황 1: 댓글/좋아요 대행 업체</h4>
+                <p style="margin-bottom: 10px;"><strong>제안:</strong></p>
+                <p style="font-style: italic; color: #666; margin-bottom: 20px;">"네이버 플레이스 순위를 올려드립니다. 댓글과 공감을 늘려드릴게요."</p>
+
+                <p style="margin-bottom: 10px;"><strong>대응 스크립트:</strong></p>
+                <div class="script-content">
+                    "감사합니다만, 저희는 해당 서비스를 이용하지 않습니다.<br>
+                    저희 프랜차이즈는 자연스러운 신뢰 구축 방식으로 운영되고 있으며,<br>
+                    인위적인 반응 생성은 금지되어 있습니다.<br><br>
+                    저희 시스템은 댓글을 만들지 않고,<br>
+                    댓글이 달릴 수밖에 없는 콘텐츠 구조를 만드는 방식입니다.<br>
+                    속도는 느릴 수 있지만, 한 번 올라간 신뢰는 절대 무너지지 않습니다."
+                </div>
+            </div>
+
+            <div class="script-box">
+                <h4>상황 2: 이벤트/프로모션 제안</h4>
+                <p style="margin-bottom: 10px;"><strong>제안:</strong></p>
+                <p style="font-style: italic; color: #666; margin-bottom: 20px;">"이번 달 할인 이벤트를 진행하시면 어떨까요? 신규 환자 유입에 효과적입니다."</p>
+
+                <p style="margin-bottom: 10px;"><strong>대응 스크립트:</strong></p>
+                <div class="script-content">
+                    "좋은 의도로 제안해 주셔서 감사합니다.<br>
+                    하지만 저희 치과는 할인이나 이벤트 방식의 마케팅을 하지 않습니다.<br><br>
+                    저희는 환자분께 가격 경쟁력이 아닌,<br>
+                    충분한 설명과 이해를 통한 신뢰로 선택받는 것을 목표로 합니다.<br>
+                    이것이 저희 프랜차이즈의 핵심 차별점입니다."
+                </div>
+            </div>
+
+            <div class="script-box">
+                <h4>상황 3: 블로그 체험단 제안</h4>
+                <p style="margin-bottom: 10px;"><strong>제안:</strong></p>
+                <p style="font-style: italic; color: #666; margin-bottom: 20px;">"블로그 체험단을 모집해서 후기를 올리게 하면 어떨까요?"</p>
+
+                <p style="margin-bottom: 10px;"><strong>대응 스크립트:</strong></p>
+                <div class="script-content">
+                    "체험단 방식은 저희 운영 철학과 맞지 않습니다.<br>
+                    저희는 실제 환자분들의 자발적인 후기만 존중합니다.<br><br>
+                    후기를 요청하거나 조건을 제시하지 않으며,<br>
+                    환자분이 자연스럽게 만족하셨을 때만 후기가 작성됩니다.<br>
+                    이것이 저희가 장기적으로 추구하는 신뢰 방식입니다."
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="content-card">
+            <h2 class="section-title">❓ 자주 묻는 질문 (FAQ)</h2>
+
+            <div class="faq-item">
+                <div class="faq-question">Q1. 원장 소개를 할 수 없나요?</div>
+                <div class="faq-answer">
+                    <strong>A:</strong> STAGE 3 이상에서 가능합니다.<br>
+                    - STAGE 1-2: 원장 1인칭 사용 금지<br>
+                    - STAGE 3: 제한적 사용 (1회)<br>
+                    - STAGE 4-5: 자유롭게 사용 (2-3회)<br><br>
+                    단, 자격 사항, 경력 등 객관적 정보 위주로 작성하고, "최고", "최상" 등의 과장 표현은 피해주세요.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Q2. 환자가 후기를 써주겠다고 하면 어떻게 하나요?</div>
+                <div class="faq-answer">
+                    <strong>A:</strong> 감사 인사만 전하세요.<br>
+                    <span class="do-badge">✅</span> "감사합니다. 자연스럽게 편하실 때 작성해주시면 됩니다."<br>
+                    <span class="dont-badge">❌</span> "네이버 플레이스에 꼭 써주세요!"<br>
+                    <span class="dont-badge">❌</span> "후기 작성하시면 다음 방문 시 할인해드릴게요."
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Q3. 경쟁 병원이 이벤트를 하는데 우리도 해야 하지 않나요?</div>
+                <div class="faq-answer">
+                    <strong>A:</strong> 아니요. 우리는 다른 게임을 합니다.<br>
+                    - 경쟁 병원: 가격 경쟁 → 단기 환자 유입 → 재방문율 낮음<br>
+                    - 우리 병원: 신뢰 구축 → 천천히 성장 → 재방문율 높음<br><br>
+                    <strong style="color: #667eea;">3개월 후를 보면 우리가 앞서갑니다.</strong>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Q4. 콘텐츠를 직접 작성할 수 있나요?</div>
+                <div class="faq-answer">
+                    <strong>A:</strong> 가능하지만 권장하지 않습니다.<br>
+                    - 시스템 생성 콘텐츠는 이미 금지어 필터링이 적용되어 있습니다<br>
+                    - 직접 작성 시 실수로 금지어를 사용할 위험이 높습니다<br>
+                    - 가맹점별 톤 차이로 프랜차이즈 일관성이 깨질 수 있습니다<br><br>
+                    <strong>직접 작성을 원하시면:</strong><br>
+                    1. 반드시 4단계 블록 구조 준수<br>
+                    2. 금지어 리스트 재확인<br>
+                    3. 질문형 종결 필수<br>
+                    4. 본부 검수 후 게시
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Q5. 다른 병원 콘텐츠를 참고해도 되나요?</div>
+                <div class="faq-answer">
+                    <strong>A:</strong> 절대 복사는 금지, 참고는 제한적 허용<br>
+                    <span class="dont-badge">❌</span> 문장을 그대로 복사<br>
+                    <span class="dont-badge">❌</span> 구조를 똑같이 따라하기<br>
+                    <span class="do-badge">✅</span> 주제 아이디어 참고<br>
+                    <span class="do-badge">✅</span> 표현 방식 학습<br><br>
+                    <strong>가장 좋은 방법:</strong> 시스템이 자동 생성한 콘텐츠 사용
+                </div>
+            </div>
+        </div>
+
+        <!-- 서약서 -->
+        <div class="content-card">
+            <div class="pledge-section">
+                <div class="pledge-title">📝 서약서</div>
+                <p style="text-align: center; color: #666; margin-bottom: 25px;">본인은 위의 모든 가이드라인을 숙지하였으며, 준수할 것을 서약합니다.</p>
+
+                <p style="font-weight: 600; margin-bottom: 15px; color: #333;">특히 다음 사항을 엄수할 것을 약속합니다:</p>
+                <div class="pledge-items">
+                    <div class="pledge-item">
+                        <div class="checkbox"></div>
+                        <span>댓글/공감 대행 업체를 절대 이용하지 않습니다</span>
+                    </div>
+                    <div class="pledge-item">
+                        <div class="checkbox"></div>
+                        <span>금지 단어를 사용하지 않습니다</span>
+                    </div>
+                    <div class="pledge-item">
+                        <div class="checkbox"></div>
+                        <span>네이버 플레이스 콘텐츠는 반드시 질문형으로 종결합니다</span>
+                    </div>
+                    <div class="pledge-item">
+                        <div class="checkbox"></div>
+                        <span>후기 작성을 조건화하지 않습니다</span>
+                    </div>
+                    <div class="pledge-item">
+                        <div class="checkbox"></div>
+                        <span>위반 시 계약 해지에 동의합니다</span>
+                    </div>
+                </div>
+
+                <div class="signature-area">
+                    <div class="signature-fields">
+                        <div class="signature-field">
+                            <label>날짜:</label>
+                            <div class="signature-line"></div>
+                        </div>
+                        <div class="signature-field">
+                            <label>가맹점명:</label>
+                            <div class="signature-line"></div>
+                        </div>
+                        <div class="signature-field">
+                            <label>원장명:</label>
+                            <div class="signature-line"></div>
+                        </div>
+                        <div class="signature-field">
+                            <label>서명:</label>
+                            <div class="signature-line"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 연락처 -->
+        <div class="contact-section">
+            <h3>🔒 본부 연락처</h3>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <strong>위반 의심 신고</strong><br>
+                    📧 compliance@dentalfinder.com<br>
+                    ☎️ 02-XXXX-XXXX
+                </div>
+                <div class="contact-item">
+                    <strong>콘텐츠 관련 문의</strong><br>
+                    📧 content@dentalfinder.com<br>
+                    💬 덴탈클리닉파인더 본부
+                </div>
+                <div class="contact-item">
+                    <strong>긴급 상황</strong><br>
+                    ☎️ 010-XXXX-XXXX<br>
+                    (24시간)
+                </div>
+            </div>
+            <p style="margin-top: 30px; font-size: 0.95em; opacity: 0.9;">
+                문서 버전: 1.0 | 최종 수정일: 2026-01-13 | 다음 검토일: 2026-04-13 (분기별 업데이트)
+            </p>
+        </div>
+    </div>
+
+    <!-- html2pdf 라이브러리 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <script>
+        function downloadPDF() {
+            // 버튼 비활성화 및 텍스트 변경
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '⏳ PDF 생성 중...';
+            button.disabled = true;
+            button.style.opacity = '0.6';
+            button.style.cursor = 'not-allowed';
+
+            // PDF용 제목 섹션 생성
+            const titleSection = document.createElement('div');
+            titleSection.id = 'pdf-title-section';
+            titleSection.style.cssText = `
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 40px;
+                text-align: center;
+                border-radius: 15px;
+                margin-bottom: 30px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            `;
+            titleSection.innerHTML = `
+                <h1 style="font-size: 2.5em; margin-bottom: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2);">
+                    📚 프랜차이즈 가맹점 운영 가이드라인
+                </h1>
+                <p style="font-size: 1.3em; opacity: 0.95; margin-bottom: 20px;">
+                    덴탈클리닉파인더 신뢰 기반 마케팅 필수 규정
+                </p>
+                <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 10px; display: inline-block;">
+                    <p style="font-size: 1.4em; font-weight: 700; margin-bottom: 10px;">
+                        "우리는 댓글을 사지 않습니다."
+                    </p>
+                    <p style="font-size: 1.4em; font-weight: 700;">
+                        "댓글이 달릴 수밖에 없는 신뢰를 만듭니다."
+                    </p>
+                </div>
+                <p style="font-size: 1em; opacity: 0.85; margin-top: 20px;">
+                    생성일: ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}
+                </p>
+            `;
+
+            // 컨테이너 요소 선택 및 제목 추가
+            const container = document.querySelector('.container');
+            container.insertBefore(titleSection, container.firstChild);
+
+            // PDF 생성 옵션
+            const opt = {
+                margin: [10, 10, 10, 10],
+                filename: '프랜차이즈_가이드라인_' + new Date().toISOString().split('T')[0] + '.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false
+                },
+                jsPDF: {
+                    unit: 'mm',
+                    format: 'a4',
+                    orientation: 'portrait'
+                },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            };
+
+            // PDF 생성
+            html2pdf().set(opt).from(container).save().then(() => {
+                // 제목 섹션 제거
+                if (titleSection && titleSection.parentNode) {
+                    titleSection.parentNode.removeChild(titleSection);
+                }
+
+                // 버튼 복원
+                button.innerHTML = originalText;
+                button.disabled = false;
+                button.style.opacity = '1';
+                button.style.cursor = 'pointer';
+
+                // 성공 메시지
+                alert('✅ PDF 다운로드가 완료되었습니다!');
+            }).catch(err => {
+                console.error('PDF 생성 오류:', err);
+
+                // 제목 섹션 제거
+                if (titleSection && titleSection.parentNode) {
+                    titleSection.parentNode.removeChild(titleSection);
+                }
+
+                button.innerHTML = originalText;
+                button.disabled = false;
+                button.style.opacity = '1';
+                button.style.cursor = 'pointer';
+                alert('❌ PDF 생성 중 오류가 발생했습니다. 다시 시도해주세요.');
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>분석 중 - 치과 광고 콘텐츠 생성기</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .robot {
+            font-size: 120px;
+            margin-bottom: 30px;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .title {
+            color: white;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 18px;
+            margin-bottom: 40px;
+        }
+
+        .status-list {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .status-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .status-icon {
+            font-size: 24px;
+        }
+
+        .status-text {
+            flex: 1;
+            font-size: 16px;
+        }
+
+        .status-check {
+            font-size: 20px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .status-item.completed .status-check {
+            opacity: 1;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.2);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: white;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            color: white;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .robot {
+                font-size: 80px;
+            }
+
+            .title {
+                font-size: 24px;
+            }
+
+            .subtitle {
+                font-size: 16px;
+            }
+
+            .status-list {
+                padding: 20px;
+            }
+
+            .status-item {
+                padding: 12px;
+            }
+
+            .status-text {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="robot">🤖</div>
+        <h1 class="title">AI가 분석 중입니다</h1>
+        <p class="subtitle">잠시만 기다려주세요...</p>
+
+        <div class="status-list">
+            <div class="status-item" id="status1">
+                <span class="status-icon">📊</span>
+                <span class="status-text">치과 데이터 분석 중</span>
+                <span class="status-check">✓</span>
+            </div>
+            <div class="status-item" id="status2">
+                <span class="status-icon">🎯</span>
+                <span class="status-text">신뢰 점수 계산 중</span>
+                <span class="status-check">✓</span>
+            </div>
+            <div class="status-item" id="status3">
+                <span class="status-icon">💡</span>
+                <span class="status-text">맞춤 광고 콘텐츠 전략 생성 중</span>
+                <span class="status-check">✓</span>
+            </div>
+            <div class="status-item" id="status4">
+                <span class="status-icon">📝</span>
+                <span class="status-text">최종 결과 정리 중</span>
+                <span class="status-check">✓</span>
+            </div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="progressText">0%</div>
+    </div>
+
+    <script>
+        // Simulate loading progress
+        let progress = 0;
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const statusItems = [
+            document.getElementById('status1'),
+            document.getElementById('status2'),
+            document.getElementById('status3'),
+            document.getElementById('status4')
+        ];
+
+        // Update progress
+        const interval = setInterval(() => {
+            progress += 2;
+            progressFill.style.width = progress + '%';
+            progressText.textContent = progress + '%';
+
+            // Mark status items as completed
+            if (progress >= 25) statusItems[0].classList.add('completed');
+            if (progress >= 50) statusItems[1].classList.add('completed');
+            if (progress >= 75) statusItems[2].classList.add('completed');
+            if (progress >= 95) statusItems[3].classList.add('completed');
+
+            // Redirect when complete
+            if (progress >= 100) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    window.location.href = 'result.html';
+                }, 500);
+            }
+        }, 60);
+    </script>
+</body>
+</html>

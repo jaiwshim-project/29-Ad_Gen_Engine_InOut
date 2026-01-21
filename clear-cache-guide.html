@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>캐시 삭제 가이드</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            max-width: 700px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .step {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+        .step h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .keyboard {
+            background: #667eea;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-weight: 700;
+            display: inline-block;
+            margin: 0 5px;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            margin-top: 60px;
+            text-align: center;
+        }
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .footer-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .footer-info {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+        .footer-info-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .footer-brand {
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .footer-link {
+            color: white;
+            text-decoration: none;
+        }
+        .footer-link:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        .footer-admin-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .footer-admin-btn:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 브라우저 캐시 삭제 가이드</h1>
+
+        <div class="warning">
+            <strong>⚠️ 문제:</strong> result.html을 열면 샘플 케이스 배지가 보입니다.<br>
+            <strong>원인:</strong> 브라우저가 오래된 HTML 파일을 캐시하고 있습니다.
+        </div>
+
+        <div class="step">
+            <h3>📌 방법 1: 강력 새로고침 (가장 간단)</h3>
+            <p>result.html 페이지에서 다음 키를 누르세요:</p>
+            <p>
+                <span class="keyboard">Ctrl</span> +
+                <span class="keyboard">Shift</span> +
+                <span class="keyboard">R</span>
+            </p>
+            <p>또는</p>
+            <p>
+                <span class="keyboard">Ctrl</span> +
+                <span class="keyboard">F5</span>
+            </p>
+        </div>
+
+        <div class="step">
+            <h3>📌 방법 2: 캐시 완전 삭제</h3>
+            <p><strong>Chrome/Edge:</strong></p>
+            <ol>
+                <li><span class="keyboard">Ctrl</span> + <span class="keyboard">Shift</span> + <span class="keyboard">Delete</span> 누르기</li>
+                <li>"캐시된 이미지 및 파일" 체크</li>
+                <li>시간 범위: "전체 기간" 선택</li>
+                <li>"데이터 삭제" 클릭</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>📌 방법 3: 시크릿 모드로 테스트</h3>
+            <p><strong>Chrome/Edge:</strong></p>
+            <p>
+                <span class="keyboard">Ctrl</span> +
+                <span class="keyboard">Shift</span> +
+                <span class="keyboard">N</span>
+            </p>
+            <p>시크릿 창에서 result.html을 열어보세요.</p>
+        </div>
+
+        <div class="step">
+            <h3>✅ 테스트 방법</h3>
+            <ol>
+                <li>위 방법 중 하나 실행</li>
+                <li>check-storage.html로 가서 "dentalFormData 삭제" 클릭</li>
+                <li>result.html 직접 클릭</li>
+                <li><strong>경고창이 뜨고 index.html로 이동하면 성공!</strong></li>
+            </ol>
+        </div>
+
+        <button onclick="window.location.href='check-storage.html'">
+            🔍 localStorage 확인하러 가기
+        </button>
+
+        <button onclick="window.location.href='index.html'">
+            🏠 홈으로 돌아가기
+        </button>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-title">심재우 대표</div>
+            <div class="footer-info">
+                <div class="footer-info-item">
+                    <span>📞</span>
+                    <a href="tel:01023975734" class="footer-link">010-2397-5734</a>
+                </div>
+                <div class="footer-info-item">
+                    <span>📧</span>
+                    <a href="mailto:jaiwshim@gmail.com" class="footer-link">jaiwshim@gmail.com</a>
+                </div>
+            </div>
+            <div class="footer-brand">덴탈 클리닉 파인더</div>
+            <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <a href="user-guide.html" class="footer-admin-btn">📖 사용자 가이드</a>
+                <a href="admin-dashboard.html" class="footer-admin-btn">🎛️ 관리자 대시보드</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

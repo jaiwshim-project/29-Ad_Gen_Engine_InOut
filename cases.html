@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 결과 보기 - 치과 광고 콘텐츠 생성기</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+            background: #f5f7fa;
+            padding: 70px 0 40px 0;
+        }
+
+        /* Header Navigation Styles */
+        .top-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 12px 30px;
+        }
+
+        .top-header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            gap: 12px;
+        }
+
+        .header-logo img {
+            height: 35px;
+            width: auto;
+        }
+
+        .header-logo-text {
+            font-size: 16px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .header-nav a {
+            text-decoration: none;
+            color: #333;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .header-nav a:hover {
+            color: #667eea;
+        }
+
+        .header-nav a.active {
+            color: #667eea;
+        }
+
+        .header-nav a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #667eea;
+            border-radius: 2px;
+        }
+
+        .header-nav .cardnews-nav-btn {
+            background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 100%);
+            color: white !important;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
+            transition: all 0.3s;
+        }
+
+        .header-nav .cardnews-nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 157, 0.5);
+            color: white !important;
+        }
+
+        @media (max-width: 768px) {
+            .top-header {
+                padding: 12px 20px;
+            }
+
+            .header-logo-text {
+                font-size: 14px;
+            }
+
+            .header-logo img {
+                height: 30px;
+            }
+
+            .header-nav {
+                gap: 15px;
+            }
+
+            .header-nav a {
+                font-size: 14px;
+            }
+
+            body {
+                padding: 65px 0 50px 0;
+            }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 25px 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .page-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .page-header p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Search Box Styles */
+        .search-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            margin-bottom: 15px;
+        }
+
+        .search-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .search-fields {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+        }
+
+        .search-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .search-field label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .search-field input {
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .search-field input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .search-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .search-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .search-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .search-btn.secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .search-btn.secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .search-results-info {
+            text-align: center;
+            margin-bottom: 12px;
+            padding: 10px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 8px;
+            font-size: 13px;
+            color: #667eea;
+            font-weight: 600;
+            display: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .empty-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+
+        .empty-state h2 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .primary-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .cases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 12px;
+        }
+
+        .case-card {
+            background: white;
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .case-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .case-card:hover {
+            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.25);
+            transform: translateY(-3px);
+        }
+
+        .case-number {
+            display: inline-block;
+            font-size: 13px;
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 4px 12px;
+            border-radius: 16px;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .case-header {
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1.5px solid #f0f0f0;
+        }
+
+        .case-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 6px;
+            line-height: 1.3;
+            word-break: keep-all;
+        }
+
+        .case-date {
+            font-size: 11px;
+            color: #888;
+        }
+
+        .case-info {
+            margin-bottom: 12px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .info-value {
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .trust-score {
+            display: inline-block;
+            padding: 3px 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .case-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 8px 6px;
+            border: 1.5px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .action-btn.delete {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+
+        .action-btn.delete:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .cases-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .case-card {
+                padding: 16px;
+            }
+
+            .page-header {
+                padding: 20px 15px;
+            }
+
+            .page-header h1 {
+                font-size: 20px;
+            }
+
+            .search-container {
+                padding: 15px;
+            }
+
+            .search-fields {
+                grid-template-columns: 1fr;
+            }
+
+            .search-actions {
+                flex-direction: column;
+            }
+
+            .search-btn {
+                width: 100%;
+            }
+
+            .action-btn {
+                font-size: 11px;
+                padding: 7px 5px;
+            }
+        }
+
+        /* Footer Styles */
+        .footer {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            margin-top: 40px;
+            text-align: center;
+        }
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .footer-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        .footer-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .footer-info-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .footer-brand {
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .footer-link {
+            color: white;
+            text-decoration: none;
+        }
+        .footer-link:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        .footer-admin-btn {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .footer-admin-btn:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Header Navigation -->
+    <header class="top-header">
+        <div class="top-header-content">
+            <a href="index.html" class="header-logo">
+                <img src="로고3.png" alt="치과 맞춤식 광고 콘텐츠 생성기 로고">
+                <span class="header-logo-text">치과 맞춤식 광고 콘텐츠 생성기</span>
+            </a>
+            <nav class="header-nav">
+                <a href="index.html">홈</a>
+                <a href="input.html">생성시작</a>
+                <a href="profiles.html">내 프로필</a>
+                <a href="cases.html" class="active">내 결과 보기</a>
+                <a href="cardnews.html" target="_blank" class="cardnews-nav-btn">🎨 카드뉴스 생성기</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>내 결과 보기</h1>
+            <p>이전에 생성한 결과를 확인하고 다시 불러올 수 있습니다</p>
+        </div>
+
+        <!-- Search Container -->
+        <div class="search-container">
+            <div class="search-title">
+                <span>🔍</span>
+                <span>케이스 검색</span>
+            </div>
+            <div class="search-fields">
+                <div class="search-field">
+                    <label for="searchNumber">일련번호</label>
+                    <input type="text" id="searchNumber" placeholder="예: 0001">
+                </div>
+                <div class="search-field">
+                    <label for="searchClinic">병원명</label>
+                    <input type="text" id="searchClinic" placeholder="병원명 입력">
+                </div>
+                <div class="search-field">
+                    <label for="searchDirector">원장명</label>
+                    <input type="text" id="searchDirector" placeholder="원장명 입력">
+                </div>
+            </div>
+            <div class="search-actions">
+                <button class="search-btn secondary" onclick="resetSearch()">초기화</button>
+                <button class="search-btn primary" onclick="performSearch()">검색</button>
+            </div>
+        </div>
+
+        <div id="searchResultsInfo" class="search-results-info"></div>
+        <div id="caseList"></div>
+    </div>
+
+    <script>
+        let allCases = []; // 전체 케이스 저장용
+
+        function loadCases(filteredCases = null) {
+            const caseList = document.getElementById('caseList');
+            let cases = filteredCases !== null ? filteredCases : JSON.parse(localStorage.getItem('dentalCases') || '[]');
+
+            // 전체 케이스 저장 (최초 로드 시)
+            if (filteredCases === null) {
+                allCases = cases;
+
+                // 프로필 번호 자동 부여 (없는 경우만)
+                let needsUpdate = false;
+
+                // 생성일 기준 오래된 순서대로 정렬하여 번호 부여
+                const sortedByCreation = [...cases].sort((a, b) =>
+                    new Date(a.savedAt || a.createdAt) - new Date(b.savedAt || b.createdAt)
+                );
+
+                sortedByCreation.forEach((profile, index) => {
+                    if (!profile.profileNumber) {
+                        profile.profileNumber = String(index + 1).padStart(4, '0');
+                        needsUpdate = true;
+                    }
+                });
+
+                // localStorage 업데이트
+                if (needsUpdate) {
+                    localStorage.setItem('dentalCases', JSON.stringify(cases));
+                    allCases = cases;
+                }
+            }
+
+            if (cases.length === 0) {
+                caseList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <h2>생성한 결과가 없습니다</h2>
+                        <p>새로운 광고 콘텐츠를 생성하고 결과를 저장해보세요</p>
+                        <a href="input.html" class="primary-btn">🚀 새로 시작하기</a>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort by date (newest first)
+            const displayCases = [...cases].sort((a, b) =>
+                new Date(b.savedAt || b.createdAt) - new Date(a.savedAt || a.createdAt)
+            );
+
+            const casesGrid = document.createElement('div');
+            casesGrid.className = 'cases-grid';
+
+            displayCases.forEach((caseData) => {
+                const card = createCaseCard(caseData);
+                casesGrid.appendChild(card);
+            });
+
+            caseList.innerHTML = ''; // 기존 내용 제거
+            caseList.appendChild(casesGrid);
+        }
+
+        function createCaseCard(caseData) {
+            const card = document.createElement('div');
+            card.className = 'case-card';
+
+            // Calculate average trust score
+            const avgTrust = calculateAvgTrust(caseData);
+            const stageText = getStageText(caseData.revenueStage1 || caseData.revenueStage);
+            const styleText = getStyleText(caseData.directorStyle1 || caseData.directorStyle);
+            const profileNumber = caseData.profileNumber || '0000';
+
+            // Format date
+            const date = new Date(caseData.savedAt || caseData.createdAt);
+            const dateStr = date.toLocaleDateString('ko-KR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            card.innerHTML = `
+                <div class="case-number">#${profileNumber}</div>
+                <div class="case-header">
+                    <div class="case-name">${caseData.clinicName || '이름 없는 치과'} (${caseData.directorName || '원장'})</div>
+                    <div class="case-date">📅 ${dateStr}</div>
+                </div>
+                <div class="case-info">
+                    <div class="info-row">
+                        <span class="info-label">📍 지역</span>
+                        <span class="info-value">${caseData.location || '-'}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">평균 신뢰</span>
+                        <span class="trust-score">${avgTrust}점</span>
+                    </div>
+                </div>
+                <div class="case-actions">
+                    <button class="action-btn" onclick="openCase('${profileNumber}')">📖 열기</button>
+                    <button class="action-btn delete" onclick="deleteCase('${profileNumber}')">🗑️ 삭제</button>
+                </div>
+            `;
+
+            return card;
+        }
+
+        function calculateAvgTrust(caseData) {
+            const scores = [
+                parseInt(caseData.empathy) || 50,
+                parseInt(caseData.understanding) || 50,
+                parseInt(caseData.decision) || 50,
+                parseInt(caseData.value) || 50,
+                parseInt(caseData.trust) || 50,
+                parseInt(caseData.space) || 50
+            ];
+            return Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+        }
+
+        function getStageText(stage) {
+            const stages = {
+                '1': '1형 - 수익 정체·감소',
+                '2': '2형 - 수익 유지·불안정',
+                '3': '3형 - 원장 과부하',
+                '4': '4형 - 수익 안정·확장 준비',
+                '5': '5형 - 고수익·브랜드형'
+            };
+            return stages[stage] || '3형 - 원장 과부하';
+        }
+
+        function getStyleText(style) {
+            const styles = {
+                'A': 'A형 - 결단·속도형',
+                'B': 'B형 - 구조·안정형',
+                'C': 'C형 - 팀·교육형',
+                'D': 'D형 - 수익·경영형',
+                'E': 'E형 - 환자·신뢰형'
+            };
+            return styles[style] || 'E형 - 환자·신뢰형';
+        }
+
+        function openCase(profileNumber) {
+            const cases = JSON.parse(localStorage.getItem('dentalCases') || '[]');
+            const caseData = cases.find(c => c.profileNumber === profileNumber);
+
+            if (!caseData) {
+                alert('케이스를 찾을 수 없습니다.');
+                return;
+            }
+
+            // 비밀번호 확인
+            const savedPassword = caseData.accessPassword;
+
+            if (savedPassword) {
+                const inputPassword = prompt('🔒 케이스를 열려면 비밀번호(4자리 숫자)를 입력하세요:');
+
+                // 취소 버튼 클릭 시
+                if (inputPassword === null) {
+                    return;
+                }
+
+                // 비밀번호 일치 확인
+                if (inputPassword !== savedPassword) {
+                    alert('❌ 비밀번호가 일치하지 않습니다.');
+                    return;
+                }
+
+                // 비밀번호 일치 - 성공 메시지
+                // alert('✅ 비밀번호가 확인되었습니다.');
+            } else {
+                // 비밀번호가 설정되지 않은 경우 (이전 버전 호환성)
+                if (!confirm('⚠️ 이 케이스는 비밀번호가 설정되지 않았습니다.\n그래도 열기를 진행하시겠습니까?')) {
+                    return;
+                }
+            }
+
+            // Load case data into dentalFormData
+            localStorage.setItem('dentalFormData', JSON.stringify(caseData));
+
+            // Redirect to result page
+            window.location.href = 'result.html';
+        }
+
+        function deleteCase(profileNumber) {
+            if (!confirm('이 케이스를 삭제하시겠습니까?')) {
+                return;
+            }
+
+            let cases = JSON.parse(localStorage.getItem('dentalCases') || '[]');
+            cases = cases.filter(c => c.profileNumber !== profileNumber);
+            localStorage.setItem('dentalCases', JSON.stringify(cases));
+
+            // Reload the page
+            location.reload();
+        }
+
+        function performSearch() {
+            const searchNumber = document.getElementById('searchNumber').value.trim().toLowerCase();
+            const searchClinic = document.getElementById('searchClinic').value.trim().toLowerCase();
+            const searchDirector = document.getElementById('searchDirector').value.trim().toLowerCase();
+
+            // 검색어가 모두 비어있는 경우
+            if (!searchNumber && !searchClinic && !searchDirector) {
+                alert('검색할 내용을 입력해주세요.');
+                return;
+            }
+
+            // 필터링
+            const filtered = allCases.filter(caseData => {
+                const matchNumber = !searchNumber || (caseData.profileNumber && caseData.profileNumber.toLowerCase().includes(searchNumber));
+                const matchClinic = !searchClinic || (caseData.clinicName && caseData.clinicName.toLowerCase().includes(searchClinic));
+                const matchDirector = !searchDirector || (caseData.directorName && caseData.directorName.toLowerCase().includes(searchDirector));
+
+                return matchNumber && matchClinic && matchDirector;
+            });
+
+            // 검색 결과 정보 표시
+            const resultsInfo = document.getElementById('searchResultsInfo');
+            if (filtered.length === 0) {
+                resultsInfo.innerHTML = '❌ 검색 결과가 없습니다';
+                resultsInfo.style.display = 'block';
+                document.getElementById('caseList').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <h2>검색 결과가 없습니다</h2>
+                        <p>다른 검색어로 다시 시도해주세요</p>
+                        <button class="primary-btn" onclick="resetSearch()">초기화</button>
+                    </div>
+                `;
+            } else {
+                resultsInfo.innerHTML = `✅ 총 ${filtered.length}개의 케이스를 찾았습니다`;
+                resultsInfo.style.display = 'block';
+                loadCases(filtered);
+            }
+        }
+
+        function resetSearch() {
+            // 검색 필드 초기화
+            document.getElementById('searchNumber').value = '';
+            document.getElementById('searchClinic').value = '';
+            document.getElementById('searchDirector').value = '';
+
+            // 검색 결과 정보 숨김
+            document.getElementById('searchResultsInfo').style.display = 'none';
+
+            // 전체 케이스 다시 로드
+            loadCases(null);
+        }
+
+        // Enter 키로 검색 실행
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInputs = ['searchNumber', 'searchClinic', 'searchDirector'];
+            searchInputs.forEach(id => {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            performSearch();
+                        }
+                    });
+                }
+            });
+        });
+
+        // Initialize
+        loadCases();
+    </script>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-title">심재우 대표</div>
+            <div class="footer-info">
+                <div class="footer-info-item">
+                    <span>📞</span>
+                    <a href="tel:01023975734" class="footer-link">010-2397-5734</a>
+                </div>
+                <div class="footer-info-item">
+                    <span>📧</span>
+                    <a href="mailto:jaiwshim@gmail.com" class="footer-link">jaiwshim@gmail.com</a>
+                </div>
+            </div>
+            <div class="footer-brand">덴탈 클리닉 파인더</div>
+            <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <a href="user-guide.html" class="footer-admin-btn">📖 사용자 가이드</a>
+                <a href="admin-dashboard.html" class="footer-admin-btn">🎛️ 관리자 대시보드</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

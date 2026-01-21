@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>네이버 플레이스 콘텐츠 생성 테스트</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-header h1 {
+            color: white;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.1em;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .test-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .result-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+
+        .result-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .result-body {
+            line-height: 1.8;
+            color: #555;
+            font-size: 16px;
+        }
+
+        .block-container {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .block-container:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .block-label {
+            display: inline-block;
+            background: #764ba2;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .block-1 .block-label { background: #667eea; }
+        .block-2 .block-label { background: #28a745; }
+        .block-3 .block-label { background: #ff9800; }
+        .block-4 .block-label { background: #dc3545; }
+
+        .block-content {
+            color: #333;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .question-highlight {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffe5a1 100%);
+            padding: 20px;
+            border-left: 5px solid #ffc107;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 18px;
+            color: #856404;
+        }
+
+        .validation-box {
+            background: white;
+            border-left: 5px solid #28a745;
+            padding: 25px;
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .validation-box.error {
+            border-left-color: #dc3545;
+        }
+
+        .validation-box h4 {
+            margin-bottom: 15px;
+            color: #28a745;
+            font-size: 18px;
+        }
+
+        .validation-box.error h4 {
+            color: #dc3545;
+        }
+
+        .validation-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .validation-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .validation-icon {
+            width: 28px;
+            height: 28px;
+            margin-right: 12px;
+            font-size: 22px;
+        }
+
+        .metadata {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .metadata h4 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .metadata-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .metadata-item:last-child {
+            border-bottom: none;
+        }
+
+        .metadata-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .metadata-value {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #667eea;
+            color: white;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 5px solid #2196f3;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .info-box h3 {
+            color: #1976d2;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .info-box p {
+            color: #1565c0;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .info-box ul {
+            margin-left: 20px;
+            color: #1565c0;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2em;
+            }
+
+            .test-card {
+                padding: 25px;
+            }
+
+            .block-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="admin-dashboard.html" class="back-link">← 관리자 대시보드로 돌아가기</a>
+
+        <div class="page-header">
+            <h1>🔍 네이버 플레이스 콘텐츠 생성 테스트</h1>
+            <p>4단계 블록 구조 + 질문형 종결 + 금지어 필터링 검증</p>
+        </div>
+
+        <div class="test-card">
+            <div class="info-box">
+                <h3>📋 네이버 플레이스 4단계 블록 구조</h3>
+                <ul>
+                    <li><strong>Block 1:</strong> 공감 시작 - 환자의 불안·고민 제시</li>
+                    <li><strong>Block 2:</strong> 선택 기준 설명 - 2-3가지 객관적 정보 제공</li>
+                    <li><strong>Block 3:</strong> 결론 유보 - 정답을 의도적으로 미제시</li>
+                    <li><strong>Block 4:</strong> 질문형 종결 - 반드시 물음표(?)로 끝남</li>
+                </ul>
+            </div>
+
+            <h2 class="card-title">입력 정보</h2>
+
+            <div class="input-group">
+                <label>치료 주제</label>
+                <input type="text" id="topic" value="임플란트 치료" placeholder="예: 임플란트 치료, 치아 교정, 스케일링">
+            </div>
+
+            <div class="input-group">
+                <label>콘텐츠 유형</label>
+                <select id="contentType">
+                    <option value="empathy">공감 (Empathy) - 불안·걱정 공감</option>
+                    <option value="understanding">이해 (Understanding) - 정보 제공</option>
+                    <option value="decision">결정 (Decision) - 선택 지원</option>
+                    <option value="value">가치 (Value) - 장기적 가치</option>
+                    <option value="trust">신뢰 (Trust) - 신뢰 구축</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>병원 STAGE</label>
+                <select id="stage">
+                    <option value="STAGE1">STAGE 1 - 공감 (원장 1인칭 금지)</option>
+                    <option value="STAGE2">STAGE 2 - 이해 (원장 1인칭 금지)</option>
+                    <option value="STAGE3" selected>STAGE 3 - 결정권 제공 (원장 1인칭 제한적 허용)</option>
+                    <option value="STAGE4">STAGE 4 - 가치 전달 (원장 1인칭 허용)</option>
+                    <option value="STAGE5">STAGE 5 - 신뢰 관계 (원장 1인칭 자유)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>치과명</label>
+                <input type="text" id="clinicName" value="행복치과" placeholder="치과 이름">
+            </div>
+
+            <div class="input-group">
+                <label>원장명</label>
+                <input type="text" id="directorName" value="김행복 원장" placeholder="원장 이름">
+            </div>
+
+            <button class="btn" onclick="generateContent()">
+                ✨ 네이버 플레이스 콘텐츠 생성
+            </button>
+        </div>
+
+        <div id="result" style="display: none;">
+            <div class="test-card">
+                <h2 class="card-title">생성 결과</h2>
+
+                <div class="result-card">
+                    <div class="result-title" id="resultTitle"></div>
+                    <div class="result-body" id="resultBody"></div>
+                </div>
+
+                <div class="validation-box" id="validationBox">
+                    <h4>✅ 검증 결과</h4>
+                    <div id="validationResults"></div>
+                </div>
+
+                <div class="metadata">
+                    <h4>📊 메타데이터 및 최적화 정보</h4>
+                    <div id="metadataContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="marketing-engine.js"></script>
+    <script>
+        function generateContent() {
+            try {
+                // 입력값 가져오기
+                const topic = document.getElementById('topic').value;
+                const contentType = document.getElementById('contentType').value;
+                const stage = document.getElementById('stage').value;
+                const clinicName = document.getElementById('clinicName').value;
+                const directorName = document.getElementById('directorName').value;
+
+                // MarketingEngine 인스턴스 생성
+                const engine = new MarketingEngine();
+
+                // 컨텍스트 구성
+                const context = {
+                    topic: topic,
+                    contentType: contentType,
+                    revenueStage: stage,
+                    clinicName: clinicName,
+                    directorName: directorName,
+                    trustScores: {
+                        empathy: 72,
+                        understanding: 68,
+                        decision_support: 65
+                    }
+                };
+
+                console.log('Context:', context);
+
+                // 네이버 플레이스 콘텐츠 생성
+                const result = engine.generateByChannel('naver_place', context);
+
+                console.log('Result:', result);
+
+                // 결과 표시
+                displayResult(result);
+
+                // 검증
+                const validation = engine.validateNaverPlaceContent(result);
+                displayValidation(validation);
+
+                // 결과 영역 표시
+                document.getElementById('result').style.display = 'block';
+
+                // 스크롤 이동
+                setTimeout(() => {
+                    document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+
+            } catch (error) {
+                console.error('Error generating content:', error);
+                alert('콘텐츠 생성 중 오류가 발생했습니다.\n\n' + error.message);
+            }
+        }
+
+        function displayResult(result) {
+            // 제목
+            document.getElementById('resultTitle').textContent = result.title;
+
+            // 본문 (4단계 블록 구분)
+            const blockLabels = [
+                'Block 1: 공감 시작',
+                'Block 2: 선택 기준 설명',
+                'Block 3: 결론 유보',
+                'Block 4: 질문형 종결'
+            ];
+
+            const bodyHtml = result.body.map((paragraph, index) => {
+                const blockNum = index + 1;
+                const blockClass = `block-${blockNum}`;
+                const label = blockLabels[index] || `Block ${blockNum}`;
+
+                // 마지막 블록(질문)은 특별 스타일
+                if (index === result.body.length - 1) {
+                    return `
+                        <div class="block-container ${blockClass}">
+                            <div class="block-label">${label}</div>
+                            <div class="question-highlight">❓ ${paragraph}</div>
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="block-container ${blockClass}">
+                        <div class="block-label">${label}</div>
+                        <div class="block-content">${paragraph}</div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('resultBody').innerHTML = bodyHtml;
+
+            // 메타데이터
+            const metadataHtml = `
+                <div class="metadata-item">
+                    <span class="metadata-label">채널</span>
+                    <span class="metadata-value">${result.metadata.channel || 'naver_place'}</span>
+                </div>
+                <div class="metadata-item">
+                    <span class="metadata-label">STAGE</span>
+                    <span class="metadata-value">${result.metadata.stage || 'N/A'}</span>
+                </div>
+                <div class="metadata-item">
+                    <span class="metadata-label">구조</span>
+                    <span class="metadata-value">${result.metadata.structure || 'four_block'}</span>
+                </div>
+                <div class="metadata-item">
+                    <span class="metadata-label">질문형 종결</span>
+                    <span class="metadata-value">${result.metadata.hasQuestionEnding ? '✅ Yes' : '❌ No'}</span>
+                </div>
+                <div class="metadata-item">
+                    <span class="metadata-label">결론 유보</span>
+                    <span class="metadata-value">${result.metadata.conclusionHold ? '✅ Yes' : '❌ No'}</span>
+                </div>
+                <div class="metadata-item">
+                    <span class="metadata-label">최적화 대상 신호</span>
+                    <span class="metadata-value">
+                        ${result.metadata.optimizedFor ? result.metadata.optimizedFor.map(signal => {
+                            const signalNames = {
+                                'dwellTime': '체류시간',
+                                'empathy': '공감(좋아요)',
+                                'comments': '댓글',
+                                'saves': '저장'
+                            };
+                            return `<span class="tag">${signalNames[signal] || signal}</span>`;
+                        }).join('') : '<span class="tag">N/A</span>'}
+                    </span>
+                </div>
+                <div class="metadata-item">
+                    <span class="metadata-label">블록 수</span>
+                    <span class="metadata-value">${result.body.length}개</span>
+                </div>
+            `;
+            document.getElementById('metadataContent').innerHTML = metadataHtml;
+        }
+
+        function displayValidation(validation) {
+            const validationBox = document.getElementById('validationBox');
+
+            if (validation.valid) {
+                validationBox.className = 'validation-box';
+                validationBox.querySelector('h4').innerHTML = '✅ 검증 통과';
+                validationBox.querySelector('h4').style.color = '#28a745';
+            } else {
+                validationBox.className = 'validation-box error';
+                validationBox.querySelector('h4').innerHTML = '❌ 검증 실패';
+                validationBox.querySelector('h4').style.color = '#dc3545';
+            }
+
+            let validationHtml = '';
+
+            if (validation.valid) {
+                validationHtml = `
+                    <div class="validation-item">
+                        <span class="validation-icon">✅</span>
+                        <span><strong>질문형 종결 확인:</strong> 마지막 문장이 물음표(?)로 끝남</span>
+                    </div>
+                    <div class="validation-item">
+                        <span class="validation-icon">✅</span>
+                        <span><strong>금지 단어 없음:</strong> 모든 금지 단어 필터링 통과</span>
+                    </div>
+                    <div class="validation-item">
+                        <span class="validation-icon">✅</span>
+                        <span><strong>4단계 블록 구조:</strong> 필수 구조 준수</span>
+                    </div>
+                    <div class="validation-item">
+                        <span class="validation-icon">✅</span>
+                        <span><strong>네이버 플레이스 최적화:</strong> 신호 생성 구조 완료</span>
+                    </div>
+                `;
+            } else {
+                validationHtml = validation.errors.map(error => `
+                    <div class="validation-item">
+                        <span class="validation-icon">❌</span>
+                        <span><strong>오류:</strong> ${error}</span>
+                    </div>
+                `).join('');
+            }
+
+            document.getElementById('validationResults').innerHTML = validationHtml;
+        }
+
+        // 페이지 로드 시 안내
+        window.addEventListener('load', function() {
+            console.log('네이버 플레이스 테스트 페이지 로드 완료');
+            console.log('Marketing Engine 로드 확인:', typeof MarketingEngine !== 'undefined');
+        });
+    </script>
+</body>
+</html>

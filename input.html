@@ -1,0 +1,2544 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>치과 정보 입력 - 치과 광고 콘텐츠 생성기</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+            background: #f5f7fa;
+            padding: 80px 0 60px 0;
+        }
+
+        /* Header Navigation Styles */
+        .top-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 15px 30px;
+        }
+
+        .top-header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            gap: 12px;
+        }
+
+        .header-logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        .header-logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .header-nav a {
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .header-nav a:hover {
+            color: #667eea;
+        }
+
+        .header-nav a.active {
+            color: #667eea;
+        }
+
+        .header-nav a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #667eea;
+            border-radius: 2px;
+        }
+
+        .header-nav .cardnews-nav-btn {
+            background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 100%);
+            color: white !important;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
+            transition: all 0.3s;
+        }
+
+        .header-nav .cardnews-nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 157, 0.5);
+            color: white !important;
+        }
+
+        @media (max-width: 768px) {
+            .top-header {
+                padding: 12px 20px;
+            }
+
+            .header-logo-text {
+                font-size: 14px;
+            }
+
+            .header-logo img {
+                height: 30px;
+            }
+
+            .header-nav {
+                gap: 15px;
+            }
+
+            .header-nav a {
+                font-size: 14px;
+            }
+
+            body {
+                padding: 70px 0 60px 0;
+            }
+        }
+
+        /* Progress Indicator */
+        .progress-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+            background: white;
+            margin-bottom: 20px;
+        }
+
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ddd;
+        }
+
+        .progress-dot.active {
+            background: #667eea;
+        }
+
+        /* Form Container */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .form-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 15px;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e4e8;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e4e8;
+            border-radius: 8px;
+            font-size: 15px;
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .char-counter {
+            text-align: right;
+            font-size: 13px;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        /* Radio/Checkbox Groups */
+        .radio-group, .checkbox-group {
+            display: grid;
+            gap: 12px;
+        }
+
+        .radio-option, .checkbox-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 15px;
+            border: 2px solid #e1e4e8;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .radio-option:hover, .checkbox-option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .radio-option input, .checkbox-option input {
+            margin-top: 3px;
+            cursor: pointer;
+        }
+
+        /* Priority Selection Options */
+        .priority-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 15px;
+            border: 2px solid #e1e4e8;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .priority-option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .priority-option.priority-1 {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .priority-option.priority-2 {
+            border-color: #ffa500;
+            background: #fff8f0;
+        }
+
+        .priority-indicator {
+            min-width: 32px;
+            height: 32px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .priority-option.priority-1 .priority-indicator {
+            border-color: #667eea;
+            color: #667eea;
+            background: white;
+        }
+
+        .priority-option.priority-1 .priority-indicator::after {
+            content: '○';
+        }
+
+        .priority-option.priority-2 .priority-indicator {
+            border-color: #ffa500;
+            color: #ffa500;
+            background: white;
+        }
+
+        .priority-option.priority-2 .priority-indicator::after {
+            content: '△';
+        }
+
+        .option-content {
+            flex: 1;
+        }
+
+        .option-label {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .option-desc {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        /* Trust Score Sliders */
+        .slider-group {
+            margin-bottom: 25px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .slider-value {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .slider-description {
+            font-size: 13px;
+            color: #ff8c00;
+            margin-bottom: 8px;
+            line-height: 1.4;
+            font-weight: 500;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .slider-description::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #ffa500;
+            font-weight: bold;
+        }
+
+        /* Section Description Box */
+        .section-description {
+            background: linear-gradient(135deg, #fff9e6 0%, #fff3d6 100%);
+            border-left: 4px solid #ffa500;
+            padding: 15px 18px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #664d00;
+            line-height: 1.7;
+        }
+
+        .section-description strong {
+            color: #ff8c00;
+            font-weight: 600;
+        }
+
+        .section-description::before {
+            content: '💡 ';
+            font-size: 16px;
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e1e4e8;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .form-section {
+                padding: 20px;
+            }
+
+            .header-title {
+                font-size: 16px;
+            }
+
+            .back-btn {
+                font-size: 14px;
+            }
+        }
+
+        /* Footer Styles */
+        .footer {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            margin-top: 60px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+
+        .footer-info {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .footer-info-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .footer-info-icon {
+            font-size: 18px;
+        }
+
+        .footer-brand {
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .footer-link {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .footer-link:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        .footer-admin-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .footer-admin-btn:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .footer {
+                padding: 30px 15px;
+                margin-top: 40px;
+            }
+
+            .footer-title {
+                font-size: 20px;
+            }
+
+            .footer-info {
+                font-size: 14px;
+            }
+
+            .footer-brand {
+                font-size: 18px;
+            }
+        }
+
+        /* ====== Diagnostic System Styles ====== */
+
+        /* Tab Navigation */
+        .diagnostic-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .diagnostic-tab {
+            flex: 1;
+            min-width: 90px;
+            max-width: 160px;
+            padding: 10px 6px;
+            background: white;
+            border: 2px solid #e1e4e8;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .diagnostic-tab:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .diagnostic-tab.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8f0ff 100%);
+        }
+
+        .diagnostic-tab.completed {
+            border-color: #4caf50;
+            background: #f1f8f4;
+        }
+
+        .tab-icon {
+            font-size: 20px;
+        }
+
+        .tab-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .tab-progress {
+            font-size: 10px;
+            color: #666;
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        .diagnostic-tab.active .tab-progress {
+            background: #667eea;
+            color: white;
+        }
+
+        .diagnostic-tab.completed .tab-progress {
+            background: #4caf50;
+            color: white;
+        }
+
+        /* Question Panel */
+        .diagnostic-panel {
+            display: none;
+            background: #fafbfc;
+            border-radius: 8px;
+            padding: 25px;
+        }
+
+        .diagnostic-panel.active {
+            display: block;
+        }
+
+        .diagnostic-question {
+            background: white;
+            border: 2px solid #e1e4e8;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .question-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .question-text {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Likert Scale Options (Radio as Cards) */
+        .likert-options {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+        }
+
+        .likert-option {
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .likert-option input[type="radio"] {
+            display: none;
+        }
+
+        .likert-option .option-label {
+            display: block;
+            text-align: center;
+            padding: 15px 8px;
+            border: 2px solid #e1e4e8;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.2s;
+            line-height: 1.3;
+        }
+
+        .likert-option:hover .option-label {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .likert-option input[type="radio"]:checked + .option-label {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Action Buttons */
+        .diagnostic-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            justify-content: center;
+        }
+
+        .btn-secondary {
+            padding: 12px 24px;
+            background: #f5f5f5;
+            color: #666;
+            border: 2px solid #e1e4e8;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: #e8e8e8;
+            border-color: #999;
+        }
+
+        .btn-primary {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Results Preview */
+        .diagnostic-results {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8f0ff 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 25px;
+        }
+
+        .diagnostic-results h3 {
+            font-size: 18px;
+            color: #667eea;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .result-item {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #d0dcf0;
+        }
+
+        .result-label {
+            display: block;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .result-score {
+            display: block;
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .result-summary {
+            text-align: center;
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        /* Mobile Responsive for Diagnostic */
+        @media (max-width: 768px) {
+            .diagnostic-tabs {
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+            }
+
+            .diagnostic-tab {
+                min-width: 80px;
+                padding: 10px 5px;
+            }
+
+            .tab-icon {
+                font-size: 18px;
+            }
+
+            .tab-name {
+                font-size: 12px;
+            }
+
+            .likert-options {
+                gap: 5px;
+            }
+
+            .likert-option .option-label {
+                padding: 10px 4px;
+                font-size: 11px;
+            }
+
+            .result-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .diagnostic-actions {
+                flex-direction: column;
+            }
+
+            .btn-secondary,
+            .btn-primary {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .likert-options {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .likert-option .option-label {
+                text-align: left;
+                padding: 12px 15px;
+            }
+
+            .likert-option input[type="radio"]:checked + .option-label::before {
+                content: '✓ ';
+                font-weight: bold;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Header Navigation -->
+    <header class="top-header">
+        <div class="top-header-content">
+            <a href="index.html" class="header-logo">
+                <img src="로고3.png" alt="치과 맞춤식 광고 콘텐츠 생성기 로고">
+                <span class="header-logo-text">치과 맞춤식 광고 콘텐츠 생성기</span>
+            </a>
+            <nav class="header-nav">
+                <a href="index.html">홈</a>
+                <a href="input.html" class="active">생성시작</a>
+                <a href="profiles.html">내 프로필</a>
+                <a href="cases.html">내 결과 보기</a>
+                <a href="cardnews.html" target="_blank" class="cardnews-nav-btn">🎨 카드뉴스 생성기</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Progress Indicator -->
+    <div class="progress-indicator">
+        <div class="progress-dot active"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+    </div>
+
+    <!-- Form Container -->
+    <div class="container">
+        <form id="dentalForm">
+            <!-- Section 1: Basic Info -->
+            <div class="form-section">
+                <h2 class="section-title">1. 기본 정보</h2>
+                <div class="section-description">
+                    광고 콘텐츠 생성을 위한 <strong>치과의 기본 정보</strong>를 입력해주세요.
+                    정확한 정보를 입력할수록 더 맞춤화된 광고 전략을 제공받을 수 있습니다.
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">치과 이름</label>
+                    <input type="text" name="clinicName" class="form-input" placeholder="예: 서울밝은치과" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">원장 이름</label>
+                    <input type="text" name="directorName" class="form-input" placeholder="예: 김철수" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">연락처</label>
+                    <input type="tel" name="phone" class="form-input" placeholder="예: 02-1234-5678">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">지역</label>
+                    <input type="text" name="location" class="form-input" placeholder="예: 서울 강남구" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">주요 진료 분야</label>
+                    <input type="text" name="specialty" class="form-input" placeholder="예: 임플란트, 교정, 심미치료">
+                </div>
+            </div>
+
+            <!-- Section 2: Diagnosis -->
+            <div class="form-section">
+                <h2 class="section-title">2. 현재 상태 진단</h2>
+                <div class="section-description">
+                    치과의 <strong>현재 매출 단계</strong>와 <strong>원장 스타일</strong>을 진단합니다.
+                    각 항목에서 <strong>가장 가까운 것을 1순위(○)</strong>로, <strong>두 번째로 가까운 것을 2순위(△)</strong>로 선택해주세요.
+                    항목을 클릭할 때마다 순서가 변경됩니다.
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">현재 매출 단계 (1순위와 2순위를 선택하세요)</label>
+                    <div class="radio-group" id="revenueStageGroup">
+                        <div class="priority-option" data-value="1" onclick="togglePriority('revenueStage', '1')">
+                            <div class="priority-indicator"></div>
+                            <div class="option-content">
+                                <div class="option-label">1형 - 수익 정체·감소</div>
+                                <div class="option-desc">매출이 정체되거나 감소하는 단계</div>
+                            </div>
+                        </div>
+                        <div class="priority-option" data-value="2" onclick="togglePriority('revenueStage', '2')">
+                            <div class="priority-indicator"></div>
+                            <div class="option-content">
+                                <div class="option-label">2형 - 수익 유지·불안정</div>
+                                <div class="option-desc">수익은 유지되지만 불안정한 단계</div>
+                            </div>
+                        </div>
+                        <div class="priority-option" data-value="3" onclick="togglePriority('revenueStage', '3')">
+                            <div class="priority-indicator"></div>
+                            <div class="option-content">
+                                <div class="option-label">3형 - 원장 과부하</div>
+                                <div class="option-desc">원장의 업무 부담이 과중한 단계</div>
+                            </div>
+                        </div>
+                        <div class="priority-option" data-value="4" onclick="togglePriority('revenueStage', '4')">
+                            <div class="priority-indicator"></div>
+                            <div class="option-content">
+                                <div class="option-label">4형 - 수익 안정·확장 준비</div>
+                                <div class="option-desc">수익이 안정적이며 확장을 준비하는 단계</div>
+                            </div>
+                        </div>
+                        <div class="priority-option" data-value="5" onclick="togglePriority('revenueStage', '5')">
+                            <div class="priority-indicator"></div>
+                            <div class="option-content">
+                                <div class="option-label">5형 - 고수익·브랜드형</div>
+                                <div class="option-desc">고수익을 내며 브랜드 가치가 높은 단계</div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="revenueStage1" id="revenueStage1" required>
+                    <input type="hidden" name="revenueStage2" id="revenueStage2">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">원장 스타일 (1순위와 2순위를 선택하세요)</label>
+                    <div class="radio-group" id="directorStyleGroup">
+                        <div class="priority-option" data-value="A" onclick="togglePriority('directorStyle', 'A')">
+                            <div class="priority-indicator"></div>
+                            <div class="option-content">
+                                <div class="option-label">A형 - 결단·속도형</div>
+                                <div class="option-desc">빠른 결정과 실행을 중시하는 유형</div>
+                            </div>
+                        </div>
+                        <div class="priority-option" data-value="B" onclick="togglePriority('directorStyle', 'B')">
+                            <div class="priority-indicator"></div>
+                            <div class="option-content">
+                                <div class="option-label">B형 - 구조·안정형</div>
+                                <div class="option-desc">체계와 안정성을 중시하는 유형</div>
+                            </div>
+                        </div>
+                        <div class="priority-option" data-value="C" onclick="togglePriority('directorStyle', 'C')">
+                            <div class="priority-indicator"></div>
+                            <div class="option-content">
+                                <div class="option-label">C형 - 팀·교육형</div>
+                                <div class="option-desc">팀워크와 교육을 중시하는 유형</div>
+                            </div>
+                        </div>
+                        <div class="priority-option" data-value="D" onclick="togglePriority('directorStyle', 'D')">
+                            <div class="priority-indicator"></div>
+                            <div class="option-content">
+                                <div class="option-label">D형 - 수익·경영형</div>
+                                <div class="option-desc">수익성과 경영 효율을 중시하는 유형</div>
+                            </div>
+                        </div>
+                        <div class="priority-option" data-value="E" onclick="togglePriority('directorStyle', 'E')">
+                            <div class="priority-indicator"></div>
+                            <div class="option-content">
+                                <div class="option-label">E형 - 환자·신뢰형</div>
+                                <div class="option-desc">환자 경험과 신뢰를 최우선하는 유형</div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="directorStyle1" id="directorStyle1" required>
+                    <input type="hidden" name="directorStyle2" id="directorStyle2">
+                </div>
+            </div>
+
+            <!-- Section 2.5: DF-AI 자가진단 -->
+            <div class="form-section" id="diagnostic-section">
+                <h2 class="section-title">2.5. DF-AI 자가진단 (선택사항)</h2>
+
+                <div class="section-description">
+                    치과의 <strong>상담 및 진료 품질</strong>을 객관적으로 평가하는 18개 문항입니다.<br>
+                    각 질문에 솔직하게 답변하시면 아래 Section 3의 슬라이더가 <strong>자동으로 설정</strong>됩니다.<br>
+                    진단을 건너뛰고 직접 슬라이더를 조절하셔도 됩니다.
+                </div>
+
+                <!-- Tab Navigation -->
+                <div class="diagnostic-tabs">
+                    <button type="button" class="diagnostic-tab active" data-element="empathy" onclick="switchDiagnosticTab('empathy')">
+                        <span class="tab-icon">❤️</span>
+                        <span class="tab-name">공감</span>
+                        <span class="tab-progress" id="empathy-progress">0/3</span>
+                    </button>
+                    <button type="button" class="diagnostic-tab" data-element="understanding" onclick="switchDiagnosticTab('understanding')">
+                        <span class="tab-icon">💡</span>
+                        <span class="tab-name">이해</span>
+                        <span class="tab-progress" id="understanding-progress">0/3</span>
+                    </button>
+                    <button type="button" class="diagnostic-tab" data-element="decision" onclick="switchDiagnosticTab('decision')">
+                        <span class="tab-icon">🤝</span>
+                        <span class="tab-name">결정</span>
+                        <span class="tab-progress" id="decision-progress">0/3</span>
+                    </button>
+                    <button type="button" class="diagnostic-tab" data-element="value" onclick="switchDiagnosticTab('value')">
+                        <span class="tab-icon">💎</span>
+                        <span class="tab-name">가치</span>
+                        <span class="tab-progress" id="value-progress">0/3</span>
+                    </button>
+                    <button type="button" class="diagnostic-tab" data-element="trust" onclick="switchDiagnosticTab('trust')">
+                        <span class="tab-icon">🔒</span>
+                        <span class="tab-name">신뢰</span>
+                        <span class="tab-progress" id="trust-progress">0/3</span>
+                    </button>
+                    <button type="button" class="diagnostic-tab" data-element="space" onclick="switchDiagnosticTab('space')">
+                        <span class="tab-icon">🏥</span>
+                        <span class="tab-name">공간</span>
+                        <span class="tab-progress" id="space-progress">0/3</span>
+                    </button>
+                </div>
+
+                <!-- Question Panels -->
+                <!-- Panel: 공감 (Empathy) -->
+                <div class="diagnostic-panel active" id="panel-empathy">
+                    <!-- Q1 -->
+                    <div class="diagnostic-question">
+                        <div class="question-number">Q1</div>
+                        <div class="question-text">
+                            초진 환자가 진료실에 들어올 때, 환자의 불안한 표정이나 떨리는 목소리를 즉시 알아차리고
+                            먼저 '긴장되시죠? 편하게 앉으세요'와 같은 말로 안심시킨다.
+                        </div>
+                        <div class="likert-options">
+                            <label class="likert-option">
+                                <input type="radio" name="empathy-q1" value="1" onchange="handleAnswerSelection('empathy', '1', this.value)">
+                                <span class="option-label">전혀<br>아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="empathy-q1" value="2" onchange="handleAnswerSelection('empathy', '1', this.value)">
+                                <span class="option-label">아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="empathy-q1" value="3" onchange="handleAnswerSelection('empathy', '1', this.value)">
+                                <span class="option-label">보통<br>이다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="empathy-q1" value="4" onchange="handleAnswerSelection('empathy', '1', this.value)">
+                                <span class="option-label">그렇다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="empathy-q1" value="5" onchange="handleAnswerSelection('empathy', '1', this.value)">
+                                <span class="option-label">매우<br>그렇다</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Q2 -->
+                    <div class="diagnostic-question">
+                        <div class="question-number">Q2</div>
+                        <div class="question-text">
+                            연세가 많은 환자에게는 천천히 큰 목소리로 설명하고, 젊은 환자에게는
+                            전문 용어를 섞어 빠르게 설명하는 등 환자마다 다른 방식으로 대화한다.
+                        </div>
+                        <div class="likert-options">
+                            <label class="likert-option">
+                                <input type="radio" name="empathy-q2" value="1" onchange="handleAnswerSelection('empathy', '2', this.value)">
+                                <span class="option-label">전혀<br>아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="empathy-q2" value="2" onchange="handleAnswerSelection('empathy', '2', this.value)">
+                                <span class="option-label">아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="empathy-q2" value="3" onchange="handleAnswerSelection('empathy', '2', this.value)">
+                                <span class="option-label">보통<br>이다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="empathy-q2" value="4" onchange="handleAnswerSelection('empathy', '2', this.value)">
+                                <span class="option-label">그렇다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="empathy-q2" value="5" onchange="handleAnswerSelection('empathy', '2', this.value)">
+                                <span class="option-label">매우<br>그렇다</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Q3 -->
+                    <div class="diagnostic-question">
+                        <div class="question-number">Q3</div>
+                        <div class="question-text">
+                            치과 광고나 소개 자료를 만들 때, '치과가 무섭지 않으신가요?'처럼
+                            환자의 솔직한 두려움을 먼저 언급하고 공감하는 문구를 넣는다.
+                        </div>
+                        <div class="likert-options">
+                            <label class="likert-option">
+                                <input type="radio" name="empathy-q3" value="1" onchange="handleAnswerSelection('empathy', '3', this.value)">
+                                <span class="option-label">전혀<br>아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="empathy-q3" value="2" onchange="handleAnswerSelection('empathy', '3', this.value)">
+                                <span class="option-label">아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="empathy-q3" value="3" onchange="handleAnswerSelection('empathy', '3', this.value)">
+                                <span class="option-label">보통<br>이다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="empathy-q3" value="4" onchange="handleAnswerSelection('empathy', '3', this.value)">
+                                <span class="option-label">그렇다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="empathy-q3" value="5" onchange="handleAnswerSelection('empathy', '3', this.value)">
+                                <span class="option-label">매우<br>그렇다</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel: 이해 (Understanding) -->
+                <div class="diagnostic-panel" id="panel-understanding">
+                    <!-- Q4 -->
+                    <div class="diagnostic-question">
+                        <div class="question-number">Q4</div>
+                        <div class="question-text">
+                            임플란트를 설명할 때 '뼈에 나사를 박는다'가 아니라
+                            '무너진 집터에 새 기둥을 세우는 것'처럼 환자가 이해하기 쉬운 비유를 사용한다.
+                        </div>
+                        <div class="likert-options">
+                            <label class="likert-option">
+                                <input type="radio" name="understanding-q1" value="1" onchange="handleAnswerSelection('understanding', '1', this.value)">
+                                <span class="option-label">전혀<br>아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="understanding-q1" value="2" onchange="handleAnswerSelection('understanding', '1', this.value)">
+                                <span class="option-label">아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="understanding-q1" value="3" onchange="handleAnswerSelection('understanding', '1', this.value)">
+                                <span class="option-label">보통<br>이다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="understanding-q1" value="4" onchange="handleAnswerSelection('understanding', '1', this.value)">
+                                <span class="option-label">그렇다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="understanding-q1" value="5" onchange="handleAnswerSelection('understanding', '1', this.value)">
+                                <span class="option-label">매우<br>그렇다</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Q5 -->
+                    <div class="diagnostic-question">
+                        <div class="question-number">Q5</div>
+                        <div class="question-text">
+                            치료 계획을 설명할 때, 말로만 하지 않고 모형, 그림, 사진, 또는 태블릿의
+                            3D 이미지를 함께 보여주며 설명한다.
+                        </div>
+                        <div class="likert-options">
+                            <label class="likert-option">
+                                <input type="radio" name="understanding-q2" value="1" onchange="handleAnswerSelection('understanding', '2', this.value)">
+                                <span class="option-label">전혀<br>아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="understanding-q2" value="2" onchange="handleAnswerSelection('understanding', '2', this.value)">
+                                <span class="option-label">아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="understanding-q2" value="3" onchange="handleAnswerSelection('understanding', '2', this.value)">
+                                <span class="option-label">보통<br>이다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="understanding-q2" value="4" onchange="handleAnswerSelection('understanding', '2', this.value)">
+                                <span class="option-label">그렇다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="understanding-q2" value="5" onchange="handleAnswerSelection('understanding', '2', this.value)">
+                                <span class="option-label">매우<br>그렇다</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Q6 -->
+                    <div class="diagnostic-question">
+                        <div class="question-number">Q6</div>
+                        <div class="question-text">
+                            치료 설명이 끝난 후 '이해가 되셨나요?'만 묻지 않고,
+                            '제가 설명한 내용 중 궁금하신 부분이 있으신가요?'처럼 구체적인 질문을 던진다.
+                        </div>
+                        <div class="likert-options">
+                            <label class="likert-option">
+                                <input type="radio" name="understanding-q3" value="1" onchange="handleAnswerSelection('understanding', '3', this.value)">
+                                <span class="option-label">전혀<br>아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="understanding-q3" value="2" onchange="handleAnswerSelection('understanding', '3', this.value)">
+                                <span class="option-label">아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="understanding-q3" value="3" onchange="handleAnswerSelection('understanding', '3', this.value)">
+                                <span class="option-label">보통<br>이다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="understanding-q3" value="4" onchange="handleAnswerSelection('understanding', '3', this.value)">
+                                <span class="option-label">그렇다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="understanding-q3" value="5" onchange="handleAnswerSelection('understanding', '3', this.value)">
+                                <span class="option-label">매우<br>그렇다</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel: 결정 (Decision) -->
+                <div class="diagnostic-panel" id="panel-decision">
+                    <!-- Q7 -->
+                    <div class="diagnostic-question">
+                        <div class="question-number">Q7</div>
+                        <div class="question-text">
+                            치료 방법을 설명할 때 하나만 권하지 않고, 최소 2-3가지 옵션(예: 임플란트 vs 브릿지)과
+                            각각의 장단점을 설명한 후 환자가 선택하도록 한다.
+                        </div>
+                        <div class="likert-options">
+                            <label class="likert-option">
+                                <input type="radio" name="decision-q1" value="1" onchange="handleAnswerSelection('decision', '1', this.value)">
+                                <span class="option-label">전혀<br>아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="decision-q1" value="2" onchange="handleAnswerSelection('decision', '1', this.value)">
+                                <span class="option-label">아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="decision-q1" value="3" onchange="handleAnswerSelection('decision', '1', this.value)">
+                                <span class="option-label">보통<br>이다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="decision-q1" value="4" onchange="handleAnswerSelection('decision', '1', this.value)">
+                                <span class="option-label">그렇다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="decision-q1" value="5" onchange="handleAnswerSelection('decision', '1', this.value)">
+                                <span class="option-label">매우<br>그렇다</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Q8 -->
+                    <div class="diagnostic-question">
+                        <div class="question-number">Q8</div>
+                        <div class="question-text">
+                            상담이 끝난 후 '오늘 결정 안 하셔도 됩니다. 집에 가서 가족과 상의해보시고
+                            편하실 때 연락주세요'라고 말한다.
+                        </div>
+                        <div class="likert-options">
+                            <label class="likert-option">
+                                <input type="radio" name="decision-q2" value="1" onchange="handleAnswerSelection('decision', '2', this.value)">
+                                <span class="option-label">전혀<br>아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="decision-q2" value="2" onchange="handleAnswerSelection('decision', '2', this.value)">
+                                <span class="option-label">아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="decision-q2" value="3" onchange="handleAnswerSelection('decision', '2', this.value)">
+                                <span class="option-label">보통<br>이다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="decision-q2" value="4" onchange="handleAnswerSelection('decision', '2', this.value)">
+                                <span class="option-label">그렇다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="decision-q2" value="5" onchange="handleAnswerSelection('decision', '2', this.value)">
+                                <span class="option-label">매우<br>그렇다</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Q9 -->
+                    <div class="diagnostic-question">
+                        <div class="question-number">Q9</div>
+                        <div class="question-text">
+                            환자가 '이 치료가 정말 필요한가요?'처럼 치료 필요성 자체를 의심하는 질문을 해도
+                            불쾌해하지 않고 '좋은 질문이세요'라며 존중하는 태도를 보인다.
+                        </div>
+                        <div class="likert-options">
+                            <label class="likert-option">
+                                <input type="radio" name="decision-q3" value="1" onchange="handleAnswerSelection('decision', '3', this.value)">
+                                <span class="option-label">전혀<br>아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="decision-q3" value="2" onchange="handleAnswerSelection('decision', '3', this.value)">
+                                <span class="option-label">아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="decision-q3" value="3" onchange="handleAnswerSelection('decision', '3', this.value)">
+                                <span class="option-label">보통<br>이다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="decision-q3" value="4" onchange="handleAnswerSelection('decision', '3', this.value)">
+                                <span class="option-label">그렇다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="decision-q3" value="5" onchange="handleAnswerSelection('decision', '3', this.value)">
+                                <span class="option-label">매우<br>그렇다</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel: 가치 (Value) -->
+                <div class="diagnostic-panel" id="panel-value">
+                    <!-- Q10 -->
+                    <div class="diagnostic-question">
+                        <div class="question-number">Q10</div>
+                        <div class="question-text">
+                            치료를 권할 때 '지금 치료하면 10년 후 다른 치아까지 망가지는 것을 막을 수 있다'처럼
+                            장기적 예방 효과를 강조한다.
+                        </div>
+                        <div class="likert-options">
+                            <label class="likert-option">
+                                <input type="radio" name="value-q1" value="1" onchange="handleAnswerSelection('value', '1', this.value)">
+                                <span class="option-label">전혀<br>아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="value-q1" value="2" onchange="handleAnswerSelection('value', '1', this.value)">
+                                <span class="option-label">아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="value-q1" value="3" onchange="handleAnswerSelection('value', '1', this.value)">
+                                <span class="option-label">보통<br>이다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="value-q1" value="4" onchange="handleAnswerSelection('value', '1', this.value)">
+                                <span class="option-label">그렇다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="value-q1" value="5" onchange="handleAnswerSelection('value', '1', this.value)">
+                                <span class="option-label">매우<br>그렇다</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Q11 -->
+                    <div class="diagnostic-question">
+                        <div class="question-number">Q11</div>
+                        <div class="question-text">
+                            치료 비용을 말할 때 '비싸다'는 반응이 나올 것을 예상하고,
+                            '이 가격에는 재료비, 기공비, 10년 보증이 포함됩니다'처럼 비용 구성을 투명하게 설명한다.
+                        </div>
+                        <div class="likert-options">
+                            <label class="likert-option">
+                                <input type="radio" name="value-q2" value="1" onchange="handleAnswerSelection('value', '2', this.value)">
+                                <span class="option-label">전혀<br>아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="value-q2" value="2" onchange="handleAnswerSelection('value', '2', this.value)">
+                                <span class="option-label">아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="value-q2" value="3" onchange="handleAnswerSelection('value', '2', this.value)">
+                                <span class="option-label">보통<br>이다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="value-q2" value="4" onchange="handleAnswerSelection('value', '2', this.value)">
+                                <span class="option-label">그렇다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="value-q2" value="5" onchange="handleAnswerSelection('value', '2', this.value)">
+                                <span class="option-label">매우<br>그렇다</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Q12 -->
+                    <div class="diagnostic-question">
+                        <div class="question-number">Q12</div>
+                        <div class="question-text">
+                            비슷한 치료를 받은 다른 환자의 Before/After 사례를 보여주거나,
+                            '작년에 같은 치료 받으신 분이 지금 아주 만족하고 계세요'처럼 구체적 사례를 언급한다.
+                        </div>
+                        <div class="likert-options">
+                            <label class="likert-option">
+                                <input type="radio" name="value-q3" value="1" onchange="handleAnswerSelection('value', '3', this.value)">
+                                <span class="option-label">전혀<br>아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="value-q3" value="2" onchange="handleAnswerSelection('value', '3', this.value)">
+                                <span class="option-label">아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="value-q3" value="3" onchange="handleAnswerSelection('value', '3', this.value)">
+                                <span class="option-label">보통<br>이다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="value-q3" value="4" onchange="handleAnswerSelection('value', '3', this.value)">
+                                <span class="option-label">그렇다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="value-q3" value="5" onchange="handleAnswerSelection('value', '3', this.value)">
+                                <span class="option-label">매우<br>그렇다</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel: 신뢰 (Trust) -->
+                <div class="diagnostic-panel" id="panel-trust">
+                    <!-- Q13 -->
+                    <div class="diagnostic-question">
+                        <div class="question-number">Q13</div>
+                        <div class="question-text">
+                            치료가 끝난 후에도 '불편하신 건 없으신가요?'처럼 정기적으로 전화나 문자로
+                            환자 상태를 확인한다.
+                        </div>
+                        <div class="likert-options">
+                            <label class="likert-option">
+                                <input type="radio" name="trust-q1" value="1" onchange="handleAnswerSelection('trust', '1', this.value)">
+                                <span class="option-label">전혀<br>아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="trust-q1" value="2" onchange="handleAnswerSelection('trust', '1', this.value)">
+                                <span class="option-label">아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="trust-q1" value="3" onchange="handleAnswerSelection('trust', '1', this.value)">
+                                <span class="option-label">보통<br>이다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="trust-q1" value="4" onchange="handleAnswerSelection('trust', '1', this.value)">
+                                <span class="option-label">그렇다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="trust-q1" value="5" onchange="handleAnswerSelection('trust', '1', this.value)">
+                                <span class="option-label">매우<br>그렇다</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Q14 -->
+                    <div class="diagnostic-question">
+                        <div class="question-number">Q14</div>
+                        <div class="question-text">
+                            치료 중 문제가 생기거나 환자가 불만을 제기할 때, 변명하지 않고
+                            '죄송합니다. 제가 다시 확인하겠습니다'처럼 즉시 인정하고 해결책을 제시한다.
+                        </div>
+                        <div class="likert-options">
+                            <label class="likert-option">
+                                <input type="radio" name="trust-q2" value="1" onchange="handleAnswerSelection('trust', '2', this.value)">
+                                <span class="option-label">전혀<br>아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="trust-q2" value="2" onchange="handleAnswerSelection('trust', '2', this.value)">
+                                <span class="option-label">아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="trust-q2" value="3" onchange="handleAnswerSelection('trust', '2', this.value)">
+                                <span class="option-label">보통<br>이다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="trust-q2" value="4" onchange="handleAnswerSelection('trust', '2', this.value)">
+                                <span class="option-label">그렇다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="trust-q2" value="5" onchange="handleAnswerSelection('trust', '2', this.value)">
+                                <span class="option-label">매우<br>그렇다</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Q15 -->
+                    <div class="diagnostic-question">
+                        <div class="question-number">Q15</div>
+                        <div class="question-text">
+                            환자에게 '다음 주에 연락드리겠습니다' 또는 '이 자료 보내드리겠습니다'라고 말한 것을
+                            반드시 메모해두고 정확히 이행한다.
+                        </div>
+                        <div class="likert-options">
+                            <label class="likert-option">
+                                <input type="radio" name="trust-q3" value="1" onchange="handleAnswerSelection('trust', '3', this.value)">
+                                <span class="option-label">전혀<br>아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="trust-q3" value="2" onchange="handleAnswerSelection('trust', '3', this.value)">
+                                <span class="option-label">아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="trust-q3" value="3" onchange="handleAnswerSelection('trust', '3', this.value)">
+                                <span class="option-label">보통<br>이다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="trust-q3" value="4" onchange="handleAnswerSelection('trust', '3', this.value)">
+                                <span class="option-label">그렇다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="trust-q3" value="5" onchange="handleAnswerSelection('trust', '3', this.value)">
+                                <span class="option-label">매우<br>그렇다</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel: 공간 (Space) -->
+                <div class="diagnostic-panel" id="panel-space">
+                    <!-- Q16 -->
+                    <div class="diagnostic-question">
+                        <div class="question-number">Q16</div>
+                        <div class="question-text">
+                            대기실에 부드러운 조명, 편안한 음악, 잡지나 책을 준비하고,
+                            '치과 기구 소리'가 들리지 않도록 방음에 신경 쓴다.
+                        </div>
+                        <div class="likert-options">
+                            <label class="likert-option">
+                                <input type="radio" name="space-q1" value="1" onchange="handleAnswerSelection('space', '1', this.value)">
+                                <span class="option-label">전혀<br>아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="space-q1" value="2" onchange="handleAnswerSelection('space', '1', this.value)">
+                                <span class="option-label">아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="space-q1" value="3" onchange="handleAnswerSelection('space', '1', this.value)">
+                                <span class="option-label">보통<br>이다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="space-q1" value="4" onchange="handleAnswerSelection('space', '1', this.value)">
+                                <span class="option-label">그렇다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="space-q1" value="5" onchange="handleAnswerSelection('space', '1', this.value)">
+                                <span class="option-label">매우<br>그렇다</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Q17 -->
+                    <div class="diagnostic-question">
+                        <div class="question-number">Q17</div>
+                        <div class="question-text">
+                            진료실에서 '지금 무엇을 하는지' 환자가 볼 수 없는 위치에서 기구를 만지지 않고,
+                            사용할 기구를 미리 보여주며 '이건 ~할 때 쓰는 도구입니다'라고 설명한다.
+                        </div>
+                        <div class="likert-options">
+                            <label class="likert-option">
+                                <input type="radio" name="space-q2" value="1" onchange="handleAnswerSelection('space', '2', this.value)">
+                                <span class="option-label">전혀<br>아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="space-q2" value="2" onchange="handleAnswerSelection('space', '2', this.value)">
+                                <span class="option-label">아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="space-q2" value="3" onchange="handleAnswerSelection('space', '2', this.value)">
+                                <span class="option-label">보통<br>이다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="space-q2" value="4" onchange="handleAnswerSelection('space', '2', this.value)">
+                                <span class="option-label">그렇다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="space-q2" value="5" onchange="handleAnswerSelection('space', '2', this.value)">
+                                <span class="option-label">매우<br>그렇다</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Q18 -->
+                    <div class="diagnostic-question">
+                        <div class="question-number">Q18</div>
+                        <div class="question-text">
+                            치료 중 환자가 아프거나 불편할 때 손을 들 수 있는 신호를 미리 약속하거나,
+                            '힘들면 언제든 말씀하세요'라는 말을 자주 반복한다.
+                        </div>
+                        <div class="likert-options">
+                            <label class="likert-option">
+                                <input type="radio" name="space-q3" value="1" onchange="handleAnswerSelection('space', '3', this.value)">
+                                <span class="option-label">전혀<br>아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="space-q3" value="2" onchange="handleAnswerSelection('space', '3', this.value)">
+                                <span class="option-label">아니다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="space-q3" value="3" onchange="handleAnswerSelection('space', '3', this.value)">
+                                <span class="option-label">보통<br>이다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="space-q3" value="4" onchange="handleAnswerSelection('space', '3', this.value)">
+                                <span class="option-label">그렇다</span>
+                            </label>
+                            <label class="likert-option">
+                                <input type="radio" name="space-q3" value="5" onchange="handleAnswerSelection('space', '3', this.value)">
+                                <span class="option-label">매우<br>그렇다</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="diagnostic-actions">
+                    <button type="button" class="btn-secondary" onclick="skipDiagnostic()">
+                        건너뛰고 직접 입력하기
+                    </button>
+                    <button type="button" class="btn-primary" onclick="completeDiagnostic()" id="complete-diagnostic-btn" disabled>
+                        진단 완료 (0/18)
+                    </button>
+                </div>
+
+                <!-- Results Preview (Hidden until complete) -->
+                <div class="diagnostic-results" id="diagnostic-results" style="display:none;">
+                    <h3>진단 결과 미리보기</h3>
+                    <div class="result-grid">
+                        <div class="result-item">
+                            <span class="result-label">공감</span>
+                            <span class="result-score" id="result-empathy">0점</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">이해</span>
+                            <span class="result-score" id="result-understanding">0점</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">결정</span>
+                            <span class="result-score" id="result-decision">0점</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">가치</span>
+                            <span class="result-score" id="result-value">0점</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">신뢰</span>
+                            <span class="result-score" id="result-trust">0점</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">공간</span>
+                            <span class="result-score" id="result-space">0점</span>
+                        </div>
+                    </div>
+                    <div class="result-summary">
+                        평균 점수: <strong id="result-avg">0점</strong>
+                        | 광고 허용 레벨: <strong id="result-level">L0</strong>
+                    </div>
+                    <button type="button" class="btn-primary" onclick="applyDiagnosticToSliders()">
+                        결과를 아래 슬라이더에 적용하기
+                    </button>
+                </div>
+            </div>
+
+            <!-- Section 3: Trust Scores -->
+            <div class="form-section">
+                <h2 class="section-title">3. DF-AI 신뢰 점수</h2>
+                <div class="section-description">
+                    치과의 <strong>환자 상담 및 진료 품질</strong>을 평가하는 지표입니다.
+                    각 항목을 <strong>0점(낮음)부터 100점(높음)</strong>까지 슬라이더로 조절하여 현재 치과의 수준을 솔직하게 평가해주세요.
+                    확실하지 않으면 <strong>50점(중간)</strong>으로 설정하세요.
+                </div>
+
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span>공감 (Empathy)</span>
+                        <span class="slider-value" id="empathyValue">50</span>
+                    </div>
+                    <p class="slider-description">환자의 감정과 불안을 얼마나 잘 이해하고 공감하는가?</p>
+                    <input type="range" name="empathy" class="slider" min="0" max="100" value="50"
+                           oninput="updateSlider('empathy', this.value)">
+                </div>
+
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span>이해 (Understanding)</span>
+                        <span class="slider-value" id="understandingValue">50</span>
+                    </div>
+                    <p class="slider-description">치료 내용을 환자가 이해하기 쉽게 설명하는가?</p>
+                    <input type="range" name="understanding" class="slider" min="0" max="100" value="50"
+                           oninput="updateSlider('understanding', this.value)">
+                </div>
+
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span>결정 자율성 (Decision Autonomy)</span>
+                        <span class="slider-value" id="decisionValue">50</span>
+                    </div>
+                    <p class="slider-description">환자에게 치료 선택권을 주고 의사결정을 존중하는가?</p>
+                    <input type="range" name="decision" class="slider" min="0" max="100" value="50"
+                           oninput="updateSlider('decision', this.value)">
+                </div>
+
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span>가치 전달 (Value Delivery)</span>
+                        <span class="slider-value" id="valueValue">50</span>
+                    </div>
+                    <p class="slider-description">치료의 장기적 가치와 효과를 잘 전달하는가?</p>
+                    <input type="range" name="value" class="slider" min="0" max="100" value="50"
+                           oninput="updateSlider('value', this.value)">
+                </div>
+
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span>신뢰 관계 (Trust Relationship)</span>
+                        <span class="slider-value" id="trustValue">50</span>
+                    </div>
+                    <p class="slider-description">환자와 장기적 신뢰 관계를 구축하고 관리하는가?</p>
+                    <input type="range" name="trust" class="slider" min="0" max="100" value="50"
+                           oninput="updateSlider('trust', this.value)">
+                </div>
+
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span>공간/감성 통제 (Space/Emotion Control)</span>
+                        <span class="slider-value" id="spaceValue">50</span>
+                    </div>
+                    <p class="slider-description">진료 환경과 분위기를 환자 친화적으로 관리하는가?</p>
+                    <input type="range" name="space" class="slider" min="0" max="100" value="50"
+                           oninput="updateSlider('space', this.value)">
+                </div>
+            </div>
+
+            <!-- Section 4: Philosophy -->
+            <div class="form-section">
+                <h2 class="section-title">4. 치과 철학 및 특징</h2>
+                <div class="section-description">
+                    치과만의 <strong>철학과 차별화 포인트</strong>를 작성해주세요.
+                    이 내용이 광고 콘텐츠의 핵심 메시지가 됩니다. 구체적으로 작성할수록 좋습니다.
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">치과의 핵심 가치와 철학</label>
+                    <textarea name="philosophy" class="form-textarea"
+                              placeholder="예: 환자 중심의 진료, 평생 구강 건강 파트너"
+                              maxlength="500" oninput="updateCharCount('philosophy', this)"></textarea>
+                    <div class="char-counter">
+                        <span id="philosophyCount">0</span>/500
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">차별화 포인트</label>
+                    <textarea name="differentiation" class="form-textarea"
+                              placeholder="예: 첨단 장비, 무통 치료, 1:1 맞춤 상담"
+                              maxlength="500" oninput="updateCharCount('differentiation', this)"></textarea>
+                    <div class="char-counter">
+                        <span id="differentiationCount">0</span>/500
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: Content Preferences -->
+            <div class="form-section">
+                <h2 class="section-title">5. 콘텐츠 선호도</h2>
+                <div class="section-description">
+                    <strong>선호하는 광고 채널과 콘텐츠 유형</strong>을 선택해주세요.
+                    중복 선택이 가능하며, 선택한 채널과 유형에 최적화된 광고 콘텐츠가 생성됩니다.
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">선호하는 광고 콘텐츠 채널 (중복 선택 가능)</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="channel" value="naver">
+                            <div class="option-content">
+                                <div class="option-label">네이버 블로그/카페</div>
+                            </div>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="channel" value="instagram">
+                            <div class="option-content">
+                                <div class="option-label">인스타그램</div>
+                            </div>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="channel" value="youtube">
+                            <div class="option-content">
+                                <div class="option-label">유튜브</div>
+                            </div>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="channel" value="facebook">
+                            <div class="option-content">
+                                <div class="option-label">페이스북</div>
+                            </div>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="channel" value="local">
+                            <div class="option-content">
+                                <div class="option-label">지역 커뮤니티</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">선호하는 콘텐츠 유형 (중복 선택 가능)</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="content" value="educational">
+                            <div class="option-content">
+                                <div class="option-label">교육/정보성</div>
+                            </div>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="content" value="cases">
+                            <div class="option-content">
+                                <div class="option-label">치료 사례</div>
+                            </div>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="content" value="story">
+                            <div class="option-content">
+                                <div class="option-label">환자 후기/스토리</div>
+                            </div>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="content" value="promotion">
+                            <div class="option-content">
+                                <div class="option-label">프로모션/이벤트</div>
+                            </div>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="content" value="facility">
+                            <div class="option-content">
+                                <div class="option-label">시설/장비 소개</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 6: Access Password -->
+            <div class="form-section">
+                <h2 class="section-title">6. 접속 비밀번호 입력</h2>
+                <div class="section-description">
+                    <strong>개인정보 보호를 위한 4자리 숫자 비밀번호</strong>를 설정해주세요.
+                    이 비밀번호는 나중에 저장된 프로필에 접근할 때 필요합니다.
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">비밀번호 (4자리 숫자)</label>
+                    <input type="password"
+                           name="accessPassword"
+                           class="form-input"
+                           placeholder="예: 1234"
+                           pattern="[0-9]{4}"
+                           maxlength="4"
+                           required
+                           style="max-width: 200px; font-size: 24px; letter-spacing: 10px; text-align: center;">
+                    <p style="margin-top: 10px; font-size: 14px; color: #666;">
+                        ⚠️ 비밀번호를 잊어버리지 않도록 주의하세요!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="submit-btn">🚀 광고 콘텐츠 전략 생성하기</button>
+        </form>
+    </div>
+
+    <script>
+        // ====== Diagnostic System Variables ======
+        let diagnosticState = {
+            empathy: { q1: null, q2: null, q3: null },
+            understanding: { q1: null, q2: null, q3: null },
+            decision: { q1: null, q2: null, q3: null },
+            value: { q1: null, q2: null, q3: null },
+            trust: { q1: null, q2: null, q3: null },
+            space: { q1: null, q2: null, q3: null }
+        };
+
+        let diagnosticCompleted = false;
+        let sliderManuallyAdjusted = false;
+
+        // ====== Diagnostic System Functions ======
+
+        // Tab Navigation
+        function switchDiagnosticTab(elementName) {
+            // 모든 탭과 패널 비활성화
+            document.querySelectorAll('.diagnostic-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.diagnostic-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+
+            // 선택한 탭과 패널 활성화
+            const targetTab = document.querySelector(`.diagnostic-tab[data-element="${elementName}"]`);
+            const targetPanel = document.getElementById(`panel-${elementName}`);
+
+            if (targetTab && targetPanel) {
+                targetTab.classList.add('active');
+                targetPanel.classList.add('active');
+
+                // 스크롤
+                targetPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        // Answer Selection Handler
+        function handleAnswerSelection(element, questionNum, value) {
+            // 상태 저장
+            diagnosticState[element][`q${questionNum}`] = parseInt(value);
+
+            // 진행률 업데이트
+            updateTabProgress(element);
+
+            // 전체 완료 체크
+            checkDiagnosticCompletion();
+
+            // localStorage에 실시간 저장
+            saveDiagnosticTemp();
+
+            // 해당 요소의 3개 질문이 모두 답변되었으면 다음 탭으로 자동 이동
+            if (isElementComplete(element)) {
+                const elementOrder = ['empathy', 'understanding', 'decision', 'value', 'trust', 'space'];
+                const currentIndex = elementOrder.indexOf(element);
+
+                if (currentIndex < 5) {
+                    setTimeout(() => {
+                        switchDiagnosticTab(elementOrder[currentIndex + 1]);
+                    }, 500); // 0.5초 딜레이로 부드러운 전환
+                }
+            }
+        }
+
+        // Update Tab Progress
+        function updateTabProgress(element) {
+            const answers = diagnosticState[element];
+            const completedCount = Object.values(answers).filter(v => v !== null).length;
+
+            const progressElem = document.getElementById(`${element}-progress`);
+            if (progressElem) {
+                progressElem.textContent = `${completedCount}/3`;
+            }
+
+            const tabElem = document.querySelector(`.diagnostic-tab[data-element="${element}"]`);
+            if (tabElem) {
+                if (completedCount === 3) {
+                    tabElem.classList.add('completed');
+                } else {
+                    tabElem.classList.remove('completed');
+                }
+            }
+        }
+
+        // Check if Element is Complete
+        function isElementComplete(element) {
+            const answers = diagnosticState[element];
+            return Object.values(answers).every(v => v !== null);
+        }
+
+        // Check Diagnostic Completion
+        function checkDiagnosticCompletion() {
+            const totalAnswered = Object.values(diagnosticState)
+                .flatMap(elem => Object.values(elem))
+                .filter(v => v !== null)
+                .length;
+
+            const completeBtn = document.getElementById('complete-diagnostic-btn');
+            if (completeBtn) {
+                completeBtn.textContent = `진단 완료 (${totalAnswered}/18)`;
+                completeBtn.disabled = totalAnswered < 18;
+            }
+        }
+
+        // Calculate Diagnostic Scores
+        function calculateDiagnosticScores() {
+            const scores = {};
+
+            for (const [element, answers] of Object.entries(diagnosticState)) {
+                // 1-5 평균 계산
+                const likertScores = Object.values(answers).filter(v => v !== null);
+                if (likertScores.length === 0) {
+                    scores[element] = 50; // 기본값
+                    continue;
+                }
+                const avgLikert = likertScores.reduce((a, b) => a + b, 0) / likertScores.length;
+
+                // 0-100 변환: 1점→0, 2점→25, 3점→50, 4점→75, 5점→100
+                scores[element] = Math.round((avgLikert - 1) * 25);
+            }
+
+            return scores;
+        }
+
+        // Calculate Permission Level
+        function calculatePermissionLevelFromDiagnostic(scores) {
+            const avgScore = Math.round(
+                Object.values(scores).reduce((a, b) => a + b, 0) / 6
+            );
+
+            if (avgScore < 30) return 'L0';
+            if (avgScore < 45) return 'L1';
+            if (avgScore < 60) return 'L2';
+            if (avgScore < 75) return 'L3';
+            if (avgScore < 90) return 'L4';
+            return 'L5';
+        }
+
+        // Complete Diagnostic
+        function completeDiagnostic() {
+            const scores = calculateDiagnosticScores();
+            const avgScore = Math.round(
+                Object.values(scores).reduce((a, b) => a + b, 0) / 6
+            );
+            const level = calculatePermissionLevelFromDiagnostic(scores);
+
+            // 저품질 응답 감지 (모두 50점인 경우)
+            const allFifty = Object.values(scores).every(s => s === 50);
+            if (allFifty) {
+                if (!confirm('⚠️ 모든 질문에 "보통이다"로 답변하셨습니다.\n' +
+                             '더 정확한 진단을 위해 다시 검토하시겠습니까?')) {
+                    return; // 완료 취소
+                }
+            }
+
+            // 결과 표시
+            document.getElementById('result-empathy').textContent = `${scores.empathy}점`;
+            document.getElementById('result-understanding').textContent = `${scores.understanding}점`;
+            document.getElementById('result-decision').textContent = `${scores.decision}점`;
+            document.getElementById('result-value').textContent = `${scores.value}점`;
+            document.getElementById('result-trust').textContent = `${scores.trust}점`;
+            document.getElementById('result-space').textContent = `${scores.space}점`;
+
+            document.getElementById('result-avg').textContent = `${avgScore}점`;
+            document.getElementById('result-level').textContent = level;
+
+            // 결과 섹션 표시
+            const resultsElem = document.getElementById('diagnostic-results');
+            if (resultsElem) {
+                resultsElem.style.display = 'block';
+                resultsElem.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            diagnosticCompleted = true;
+        }
+
+        // Apply Diagnostic to Sliders
+        function applyDiagnosticToSliders() {
+            const scores = calculateDiagnosticScores();
+
+            // Section 3 슬라이더 업데이트 (기존 updateSlider 함수 재사용)
+            for (const [element, score] of Object.entries(scores)) {
+                const slider = document.querySelector(`input[name="${element}"]`);
+                if (slider) {
+                    slider.value = score;
+                    updateSlider(element, score); // 기존 함수 재사용
+                }
+            }
+
+            // Section 3으로 스크롤
+            const trustScoresSection = document.querySelectorAll('.form-section')[2]; // Section 3
+            if (trustScoresSection) {
+                trustScoresSection.scrollIntoView({ behavior: 'smooth' });
+
+                // 시각적 하이라이트 효과
+                trustScoresSection.style.transition = 'all 0.5s';
+                trustScoresSection.style.border = '3px solid #667eea';
+                trustScoresSection.style.boxShadow = '0 0 20px rgba(102, 126, 234, 0.3)';
+
+                setTimeout(() => {
+                    trustScoresSection.style.border = '';
+                    trustScoresSection.style.boxShadow = '';
+                }, 2000);
+            }
+
+            alert('✅ 진단 결과가 슬라이더에 적용되었습니다!\n필요시 슬라이더를 직접 조절할 수 있습니다.');
+        }
+
+        // Skip Diagnostic
+        function skipDiagnostic() {
+            if (confirm('진단을 건너뛰고 직접 슬라이더를 설정하시겠습니까?')) {
+                const trustScoresSection = document.querySelectorAll('.form-section')[2]; // Section 3
+                if (trustScoresSection) {
+                    trustScoresSection.scrollIntoView({ behavior: 'smooth' });
+                }
+
+                localStorage.setItem('diagnosticSkipped', 'true');
+            }
+        }
+
+        // Reset Diagnostic
+        function resetDiagnostic() {
+            if (confirm('진단을 초기화하고 다시 시작하시겠습니까?\n기존 답변은 모두 삭제됩니다.')) {
+                // 상태 초기화
+                for (const element in diagnosticState) {
+                    diagnosticState[element] = { q1: null, q2: null, q3: null };
+                }
+
+                // UI 초기화
+                document.querySelectorAll('.diagnostic-question input[type="radio"]').forEach(radio => {
+                    radio.checked = false;
+                });
+
+                document.querySelectorAll('.diagnostic-tab').forEach(tab => {
+                    tab.classList.remove('completed');
+                });
+
+                Object.keys(diagnosticState).forEach(element => {
+                    updateTabProgress(element);
+                });
+
+                checkDiagnosticCompletion();
+
+                const resultsElem = document.getElementById('diagnostic-results');
+                if (resultsElem) {
+                    resultsElem.style.display = 'none';
+                }
+
+                diagnosticCompleted = false;
+
+                // 첫 탭으로 이동
+                switchDiagnosticTab('empathy');
+
+                // localStorage 임시 데이터 삭제
+                localStorage.removeItem('diagnosticTemp');
+            }
+        }
+
+        // Save Diagnostic Temp (실시간 저장)
+        function saveDiagnosticTemp() {
+            const tempData = {
+                diagnosticAnswers: diagnosticState,
+                lastUpdated: new Date().toISOString()
+            };
+            localStorage.setItem('diagnosticTemp', JSON.stringify(tempData));
+        }
+
+        // Restore Diagnostic Temp (페이지 새로고침 대비)
+        function restoreDiagnosticTemp() {
+            const tempData = localStorage.getItem('diagnosticTemp');
+            if (!tempData) return;
+
+            try {
+                const parsed = JSON.parse(tempData);
+                // 24시간 이내 데이터만 복원
+                const lastUpdated = new Date(parsed.lastUpdated);
+                const now = new Date();
+                if ((now - lastUpdated) < 24 * 60 * 60 * 1000) {
+                    Object.assign(diagnosticState, parsed.diagnosticAnswers);
+
+                    // UI 복원
+                    for (const [element, answers] of Object.entries(diagnosticState)) {
+                        for (const [qKey, value] of Object.entries(answers)) {
+                            if (value !== null) {
+                                const qNum = qKey.replace('q', '');
+                                const radio = document.querySelector(
+                                    `input[name="${element}-q${qNum}"][value="${value}"]`
+                                );
+                                if (radio) radio.checked = true;
+                            }
+                        }
+                        updateTabProgress(element);
+                    }
+
+                    checkDiagnosticCompletion();
+                }
+            } catch (e) {
+                console.error('진단 임시 데이터 복원 실패:', e);
+            }
+        }
+
+        // Auto-fill form if data exists
+        function autoFillForm() {
+            const savedData = localStorage.getItem('dentalFormData');
+            if (!savedData) return;
+
+            const data = JSON.parse(savedData);
+            console.log('자동 입력 시작:', data); // 디버깅용
+
+            // 1. 기본 정보
+            const clinicNameField = document.querySelector('input[name="clinicName"]');
+            const directorNameField = document.querySelector('input[name="directorName"]');
+            const phoneField = document.querySelector('input[name="phone"]');
+            const locationField = document.querySelector('input[name="location"]');
+            const specialtyField = document.querySelector('input[name="specialty"]');
+
+            if (data.clinicName && clinicNameField) clinicNameField.value = data.clinicName;
+            if (data.directorName && directorNameField) directorNameField.value = data.directorName;
+            if (data.phone && phoneField) phoneField.value = data.phone;
+            if (data.location && locationField) locationField.value = data.location;
+            if (data.specialty && specialtyField) specialtyField.value = data.specialty;
+
+            // 2. 현재 상태 진단 - 우선순위 선택
+            if (data.revenueStage1) {
+                const elem1 = document.querySelector(`#revenueStageGroup .priority-option[data-value="${data.revenueStage1}"]`);
+                if (elem1) {
+                    elem1.classList.add('priority-1');
+                    priorityState.revenueStage[data.revenueStage1] = 1;
+                    const hiddenInput1 = document.getElementById('revenueStage1');
+                    if (hiddenInput1) hiddenInput1.value = data.revenueStage1;
+                }
+            }
+            if (data.revenueStage2) {
+                const elem2 = document.querySelector(`#revenueStageGroup .priority-option[data-value="${data.revenueStage2}"]`);
+                if (elem2) {
+                    elem2.classList.add('priority-2');
+                    priorityState.revenueStage[data.revenueStage2] = 2;
+                    const hiddenInput2 = document.getElementById('revenueStage2');
+                    if (hiddenInput2) hiddenInput2.value = data.revenueStage2;
+                }
+            }
+
+            if (data.directorStyle1) {
+                const elem1 = document.querySelector(`#directorStyleGroup .priority-option[data-value="${data.directorStyle1}"]`);
+                if (elem1) {
+                    elem1.classList.add('priority-1');
+                    priorityState.directorStyle[data.directorStyle1] = 1;
+                    const hiddenInput1 = document.getElementById('directorStyle1');
+                    if (hiddenInput1) hiddenInput1.value = data.directorStyle1;
+                }
+            }
+            if (data.directorStyle2) {
+                const elem2 = document.querySelector(`#directorStyleGroup .priority-option[data-value="${data.directorStyle2}"]`);
+                if (elem2) {
+                    elem2.classList.add('priority-2');
+                    priorityState.directorStyle[data.directorStyle2] = 2;
+                    const hiddenInput2 = document.getElementById('directorStyle2');
+                    if (hiddenInput2) hiddenInput2.value = data.directorStyle2;
+                }
+            }
+
+            // 3. DF-AI 신뢰 점수 - 슬라이더
+            const sliders = ['empathy', 'understanding', 'decision', 'value', 'trust', 'space'];
+            sliders.forEach(name => {
+                if (data[name]) {
+                    const slider = document.querySelector(`input[name="${name}"]`);
+                    if (slider) {
+                        slider.value = data[name];
+                        updateSlider(name, data[name]);
+                    }
+                }
+            });
+
+            // 4. 치과 철학 - 텍스트
+            if (data.philosophy) {
+                const philosophyField = document.querySelector('textarea[name="philosophy"]');
+                if (philosophyField) {
+                    philosophyField.value = data.philosophy;
+                    updateCharCount('philosophy', philosophyField);
+                }
+            }
+            if (data.differentiation) {
+                const diffField = document.querySelector('textarea[name="differentiation"]');
+                if (diffField) {
+                    diffField.value = data.differentiation;
+                    updateCharCount('differentiation', diffField);
+                }
+            }
+
+            // 5. 콘텐츠 선호도 - 체크박스
+            if (data.channel && Array.isArray(data.channel)) {
+                data.channel.forEach(ch => {
+                    const checkbox = document.querySelector(`input[name="channel"][value="${ch}"]`);
+                    if (checkbox) checkbox.checked = true;
+                });
+            }
+            if (data.content && Array.isArray(data.content)) {
+                data.content.forEach(ct => {
+                    const checkbox = document.querySelector(`input[name="content"][value="${ct}"]`);
+                    if (checkbox) checkbox.checked = true;
+                });
+            }
+
+            // 6. 접속 비밀번호
+            if (data.accessPassword) {
+                const passwordField = document.querySelector('input[name="accessPassword"]');
+                if (passwordField) {
+                    passwordField.value = data.accessPassword;
+                }
+            }
+
+            // 7. 진단 데이터 복원
+            if (data.diagnosticCompleted && data.diagnosticAnswers) {
+                Object.assign(diagnosticState, data.diagnosticAnswers);
+                diagnosticCompleted = true;
+
+                // 라디오 버튼 체크 복원
+                for (const [element, answers] of Object.entries(diagnosticState)) {
+                    for (const [qKey, value] of Object.entries(answers)) {
+                        if (value !== null) {
+                            const qNum = qKey.replace('q', '');
+                            const radio = document.querySelector(
+                                `input[name="${element}-q${qNum}"][value="${value}"]`
+                            );
+                            if (radio) radio.checked = true;
+                        }
+                    }
+                    updateTabProgress(element);
+                }
+
+                checkDiagnosticCompletion();
+
+                // 진단 결과도 표시
+                if (data.diagnosticScores) {
+                    const scores = data.diagnosticScores;
+                    const avgScore = Math.round(
+                        Object.values(scores).reduce((a, b) => a + b, 0) / 6
+                    );
+                    const level = calculatePermissionLevelFromDiagnostic(scores);
+
+                    document.getElementById('result-empathy').textContent = `${scores.empathy}점`;
+                    document.getElementById('result-understanding').textContent = `${scores.understanding}점`;
+                    document.getElementById('result-decision').textContent = `${scores.decision}점`;
+                    document.getElementById('result-value').textContent = `${scores.value}점`;
+                    document.getElementById('result-trust').textContent = `${scores.trust}점`;
+                    document.getElementById('result-space').textContent = `${scores.space}점`;
+                    document.getElementById('result-avg').textContent = `${avgScore}점`;
+                    document.getElementById('result-level').textContent = level;
+
+                    const resultsElem = document.getElementById('diagnostic-results');
+                    if (resultsElem) {
+                        resultsElem.style.display = 'block';
+                    }
+                }
+            }
+
+            console.log('자동 입력 완료'); // 디버깅용
+        }
+
+        // Update slider values
+        function updateSlider(name, value) {
+            document.getElementById(name + 'Value').textContent = value;
+        }
+
+        // Update character count
+        function updateCharCount(name, element) {
+            document.getElementById(name + 'Count').textContent = element.value.length;
+        }
+
+        // Priority selection state
+        const priorityState = {
+            revenueStage: {},
+            directorStyle: {}
+        };
+
+        // Toggle priority selection (none -> priority-1 -> priority-2 -> none)
+        function togglePriority(group, value) {
+            const element = document.querySelector(`#${group}Group .priority-option[data-value="${value}"]`);
+
+            // Get current priority
+            let currentPriority = null;
+            if (element.classList.contains('priority-1')) currentPriority = 1;
+            else if (element.classList.contains('priority-2')) currentPriority = 2;
+
+            // Remove current class
+            element.classList.remove('priority-1', 'priority-2');
+
+            // Cycle through states: none -> 1 -> 2 -> none
+            if (currentPriority === null) {
+                // Check if priority-1 is already taken
+                const priority1Exists = document.querySelector(`#${group}Group .priority-option.priority-1`);
+                if (!priority1Exists) {
+                    element.classList.add('priority-1');
+                    priorityState[group][value] = 1;
+                } else {
+                    // If priority-1 exists, check priority-2
+                    const priority2Exists = document.querySelector(`#${group}Group .priority-option.priority-2`);
+                    if (!priority2Exists) {
+                        element.classList.add('priority-2');
+                        priorityState[group][value] = 2;
+                    }
+                }
+            } else if (currentPriority === 1) {
+                // Change to priority-2
+                element.classList.add('priority-2');
+                priorityState[group][value] = 2;
+            } else if (currentPriority === 2) {
+                // Remove (back to none)
+                delete priorityState[group][value];
+            }
+
+            // Update hidden inputs
+            updatePriorityInputs(group);
+        }
+
+        // Update hidden inputs with priority values
+        function updatePriorityInputs(group) {
+            let priority1Value = '';
+            let priority2Value = '';
+
+            // Find priority-1 and priority-2
+            const options = document.querySelectorAll(`#${group}Group .priority-option`);
+            options.forEach(option => {
+                const value = option.getAttribute('data-value');
+                if (option.classList.contains('priority-1')) {
+                    priority1Value = value;
+                } else if (option.classList.contains('priority-2')) {
+                    priority2Value = value;
+                }
+            });
+
+            // Update hidden inputs
+            document.getElementById(`${group}1`).value = priority1Value;
+            document.getElementById(`${group}2`).value = priority2Value;
+        }
+
+        // Handle form submission
+        document.getElementById('dentalForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Validate priority selections
+            const revenueStage1 = document.getElementById('revenueStage1').value;
+            const directorStyle1 = document.getElementById('directorStyle1').value;
+
+            if (!revenueStage1) {
+                alert('현재 매출 단계의 1순위를 선택해주세요.');
+                return;
+            }
+
+            if (!directorStyle1) {
+                alert('원장 스타일의 1순위를 선택해주세요.');
+                return;
+            }
+
+            const formData = new FormData(this);
+            const data = {
+                createdAt: new Date().toISOString()
+            };
+
+            // Collect form data
+            for (let [key, value] of formData.entries()) {
+                if (key === 'channel' || key === 'content') {
+                    if (!data[key]) data[key] = [];
+                    data[key].push(value);
+                } else {
+                    data[key] = value;
+                }
+            }
+
+            // 샘플이 아닌 일반 케이스임을 명시
+            // (sampleDescription 필드가 없으면 샘플이 아님)
+            // 이전 샘플 데이터를 완전히 덮어쓰기 위해 명시적으로 제거
+            delete data.sampleDescription;
+
+            // 진단 데이터 추가
+            if (diagnosticCompleted) {
+                data.diagnosticAnswers = diagnosticState;
+                data.diagnosticScores = calculateDiagnosticScores();
+                data.diagnosticCompleted = true;
+            } else {
+                data.diagnosticCompleted = false;
+            }
+
+            // Save to localStorage
+            localStorage.setItem('dentalFormData', JSON.stringify(data));
+
+            // Redirect to loading page
+            window.location.href = 'loading.html';
+        });
+
+        // 페이지 로드 시 자동 입력 실행
+        window.addEventListener('DOMContentLoaded', function() {
+            autoFillForm();
+
+            // 진단 임시 데이터 복원
+            restoreDiagnosticTemp();
+
+            // 슬라이더 수동 조정 감지
+            document.querySelectorAll('.slider').forEach(slider => {
+                slider.addEventListener('change', function() {
+                    if (diagnosticCompleted) {
+                        sliderManuallyAdjusted = true;
+
+                        // 경고 표시 (첫 변경 시만)
+                        if (!sessionStorage.getItem('sliderWarningShown')) {
+                            alert('ℹ️ 진단 결과를 직접 수정하셨습니다.\n수정된 값이 광고 생성에 사용됩니다.');
+                            sessionStorage.setItem('sliderWarningShown', 'true');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-title">심재우 대표</div>
+            <div class="footer-info">
+                <div class="footer-info-item">
+                    <span class="footer-info-icon">📞</span>
+                    <a href="tel:01023975734" class="footer-link">010-2397-5734</a>
+                </div>
+                <div class="footer-info-item">
+                    <span class="footer-info-icon">📧</span>
+                    <a href="mailto:jaiwshim@gmail.com" class="footer-link">jaiwshim@gmail.com</a>
+                </div>
+            </div>
+            <div class="footer-brand">덴탈 클리닉 파인더</div>
+            <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <a href="user-guide.html" class="footer-admin-btn">📖 사용자 가이드</a>
+                <a href="admin-dashboard.html" class="footer-admin-btn">🎛️ 관리자 대시보드</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

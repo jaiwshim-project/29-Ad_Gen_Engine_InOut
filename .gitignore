@@ -1,0 +1,22 @@
+# PDF files
+*.pdf
+
+# Image files
+*.png
+*.jpg
+*.jpeg
+*.gif
+
+# Video files
+*.mp4
+
+# Office files
+*.docx
+*.xlsx
+*.pptx
+
+# Temp files
+tmpclaude-*
+
+# Claude cache
+.claude/

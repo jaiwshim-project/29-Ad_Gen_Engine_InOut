@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 대시보드 - 광고 콘텐츠 생성 목록</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+            background: #f5f7fa;
+            padding-bottom: 60px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .header-left p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .back-btn, .test-btn, .guide-btn, .engine-btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .back-btn:hover, .test-btn:hover, .guide-btn:hover, .engine-btn:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        .engine-btn {
+            background: rgba(33, 150, 243, 0.3);
+            border-color: #2196f3;
+        }
+
+        .engine-btn:hover {
+            background: #2196f3;
+            color: white;
+        }
+
+        .guide-btn {
+            background: rgba(76, 175, 80, 0.3);
+            border-color: #4caf50;
+        }
+
+        .guide-btn:hover {
+            background: #4caf50;
+            color: white;
+        }
+
+        .test-btn {
+            background: rgba(255, 193, 7, 0.3);
+            border-color: #ffc107;
+        }
+
+        .test-btn:hover {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .table-header h2 {
+            font-size: 20px;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f8f9ff;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #667eea;
+            font-size: 14px;
+            border-bottom: 2px solid #e8eaff;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #333;
+            font-size: 14px;
+        }
+
+        tbody tr:hover {
+            background: #f8f9ff;
+        }
+
+        .view-btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .view-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .empty-state-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .sample-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #ffeb3b;
+            color: #333;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            margin-top: 60px;
+            text-align: center;
+        }
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .footer-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .footer-info {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+        .footer-info-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .footer-brand {
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .footer-link {
+            color: white;
+            text-decoration: none;
+        }
+        .footer-link:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        /* Password Modal Styles */
+        .password-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .password-modal.hidden {
+            display: none;
+        }
+
+        .password-content {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .password-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .password-content h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .password-content p {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            text-align: center;
+            letter-spacing: 8px;
+            margin-bottom: 20px;
+            transition: border-color 0.3s;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .password-input.error {
+            border-color: #ff6b9d;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .password-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .password-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .password-error {
+            color: #ff6b9d;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .password-error.show {
+            display: block;
+        }
+
+        .main-content {
+            display: none;
+        }
+
+        .main-content.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .header-left h1 {
+                font-size: 24px;
+            }
+
+            .header-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .back-btn, .test-btn, .guide-btn, .engine-btn {
+                width: 100%;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 10px 8px;
+            }
+
+            .stat-card {
+                padding: 20px;
+            }
+
+            .stat-number {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Password Modal -->
+    <div class="password-modal" id="passwordModal">
+        <div class="password-content">
+            <div class="password-icon">🔐</div>
+            <h2>관리자 인증</h2>
+            <p>관리자 대시보드 접근을 위해 비밀번호를 입력하세요</p>
+            <input
+                type="password"
+                id="passwordInput"
+                class="password-input"
+                placeholder="••••••"
+                maxlength="6"
+                autocomplete="off"
+            >
+            <button class="password-btn" onclick="checkPassword()">확인</button>
+            <div class="password-error" id="passwordError">❌ 비밀번호가 올바르지 않습니다</div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <div class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <h1>🎛️ 관리자 대시보드</h1>
+                <p>생성된 모든 광고 콘텐츠를 확인하고 관리하세요</p>
+            </div>
+            <div class="header-buttons">
+                <a href="marketing-engine-guide.html" class="engine-btn">⚙️ 마케팅 엔진 원리</a>
+                <a href="franchise-guidelines.html" class="guide-btn">📚 프랜차이즈 가이드라인</a>
+                <a href="test-naver-place.html" class="test-btn">🧪 네이버 플레이스 테스트</a>
+                <a href="index.html" class="back-btn">🏠 홈으로</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-number" id="totalCases">0</div>
+                <div class="stat-label">총 생성 케이스</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="todayCases">0</div>
+                <div class="stat-label">오늘 생성</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="thisWeekCases">0</div>
+                <div class="stat-label">이번 주 생성</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div class="table-header">
+                <h2>📋 광고 콘텐츠 생성 목록</h2>
+            </div>
+            <div id="tableContent">
+                <!-- 테이블이 동적으로 생성됩니다 -->
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-title">심재우 대표</div>
+            <div class="footer-info">
+                <div class="footer-info-item">
+                    <span>📞</span>
+                    <a href="tel:01023975734" class="footer-link">010-2397-5734</a>
+                </div>
+                <div class="footer-info-item">
+                    <span>📧</span>
+                    <a href="mailto:jaiwshim@gmail.com" class="footer-link">jaiwshim@gmail.com</a>
+                </div>
+            </div>
+            <div class="footer-brand">덴탈 클리닉 파인더</div>
+            <div style="margin-top: 20px;">
+                <a href="user-guide.html" style="display: inline-block; padding: 12px 24px; background: rgba(255, 255, 255, 0.2); color: white; border: 2px solid white; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s;" onmouseover="this.style.background='white'; this.style.color='#667eea';" onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'; this.style.color='white';">📖 사용자 가이드</a>
+            </div>
+        </div>
+    </footer>
+    </div>
+    <!-- End Main Content -->
+
+    <script>
+        // Password Protection
+        const ADMIN_PASSWORD = '963314';
+        const PASSWORD_SESSION_KEY = 'adminAuthenticated';
+
+        function checkPassword() {
+            const input = document.getElementById('passwordInput');
+            const error = document.getElementById('passwordError');
+            const enteredPassword = input.value;
+
+            if (enteredPassword === ADMIN_PASSWORD) {
+                // 비밀번호 맞음
+                sessionStorage.setItem(PASSWORD_SESSION_KEY, 'true');
+                document.getElementById('passwordModal').classList.add('hidden');
+                document.getElementById('mainContent').classList.add('show');
+                loadDashboard();
+            } else {
+                // 비밀번호 틀림
+                error.classList.add('show');
+                input.classList.add('error');
+                input.value = '';
+
+                setTimeout(() => {
+                    error.classList.remove('show');
+                    input.classList.remove('error');
+                }, 2000);
+            }
+        }
+
+        // Enter 키로 비밀번호 확인
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('passwordInput');
+
+            passwordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkPassword();
+                }
+            });
+
+            // 이미 인증된 경우 바로 표시
+            if (sessionStorage.getItem(PASSWORD_SESSION_KEY) === 'true') {
+                document.getElementById('passwordModal').classList.add('hidden');
+                document.getElementById('mainContent').classList.add('show');
+                loadDashboard();
+            } else {
+                // 포커스를 비밀번호 입력창에 자동 설정
+                setTimeout(() => {
+                    passwordInput.focus();
+                }, 100);
+            }
+        });
+
+        function loadDashboard() {
+            const cases = JSON.parse(localStorage.getItem('dentalCases') || '[]');
+
+            // 통계 업데이트
+            document.getElementById('totalCases').textContent = cases.length;
+
+            // 오늘 생성된 케이스
+            const today = new Date().toDateString();
+            const todayCases = cases.filter(c => {
+                const caseDate = new Date(c.savedAt || c.createdAt);
+                return caseDate.toDateString() === today;
+            }).length;
+            document.getElementById('todayCases').textContent = todayCases;
+
+            // 이번 주 생성된 케이스
+            const oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            const weekCases = cases.filter(c => {
+                const caseDate = new Date(c.savedAt || c.createdAt);
+                return caseDate >= oneWeekAgo;
+            }).length;
+            document.getElementById('thisWeekCases').textContent = weekCases;
+
+            const tableContent = document.getElementById('tableContent');
+
+            if (cases.length === 0) {
+                tableContent.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <h3>생성된 케이스가 없습니다</h3>
+                        <p>새로운 광고 콘텐츠를 생성해보세요</p>
+                        <a href="input.html" class="empty-state-btn">🚀 새 케이스 생성하기</a>
+                    </div>
+                `;
+                return;
+            }
+
+            // 최신순으로 정렬
+            cases.sort((a, b) => {
+                const dateA = new Date(b.savedAt || b.createdAt || 0);
+                const dateB = new Date(a.savedAt || a.createdAt || 0);
+                return dateA - dateB;
+            });
+
+            let tableHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>생성일</th>
+                            <th>병원명</th>
+                            <th>원장명</th>
+                            <th>지역명</th>
+                            <th>전문 분야</th>
+                            <th>작업</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            cases.forEach((caseData, index) => {
+                const date = new Date(caseData.savedAt || caseData.createdAt);
+                const formattedDate = date.toLocaleDateString('ko-KR', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                const isSample = caseData.sampleDescription ? '<span class="sample-badge">샘플</span>' : '';
+
+                tableHTML += `
+                    <tr>
+                        <td>${formattedDate}</td>
+                        <td>${caseData.clinicName || '-'}${isSample}</td>
+                        <td>${caseData.directorName || '-'}</td>
+                        <td>${caseData.location || '-'}</td>
+                        <td>${caseData.specialty || '-'}</td>
+                        <td>
+                            <button class="view-btn" onclick="viewCase(${index})">👁️ 보기</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+
+            tableContent.innerHTML = tableHTML;
+        }
+
+        function viewCase(index) {
+            const cases = JSON.parse(localStorage.getItem('dentalCases') || '[]');
+
+            // 최신순으로 정렬 (loadDashboard와 동일한 순서 유지)
+            cases.sort((a, b) => {
+                const dateA = new Date(b.savedAt || b.createdAt || 0);
+                const dateB = new Date(a.savedAt || a.createdAt || 0);
+                return dateA - dateB;
+            });
+
+            if (index >= 0 && index < cases.length) {
+                const selectedCase = cases[index];
+
+                // dentalFormData에 저장
+                localStorage.setItem('dentalFormData', JSON.stringify(selectedCase));
+
+                // result.html로 이동
+                window.location.href = 'result.html';
+            }
+        }
+
+        // 페이지 로드 시 실행
+        loadDashboard();
+    </script>
+</body>
+</html>

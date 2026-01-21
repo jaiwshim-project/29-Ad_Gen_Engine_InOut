@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>데이터 초기화</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        .btn-clear {
+            background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 100%);
+            color: white;
+        }
+        .btn-home {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        /* Footer Styles */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            color: #667eea;
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+        }
+        .footer-title {
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .footer-info {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .footer-link {
+            color: #667eea;
+            text-decoration: none;
+        }
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+        .footer-brand {
+            margin-top: 8px;
+            font-weight: 600;
+        }
+
+        .footer-admin-btn {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 13px;
+        }
+
+        .footer-admin-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 데이터 초기화</h1>
+
+        <div class="info">
+            <h3>현재 저장된 데이터:</h3>
+            <div id="currentData"></div>
+        </div>
+
+        <p>모든 데이터를 초기화하고 처음부터 시작하시겠습니까?</p>
+
+        <button class="btn-clear" onclick="clearAllData()">🗑️ 모든 데이터 삭제</button>
+        <button class="btn-home" onclick="goHome()">🏠 홈으로 돌아가기</button>
+    </div>
+
+    <script>
+        function displayCurrentData() {
+            const formData = localStorage.getItem('dentalFormData');
+            const cases = localStorage.getItem('dentalCases');
+
+            let html = '<ul style="list-style: none; padding: 0;">';
+
+            if (formData) {
+                const data = JSON.parse(formData);
+                html += '<li><strong>현재 폼 데이터:</strong></li>';
+                html += `<li>- 치과명: ${data.clinicName || '없음'}</li>`;
+                html += `<li>- 샘플 케이스: ${data.sampleDescription ? '예' : '아니오'}</li>`;
+            } else {
+                html += '<li>폼 데이터 없음</li>';
+            }
+
+            html += '<br>';
+
+            if (cases) {
+                const caseList = JSON.parse(cases);
+                html += `<li><strong>저장된 케이스:</strong> ${caseList.length}개</li>`;
+            } else {
+                html += '<li>저장된 케이스 없음</li>';
+            }
+
+            html += '</ul>';
+
+            document.getElementById('currentData').innerHTML = html;
+        }
+
+        function clearAllData() {
+            if (confirm('정말로 모든 데이터를 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) {
+                localStorage.removeItem('dentalFormData');
+                localStorage.removeItem('dentalCases');
+                alert('✅ 모든 데이터가 삭제되었습니다!');
+                displayCurrentData();
+            }
+        }
+
+        function goHome() {
+            window.location.href = 'index.html';
+        }
+
+        displayCurrentData();
+    </script>
+
+    <footer class="footer">
+        <div class="footer-title">심재우 대표</div>
+        <div class="footer-info">
+            <a href="tel:01023975734" class="footer-link">📞 010-2397-5734</a>
+            <a href="mailto:jaiwshim@gmail.com" class="footer-link">📧 jaiwshim@gmail.com</a>
+        </div>
+        <div class="footer-brand">덴탈 클리닉 파인더</div>
+        <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+            <a href="user-guide.html" class="footer-admin-btn">📖 사용자 가이드</a>
+            <a href="admin-dashboard.html" class="footer-admin-btn">🎛️ 관리자 대시보드</a>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>카드뉴스 생성 - 치과 광고 콘텐츠 생성기</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Noto Sans KR', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    * {
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    .card-gradient-hook { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .card-gradient-empathy { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+    .card-gradient-problem { background: linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%); }
+    .card-gradient-solution { background: linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%); }
+    .card-gradient-cta { background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); }
+
+    .spinner {
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top: 3px solid #fff;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-fadeIn {
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .tab-active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #1a1c2e 0%, #2d1f3d 50%, #1a2a4a 100%);
+    }
+
+    .section-card {
+      background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    .section-card:hover {
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .input-field {
+      transition: all 0.3s ease;
+      border: 2px solid #e2e8f0;
+    }
+
+    .input-field:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .select-btn {
+      transition: all 0.2s ease;
+    }
+
+    .select-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .select-btn.active {
+      transform: scale(1.02);
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 3px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    .glow-text {
+      text-shadow: 0 0 40px rgba(102, 126, 234, 0.3);
+    }
+  </style>
+</head>
+<body class="gradient-bg min-h-screen">
+
+  <!-- 네비게이션 바 (독립적인 카드뉴스 생성기 스타일) -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-indigo-900 via-purple-900 to-indigo-900 backdrop-blur-md border-b border-indigo-500/30 shadow-lg">
+    <div class="container mx-auto px-4 max-w-4xl">
+      <div class="flex items-center justify-between h-14">
+        <!-- 로고 -->
+        <a href="#" onclick="goHome()" class="flex items-center gap-2 text-white font-bold">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+            </svg>
+          </div>
+          <span class="text-sm">AI 카드뉴스 생성기</span>
+        </a>
+
+        <!-- 메뉴 -->
+        <div class="flex items-center gap-2">
+          <button onclick="openBusinessInfoPanel()" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all text-sm font-medium">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+            </svg>
+            <span>업체 정보</span>
+            <span id="business-count-badge" class="hidden px-1.5 py-0.5 text-xs rounded-full bg-indigo-500 text-white">0</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 업체 정보 사이드 패널 -->
+  <div id="business-info-panel" class="fixed inset-0 z-50 hidden">
+    <!-- 오버레이 -->
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeBusinessInfoPanel()"></div>
+
+    <!-- 패널 -->
+    <div class="absolute right-0 top-0 h-full w-full max-w-md bg-slate-900 shadow-2xl transform transition-transform duration-300 translate-x-full" id="business-panel-content">
+      <div class="h-full flex flex-col">
+        <!-- 패널 헤더 -->
+        <div class="p-4 border-b border-slate-700 flex items-center justify-between">
+          <h2 class="text-lg font-bold text-white flex items-center gap-2">
+            <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+            </svg>
+            저장된 업체 정보
+          </h2>
+          <button onclick="closeBusinessInfoPanel()" class="p-2 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-all">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- 패널 내용 -->
+        <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+          <div id="saved-business-list" class="space-y-3">
+            <!-- 저장된 업체 정보가 여기에 표시됨 -->
+          </div>
+
+          <!-- 빈 상태 -->
+          <div id="empty-business-state" class="hidden text-center py-12">
+            <div class="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+              </svg>
+            </div>
+            <p class="text-slate-500 text-sm">저장된 업체 정보가 없습니다</p>
+            <p class="text-slate-600 text-xs mt-1">카드뉴스를 생성하면 업체 정보가 자동 저장됩니다</p>
+          </div>
+        </div>
+
+        <!-- 패널 푸터 -->
+        <div class="p-4 border-t border-slate-700">
+          <button onclick="clearAllBusinessInfo()" class="w-full py-2.5 rounded-lg bg-red-600/20 text-red-400 hover:bg-red-600/30 transition-all text-sm font-medium flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+            전체 삭제
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 메인 컨테이너 -->
+  <div id="app" class="container mx-auto px-4 py-8 pt-20 max-w-4xl">
+
+    <!-- 헤더 -->
+    <header class="text-center mb-10 animate-fadeIn">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 mb-4 shadow-lg">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+        </svg>
+      </div>
+      <h1 class="text-4xl font-extrabold text-white mb-3 glow-text">AI 카드뉴스 생성기</h1>
+      <p class="text-slate-400 text-lg">주제만 입력하면 AI가 5장의 매력적인 카드뉴스를 자동 생성합니다</p>
+    </header>
+
+    <!-- API 키 설정 -->
+    <div id="api-key-section" class="glass-card rounded-2xl shadow-xl p-6 mb-6 animate-fadeIn">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-lg font-bold text-slate-800">API 키 설정</h2>
+          <p class="text-sm text-slate-500">Gemini API 키를 입력하세요</p>
+        </div>
+      </div>
+      <div class="flex gap-3">
+        <input
+          type="password"
+          id="api-key-input"
+          placeholder="Gemini API 키를 입력하세요"
+          class="input-field flex-1 px-4 py-3 rounded-xl bg-slate-50 focus:outline-none text-slate-700"
+        >
+        <button
+          onclick="saveApiKey()"
+          class="px-6 py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
+        >
+          저장
+        </button>
+      </div>
+      <p class="text-sm text-slate-500 mt-3 flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        API 키는 <a href="https://ai.google.dev" target="_blank" class="text-indigo-600 hover:text-indigo-700 font-medium underline underline-offset-2">ai.google.dev</a>에서 무료로 발급받을 수 있습니다.
+      </p>
+      <p id="api-key-status" class="text-sm mt-2 hidden"></p>
+    </div>
+
+    <!-- 입력 폼 -->
+    <div id="form-section" class="glass-card rounded-2xl shadow-xl p-8 mb-6 animate-fadeIn">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-xl font-bold text-slate-800">카드뉴스 정보 입력</h2>
+          <p class="text-sm text-slate-500">아래 정보를 입력하면 AI가 콘텐츠를 생성합니다</p>
+        </div>
+      </div>
+
+      <form id="cardnews-form" class="space-y-5">
+        <!-- 도메인 -->
+        <div class="section-card rounded-2xl p-5">
+          <label class="flex items-center gap-2 text-base font-bold text-slate-700 mb-3">
+            <span class="w-6 h-6 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center text-white text-xs">1</span>
+            도메인
+          </label>
+          <input type="hidden" id="domain" value="hospital">
+          <div class="grid grid-cols-4 gap-2 mb-2">
+            <button type="button" onclick="selectDomain('hospital')" id="domain-btn-hospital"
+              class="domain-btn select-btn px-3 py-3 rounded-xl font-semibold text-sm transition-all border-2 border-emerald-500 bg-emerald-500 text-white shadow-md">
+              병원/의료
+            </button>
+            <button type="button" onclick="selectDomain('election')" id="domain-btn-election"
+              class="domain-btn select-btn px-3 py-3 rounded-xl font-semibold text-sm transition-all border-2 border-slate-200 bg-white text-slate-600 hover:border-emerald-300 hover:bg-emerald-50">
+              선거/정치
+            </button>
+            <button type="button" onclick="selectDomain('education')" id="domain-btn-education"
+              class="domain-btn select-btn px-3 py-3 rounded-xl font-semibold text-sm transition-all border-2 border-slate-200 bg-white text-slate-600 hover:border-emerald-300 hover:bg-emerald-50">
+              교육
+            </button>
+            <button type="button" onclick="selectDomain('realestate')" id="domain-btn-realestate"
+              class="domain-btn select-btn px-3 py-3 rounded-xl font-semibold text-sm transition-all border-2 border-slate-200 bg-white text-slate-600 hover:border-emerald-300 hover:bg-emerald-50">
+              부동산
+            </button>
+          </div>
+          <div class="grid grid-cols-4 gap-2 mb-2">
+            <button type="button" onclick="selectDomain('finance')" id="domain-btn-finance"
+              class="domain-btn select-btn px-3 py-3 rounded-xl font-semibold text-sm transition-all border-2 border-slate-200 bg-white text-slate-600 hover:border-emerald-300 hover:bg-emerald-50">
+              금융/보험
+            </button>
+            <button type="button" onclick="selectDomain('beauty')" id="domain-btn-beauty"
+              class="domain-btn select-btn px-3 py-3 rounded-xl font-semibold text-sm transition-all border-2 border-slate-200 bg-white text-slate-600 hover:border-emerald-300 hover:bg-emerald-50">
+              뷰티/미용
+            </button>
+            <button type="button" onclick="selectDomain('food')" id="domain-btn-food"
+              class="domain-btn select-btn px-3 py-3 rounded-xl font-semibold text-sm transition-all border-2 border-slate-200 bg-white text-slate-600 hover:border-emerald-300 hover:bg-emerald-50">
+              음식/요식업
+            </button>
+            <button type="button" onclick="selectDomain('custom')" id="domain-btn-custom"
+              class="domain-btn select-btn px-3 py-3 rounded-xl font-semibold text-sm transition-all border-2 border-dashed border-emerald-400 bg-emerald-50 text-emerald-600 hover:bg-emerald-100">
+              + 직접입력
+            </button>
+          </div>
+          <div id="custom-domain-input-wrap" class="hidden mt-3">
+            <div class="flex gap-2">
+              <input type="text" id="custom-domain-input" placeholder="도메인을 직접 입력하세요 (예: 자동차, 여행, IT)"
+                class="input-field flex-1 px-4 py-3 rounded-xl bg-white text-sm focus:outline-none">
+              <button type="button" onclick="applyCustomDomain()"
+                class="px-5 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl text-sm font-semibold hover:shadow-lg transition-all">
+                적용
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 타겟 대상 -->
+        <div class="section-card rounded-2xl p-5">
+          <label class="flex items-center gap-2 text-base font-bold text-slate-700 mb-3">
+            <span class="w-6 h-6 rounded-lg bg-gradient-to-br from-violet-500 to-purple-400 flex items-center justify-center text-white text-xs">2</span>
+            타겟 대상
+          </label>
+          <input type="hidden" id="target-audience" value="30대 직장인">
+
+          <p class="text-xs font-semibold text-violet-600 mb-2 flex items-center gap-1">
+            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+            연령대
+          </p>
+          <div class="flex flex-wrap gap-2 mb-4">
+            <button type="button" onclick="selectAge('10대')" id="age-btn-10대" class="age-btn select-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all border-2 border-slate-200 bg-white text-slate-600 hover:border-violet-300 hover:bg-violet-50">10대</button>
+            <button type="button" onclick="selectAge('20대')" id="age-btn-20대" class="age-btn select-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all border-2 border-slate-200 bg-white text-slate-600 hover:border-violet-300 hover:bg-violet-50">20대</button>
+            <button type="button" onclick="selectAge('30대')" id="age-btn-30대" class="age-btn select-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all border-2 border-violet-500 bg-violet-500 text-white shadow-md">30대</button>
+            <button type="button" onclick="selectAge('40대')" id="age-btn-40대" class="age-btn select-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all border-2 border-slate-200 bg-white text-slate-600 hover:border-violet-300 hover:bg-violet-50">40대</button>
+            <button type="button" onclick="selectAge('50대')" id="age-btn-50대" class="age-btn select-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all border-2 border-slate-200 bg-white text-slate-600 hover:border-violet-300 hover:bg-violet-50">50대</button>
+            <button type="button" onclick="selectAge('60대')" id="age-btn-60대" class="age-btn select-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all border-2 border-slate-200 bg-white text-slate-600 hover:border-violet-300 hover:bg-violet-50">60대</button>
+            <button type="button" onclick="selectAge('70대')" id="age-btn-70대" class="age-btn select-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all border-2 border-slate-200 bg-white text-slate-600 hover:border-violet-300 hover:bg-violet-50">70대</button>
+          </div>
+
+          <p class="text-xs font-semibold text-purple-600 mb-2 flex items-center gap-1">
+            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
+            직업군
+          </p>
+          <div class="flex flex-wrap gap-2 mb-2">
+            <button type="button" onclick="selectJob('직장인')" id="job-btn-직장인" class="job-btn select-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all border-2 border-purple-500 bg-purple-500 text-white shadow-md">직장인</button>
+            <button type="button" onclick="selectJob('자영업자')" id="job-btn-자영업자" class="job-btn select-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all border-2 border-slate-200 bg-white text-slate-600 hover:border-purple-300 hover:bg-purple-50">자영업자</button>
+            <button type="button" onclick="selectJob('주부')" id="job-btn-주부" class="job-btn select-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all border-2 border-slate-200 bg-white text-slate-600 hover:border-purple-300 hover:bg-purple-50">주부</button>
+            <button type="button" onclick="selectJob('학생')" id="job-btn-학생" class="job-btn select-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all border-2 border-slate-200 bg-white text-slate-600 hover:border-purple-300 hover:bg-purple-50">학생</button>
+            <button type="button" onclick="selectJob('프리랜서')" id="job-btn-프리랜서" class="job-btn select-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all border-2 border-slate-200 bg-white text-slate-600 hover:border-purple-300 hover:bg-purple-50">프리랜서</button>
+            <button type="button" onclick="selectJob('은퇴자')" id="job-btn-은퇴자" class="job-btn select-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all border-2 border-slate-200 bg-white text-slate-600 hover:border-purple-300 hover:bg-purple-50">은퇴자</button>
+            <button type="button" onclick="selectJob('전문직')" id="job-btn-전문직" class="job-btn select-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all border-2 border-slate-200 bg-white text-slate-600 hover:border-purple-300 hover:bg-purple-50">전문직</button>
+            <button type="button" onclick="selectJob('custom')" id="job-btn-custom" class="job-btn select-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all border-2 border-dashed border-purple-400 bg-purple-50 text-purple-600 hover:bg-purple-100">+ 직접입력</button>
+          </div>
+          <div id="custom-job-input-wrap" class="hidden mt-3">
+            <div class="flex gap-2">
+              <input type="text" id="custom-job-input" placeholder="직업군을 직접 입력하세요 (예: 공무원, 의료인)"
+                class="input-field flex-1 px-4 py-3 rounded-xl bg-white text-sm focus:outline-none">
+              <button type="button" onclick="applyCustomJob()"
+                class="px-5 py-3 bg-gradient-to-r from-purple-500 to-violet-500 text-white rounded-xl text-sm font-semibold hover:shadow-lg transition-all">
+                적용
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 주제 -->
+        <div class="section-card rounded-2xl p-5">
+          <label class="flex items-center gap-2 text-base font-bold text-slate-700 mb-3">
+            <span class="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-500 to-orange-400 flex items-center justify-center text-white text-xs">3</span>
+            주제
+          </label>
+          <input
+            type="text"
+            id="topic"
+            value=""
+            placeholder="치아 미백의 효과와 주의사항"
+            class="input-field w-full px-4 py-3 rounded-xl bg-white focus:outline-none text-slate-700 placeholder:text-slate-400 placeholder:font-normal"
+            required
+          >
+        </div>
+
+        <!-- 핵심 메시지 -->
+        <div class="section-card rounded-2xl p-5">
+          <label class="flex items-center gap-2 text-base font-bold text-slate-700 mb-3">
+            <span class="w-6 h-6 rounded-lg bg-gradient-to-br from-rose-500 to-pink-400 flex items-center justify-center text-white text-xs">4</span>
+            핵심 메시지
+          </label>
+          <textarea
+            id="main-message"
+            rows="3"
+            placeholder="전문 치과에서 안전하고 효과적인 미백 치료를 받아보세요. 셀프 미백의 위험성과 전문 치료의 장점을 알려드립니다."
+            class="input-field w-full px-4 py-3 rounded-xl bg-white focus:outline-none text-slate-700 resize-none placeholder:text-slate-400 placeholder:font-normal"
+            required
+          ></textarea>
+        </div>
+
+        <!-- 키워드 -->
+        <div class="section-card rounded-2xl p-5">
+          <label class="flex items-center gap-2 text-base font-bold text-slate-700 mb-3">
+            <span class="w-6 h-6 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-400 flex items-center justify-center text-white text-xs">5</span>
+            키워드
+            <span class="text-xs font-normal text-slate-400 ml-1">(복수 선택 가능)</span>
+          </label>
+          <input type="hidden" id="keywords" value="">
+          <div id="keyword-buttons" class="flex flex-wrap gap-2 mb-3">
+            <!-- 키워드 버튼이 동적으로 생성됨 -->
+          </div>
+          <div class="flex gap-2">
+            <input type="text" id="custom-keyword-input" placeholder="키워드 직접 입력"
+              class="input-field flex-1 px-4 py-3 rounded-xl bg-white text-sm focus:outline-none"
+              onkeypress="if(event.key === 'Enter') { event.preventDefault(); addCustomKeyword(); }">
+            <button type="button" onclick="addCustomKeyword()"
+              class="px-5 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl text-sm font-semibold hover:shadow-lg transition-all">
+              추가
+            </button>
+          </div>
+          <p class="text-xs text-slate-400 mt-2 flex items-center gap-1">
+            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+            도메인, 연령대, 직업군에 따라 추천 키워드가 자동 변경됩니다
+          </p>
+        </div>
+
+        <!-- 톤앤매너 -->
+        <div class="section-card rounded-2xl p-5">
+          <label class="flex items-center gap-2 text-base font-bold text-slate-700 mb-3">
+            <span class="w-6 h-6 rounded-lg bg-gradient-to-br from-slate-600 to-slate-400 flex items-center justify-center text-white text-xs">6</span>
+            톤앤매너
+          </label>
+          <input type="hidden" id="tone" value="professional">
+          <div class="grid grid-cols-5 gap-2">
+            <button type="button" onclick="selectTone('professional')" id="tone-btn-professional"
+              class="tone-btn select-btn px-3 py-3 rounded-xl font-semibold text-sm transition-all border-2 border-slate-600 bg-slate-600 text-white shadow-md">
+              전문적
+            </button>
+            <button type="button" onclick="selectTone('friendly')" id="tone-btn-friendly"
+              class="tone-btn select-btn px-3 py-3 rounded-xl font-semibold text-sm transition-all border-2 border-slate-200 bg-white text-slate-600 hover:border-slate-400 hover:bg-slate-50">
+              친근한
+            </button>
+            <button type="button" onclick="selectTone('formal')" id="tone-btn-formal"
+              class="tone-btn select-btn px-3 py-3 rounded-xl font-semibold text-sm transition-all border-2 border-slate-200 bg-white text-slate-600 hover:border-slate-400 hover:bg-slate-50">
+              격식체
+            </button>
+            <button type="button" onclick="selectTone('urgent')" id="tone-btn-urgent"
+              class="tone-btn select-btn px-3 py-3 rounded-xl font-semibold text-sm transition-all border-2 border-slate-200 bg-white text-slate-600 hover:border-slate-400 hover:bg-slate-50">
+              긴급한
+            </button>
+            <button type="button" onclick="selectTone('custom')" id="tone-btn-custom"
+              class="tone-btn select-btn px-3 py-3 rounded-xl font-semibold text-sm transition-all border-2 border-dashed border-slate-400 bg-slate-100 text-slate-500 hover:bg-slate-200">
+              + 직접입력
+            </button>
+          </div>
+          <div id="custom-tone-input-wrap" class="hidden mt-3">
+            <div class="flex gap-2">
+              <input type="text" id="custom-tone-input" placeholder="톤앤매너를 직접 입력하세요 (예: 유머러스한, 감성적인)"
+                class="input-field flex-1 px-4 py-3 rounded-xl bg-white text-sm focus:outline-none">
+              <button type="button" onclick="applyCustomTone()"
+                class="px-5 py-3 bg-gradient-to-r from-slate-600 to-slate-700 text-white rounded-xl text-sm font-semibold hover:shadow-lg transition-all">
+                적용
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 병원/업체 이름 및 연락처 (마지막) -->
+        <div class="section-card rounded-2xl p-5">
+          <label class="flex items-center gap-2 text-base font-bold text-slate-700 mb-3">
+            <span class="w-6 h-6 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xs">7</span>
+            병원/업체 정보
+          </label>
+
+          <!-- 업체명 -->
+          <div class="mb-4">
+            <p class="text-xs font-semibold text-indigo-600 mb-2 flex items-center gap-1">
+              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4zm3 1h6v4H7V5zm2 6h2v2H9v-2z" clip-rule="evenodd"></path></svg>
+              업체명
+            </p>
+            <input
+              type="text"
+              id="business-name"
+              value=""
+              placeholder="화이트서울치과"
+              class="input-field w-full px-4 py-3 rounded-xl bg-white focus:outline-none text-slate-700 placeholder:text-slate-400 placeholder:font-normal"
+              required
+            >
+          </div>
+
+          <!-- 연락처 -->
+          <div>
+            <p class="text-xs font-semibold text-indigo-600 mb-2 flex items-center gap-1">
+              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
+              연락처
+            </p>
+            <input
+              type="text"
+              id="contact-number"
+              value=""
+              placeholder="02-1234-5678"
+              class="input-field w-full px-4 py-3 rounded-xl bg-white focus:outline-none text-slate-700 placeholder:text-slate-400 placeholder:font-normal"
+              required
+            >
+          </div>
+
+          <p class="text-xs text-slate-400 mt-3 flex items-center gap-1">
+            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+            마지막 카드(행동 유도)에 업체명과 연락처가 표시됩니다
+          </p>
+        </div>
+
+        <!-- 에러 메시지 -->
+        <div id="error-message" class="hidden p-4 bg-red-50 border-2 border-red-200 rounded-xl text-red-600 text-sm font-medium flex items-center gap-2">
+          <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+          <span></span>
+        </div>
+
+        <!-- 생성 버튼 -->
+        <button type="submit" id="generate-btn"
+          class="btn-primary w-full py-4 text-white font-bold text-lg rounded-2xl flex items-center justify-center gap-3">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+          <span>카드뉴스 생성하기</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- 결과 섹션 (숨김) -->
+    <div id="result-section" class="hidden animate-fadeIn">
+
+      <!-- 품질 점수 -->
+      <div class="glass-card rounded-2xl shadow-xl p-6 mb-6">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+              </svg>
+            </div>
+            <h2 class="text-xl font-bold text-slate-800">품질 점수</h2>
+          </div>
+          <span id="overall-score" class="text-4xl font-black"></span>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+          <div class="text-center p-4 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl border border-indigo-100">
+            <div class="text-xs text-indigo-600 font-semibold mb-1">HOOK 강도</div>
+            <div id="hook-score" class="text-2xl font-black"></div>
+          </div>
+          <div class="text-center p-4 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl border border-emerald-100">
+            <div class="text-xs text-emerald-600 font-semibold mb-1">흐름 일관성</div>
+            <div id="flow-score" class="text-2xl font-black"></div>
+          </div>
+          <div class="text-center p-4 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-100">
+            <div class="text-xs text-amber-600 font-semibold mb-1">CTA 명확성</div>
+            <div id="cta-score" class="text-2xl font-black"></div>
+          </div>
+          <div class="text-center p-4 bg-gradient-to-br from-rose-50 to-pink-50 rounded-xl border border-rose-100">
+            <div class="text-xs text-rose-600 font-semibold mb-1">도메인 적합성</div>
+            <div id="domain-score" class="text-2xl font-black"></div>
+          </div>
+        </div>
+
+        <div id="feedback-section" class="border-t border-slate-100 pt-4">
+          <h4 class="font-bold text-slate-700 mb-3 flex items-center gap-2">
+            <svg class="w-4 h-4 text-indigo-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+            피드백
+          </h4>
+          <ul id="feedback-list" class="space-y-2 text-sm text-slate-600"></ul>
+        </div>
+      </div>
+
+      <!-- 카드 탭 -->
+      <div class="glass-card rounded-2xl shadow-xl p-6 mb-6">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+            </div>
+            <h2 class="text-xl font-bold text-slate-800">카드 미리보기</h2>
+          </div>
+          <button onclick="downloadAllCards()"
+            class="px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl hover:shadow-lg transition-all text-sm font-semibold flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+            전체 다운로드
+          </button>
+        </div>
+
+        <!-- 탭 버튼 -->
+        <div class="flex gap-2 mb-6 overflow-x-auto custom-scrollbar pb-2">
+          <button onclick="showCard(0)" class="tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all whitespace-nowrap" data-index="0">관심 유도</button>
+          <button onclick="showCard(1)" class="tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all whitespace-nowrap" data-index="1">공감 형성</button>
+          <button onclick="showCard(2)" class="tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all whitespace-nowrap" data-index="2">문제 제기</button>
+          <button onclick="showCard(3)" class="tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all whitespace-nowrap" data-index="3">해결책 제시</button>
+          <button onclick="showCard(4)" class="tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all whitespace-nowrap" data-index="4">행동 유도</button>
+        </div>
+
+        <!-- 카드 컨테이너 -->
+        <div id="card-container" class="flex flex-col items-center gap-4">
+          <!-- 카드가 여기에 렌더링됨 -->
+        </div>
+
+        <!-- 개별 다운로드 버튼 -->
+        <div class="text-center mt-6">
+          <button onclick="downloadCurrentCard()"
+            class="px-6 py-3 border-2 border-slate-200 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all text-sm font-semibold text-slate-600 flex items-center gap-2 mx-auto">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+            이 카드 다운로드 (PNG)
+          </button>
+        </div>
+      </div>
+
+      <!-- 전체 카드 보기 -->
+      <div class="glass-card rounded-2xl shadow-xl p-6 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+            </svg>
+          </div>
+          <h2 class="text-xl font-bold text-slate-800">전체 카드 보기</h2>
+        </div>
+        <div id="all-cards-container" class="flex flex-wrap justify-center gap-4">
+          <!-- 작은 카드 미리보기 -->
+        </div>
+      </div>
+
+      <!-- 다시 만들기 버튼 -->
+      <div class="text-center">
+        <button onclick="resetForm()"
+          class="px-8 py-4 bg-gradient-to-r from-slate-700 to-slate-800 text-white font-bold rounded-2xl hover:shadow-xl transition-all hover:-translate-y-1 flex items-center gap-3 mx-auto">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+          새로운 카드뉴스 만들기
+        </button>
+      </div>
+    </div>
+
+    <!-- 푸터 -->
+    <footer class="text-center mt-12 pb-8">
+      <p class="text-slate-500 text-sm">Powered by Google Gemini AI</p>
+    </footer>
+
+  </div>
+
+  <script src="cardnews-app.js"></script>
+</body>
+</html>

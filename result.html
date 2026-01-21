@@ -1,0 +1,2483 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>광고 콘텐츠 전략 결과 - 치과 광고 콘텐츠 생성기</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+            background: #f5f7fa;
+            padding: 80px 0 60px 0;
+        }
+
+        /* Header Navigation Styles */
+        .top-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 15px 30px;
+        }
+
+        .top-header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            gap: 12px;
+        }
+
+        .header-logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        .header-logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .header-nav a {
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .header-nav a:hover {
+            color: #667eea;
+        }
+
+        .header-nav a.active {
+            color: #667eea;
+        }
+
+        .header-nav a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #667eea;
+            border-radius: 2px;
+        }
+
+        .header-nav .cardnews-nav-btn {
+            background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 100%);
+            color: white !important;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
+            transition: all 0.3s;
+        }
+
+        .header-nav .cardnews-nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 157, 0.5);
+            color: white !important;
+        }
+
+        @media (max-width: 768px) {
+            .top-header {
+                padding: 12px 20px;
+            }
+
+            .header-logo-text {
+                font-size: 14px;
+            }
+
+            .header-logo img {
+                height: 30px;
+            }
+
+            .header-nav {
+                gap: 15px;
+            }
+
+            .header-nav a {
+                font-size: 14px;
+            }
+
+            body {
+                padding: 70px 0 60px 0;
+            }
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto 0;
+            padding: 0 20px;
+        }
+
+        .diagnosis-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .diagnosis-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .diagnosis-icon {
+            font-size: 48px;
+        }
+
+        .diagnosis-content h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .diagnosis-level {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .diagnosis-info {
+            background: #f8f9ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .diagnosis-info h3 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .diagnosis-info p {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            flex: 0 0 auto;
+            padding: 15px 20px;
+            background: white;
+            border: 3px solid #e1e4e8;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tab-main {
+            font-size: 20px;
+            font-weight: 700;
+            display: block;
+        }
+
+        .tab-sub {
+            font-size: 12px;
+            font-weight: 500;
+            display: block;
+            opacity: 0.85;
+        }
+
+        .tab:nth-child(1) {
+            border-color: #ff6b9d;
+            color: #ff6b9d;
+        }
+
+        .tab:nth-child(1):hover {
+            background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 107, 157, 0.3);
+        }
+
+        .tab:nth-child(1).active {
+            background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .tab:nth-child(2) {
+            border-color: #4ecdc4;
+            color: #4ecdc4;
+        }
+
+        .tab:nth-child(2):hover {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(78, 205, 196, 0.3);
+        }
+
+        .tab:nth-child(2).active {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .tab:nth-child(3) {
+            border-color: #ffa500;
+            color: #ffa500;
+        }
+
+        .tab:nth-child(3):hover {
+            background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 165, 0, 0.3);
+        }
+
+        .tab:nth-child(3).active {
+            background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .tab:nth-child(4) {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .tab:nth-child(4):hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .tab:nth-child(4).active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .tab:nth-child(5) {
+            border-color: #f39c12;
+            color: #f39c12;
+        }
+
+        .tab:nth-child(5):hover {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(243, 156, 18, 0.3);
+        }
+
+        .tab:nth-child(5).active {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Content Length Control */
+        .content-length-control {
+            background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.1);
+            text-align: center;
+            border: 2px solid #e8eaff;
+        }
+
+        .content-length-control h3 {
+            font-size: 22px;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            letter-spacing: -0.5px;
+        }
+
+        .length-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .length-btn {
+            padding: 12px 24px;
+            border: 2px solid #e1e4e8;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            color: #555;
+        }
+
+        .length-btn:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+            transform: translateY(-2px);
+        }
+
+        .length-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .length-btn .length-label {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .length-btn .length-desc {
+            display: block;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .ad-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .ad-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .ad-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .ad-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .cardnews-btn {
+            padding: 8px 16px;
+            border: 2px solid #ff6b9d;
+            background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 100%);
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .cardnews-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 157, 0.4);
+        }
+
+        .ad-content {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 15px;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .ad-reasoning {
+            background: #fff9e6;
+            border-left: 4px solid #ffd700;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .ad-reasoning h4 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .ad-reasoning p {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .ad-channels {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .channel-tag {
+            padding: 6px 12px;
+            background: #e8f0fe;
+            color: #1967d2;
+            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .bottom-actions {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 30px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .bottom-actions h3 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .bottom-actions p {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .primary-btn {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .secondary-btn {
+            padding: 14px 28px;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .secondary-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab {
+                min-width: 100%;
+            }
+
+            .ad-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .primary-btn, .secondary-btn {
+                width: 100%;
+            }
+
+            .diagnosis-level {
+                display: block;
+                margin: 5px 0;
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+
+            .diagnosis-content h2 {
+                font-size: 20px;
+            }
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 30px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .modal-header h2 {
+            font-size: 24px;
+            color: #333;
+            margin: 0;
+        }
+
+        .modal-close {
+            font-size: 32px;
+            font-weight: 300;
+            color: #999;
+            cursor: pointer;
+            transition: color 0.2s;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: #333;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-body textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        .modal-body textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .modal-warning {
+            background: #fff9e6;
+            border-left: 4px solid #ffa500;
+            padding: 12px 15px;
+            margin-top: 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            padding: 20px 30px;
+            border-top: 2px solid #f0f0f0;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .cancel-btn {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .cancel-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .edit-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .edit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(245, 87, 108, 0.3);
+        }
+
+        /* Footer Styles */
+        .footer {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            margin-top: 60px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+
+        .footer-info {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .footer-info-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .footer-info-icon {
+            font-size: 18px;
+        }
+
+        .footer-brand {
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .footer-link {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .footer-link:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        .footer-admin-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .footer-admin-btn:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .footer {
+                padding: 30px 15px;
+                margin-top: 40px;
+            }
+
+            .footer-title {
+                font-size: 20px;
+            }
+
+            .footer-info {
+                font-size: 14px;
+            }
+
+            .footer-brand {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Header Navigation -->
+    <header class="top-header">
+        <div class="top-header-content">
+            <a href="index.html" class="header-logo">
+                <img src="로고3.png" alt="치과 맞춤식 광고 콘텐츠 생성기 로고">
+                <span class="header-logo-text">치과 맞춤식 광고 콘텐츠 생성기</span>
+            </a>
+            <nav class="header-nav">
+                <a href="index.html">홈</a>
+                <a href="input.html">생성시작</a>
+                <a href="profiles.html">내 프로필</a>
+                <a href="cases.html">내 결과 보기</a>
+                <a href="cardnews.html" target="_blank" class="cardnews-nav-btn">🎨 카드뉴스 생성기</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Sample Case Badge -->
+        <div id="sampleBadge" style="display: none; background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 100%); color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: center;">
+            <h3 style="font-size: 20px; margin-bottom: 5px;">📌 샘플 케이스</h3>
+            <p style="font-size: 14px; opacity: 0.95;">화이트서울치과 임영일 원장의 실제 진단 결과 기반</p>
+        </div>
+
+        <!-- Input Data Summary (샘플인 경우만 표시) -->
+        <div id="inputDataCard" style="display: none;" class="diagnosis-card">
+            <div class="diagnosis-header">
+                <div class="diagnosis-icon">📋</div>
+                <div class="diagnosis-content">
+                    <h2>입력 데이터 요약</h2>
+                </div>
+            </div>
+            <div class="diagnosis-info">
+                <h3>기본 정보</h3>
+                <p>
+                    <strong>치과명:</strong> <span id="inputClinicName"></span><br>
+                    <strong>지역:</strong> <span id="inputLocation"></span><br>
+                    <strong>주요 진료:</strong> <span id="inputSpecialty"></span>
+                </p>
+                <h3 style="margin-top: 15px;">진단 결과</h3>
+                <p>
+                    <strong>매출 단계:</strong> <span id="inputRevenue"></span><br>
+                    <strong>원장 스타일:</strong> <span id="inputStyle"></span>
+                </p>
+                <h3 style="margin-top: 15px;">DF-AI 신뢰 점수</h3>
+                <p>
+                    공감: <span id="inputEmpathy"></span> |
+                    이해: <span id="inputUnderstanding"></span> |
+                    결정: <span id="inputDecision"></span> |
+                    가치: <span id="inputValue"></span> |
+                    신뢰: <span id="inputTrust"></span> |
+                    공간: <span id="inputSpace"></span>
+                </p>
+                <h3 style="margin-top: 15px;">치과 철학</h3>
+                <p id="inputPhilosophy" style="white-space: pre-wrap;"></p>
+                <h3 style="margin-top: 15px;">차별화 포인트</h3>
+                <p id="inputDifferentiation" style="white-space: pre-wrap;"></p>
+            </div>
+        </div>
+
+        <!-- Diagnosis Card -->
+        <div class="diagnosis-card">
+            <div class="diagnosis-header">
+                <div class="diagnosis-icon">🎯</div>
+                <div class="diagnosis-content">
+                    <h2 id="clinicName">귀원의 상황과 목표에 적합한 맞춤식 광고 콘텐츠를 제공합니다!</h2>
+                    <span class="diagnosis-level" id="permissionLevel">광고 콘텐츠 허용 레벨: L3</span>
+                    <span class="diagnosis-level" id="profileNumber" style="display: none; margin-left: 15px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); animation: fadeIn 0.5s ease-in;"></span>
+                </div>
+            </div>
+            <div class="diagnosis-info">
+                <h3>현재 상태 분석</h3>
+                <p id="diagnosisText">
+                    귀 치과는 현재 <strong>성장기</strong> 단계에 있으며,
+                    <strong>평균 신뢰 점수 65점</strong>으로 안정적인 광고 콘텐츠 전략을 구사할 수 있는 단계입니다.
+                    관계 중심의 원장 스타일과 높은 공감 능력을 바탕으로,
+                    환자와의 신뢰 관계 구축에 집중한 마케팅이 효과적입니다.
+                </p>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab(0)">
+                <span class="tab-main">공감형</span>
+                <span class="tab-sub">광고 콘텐츠</span>
+            </div>
+            <div class="tab" onclick="switchTab(1)">
+                <span class="tab-main">이해형</span>
+                <span class="tab-sub">광고 콘텐츠</span>
+            </div>
+            <div class="tab" onclick="switchTab(2)">
+                <span class="tab-main">결정형</span>
+                <span class="tab-sub">광고 콘텐츠</span>
+            </div>
+            <div class="tab" onclick="switchTab(3)">
+                <span class="tab-main">가치전달형</span>
+                <span class="tab-sub">광고 콘텐츠</span>
+            </div>
+            <div class="tab" onclick="switchTab(4)">
+                <span class="tab-main">신뢰 형성용</span>
+                <span class="tab-sub">광고 콘텐츠</span>
+            </div>
+        </div>
+
+        <!-- Content Length Control -->
+        <div class="content-length-control">
+            <h3>📝 콘텐츠 분량 선택</h3>
+            <div class="length-buttons">
+                <button class="length-btn active" onclick="setContentLength('basic', event)">
+                    <span class="length-label">기본</span>
+                    <span class="length-desc">현재 분량</span>
+                </button>
+                <button class="length-btn" onclick="setContentLength('medium', event)">
+                    <span class="length-label">중문</span>
+                    <span class="length-desc">약 2배 분량</span>
+                </button>
+                <button class="length-btn" onclick="setContentLength('long', event)">
+                    <span class="length-label">장문</span>
+                    <span class="length-desc">약 4배 분량</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Permission Level Control -->
+        <div class="content-length-control">
+            <h3>🎚️ 광고 콘텐츠 허용 레벨 선택</h3>
+            <p style="font-size: 14px; color: #555; margin-bottom: 20px; line-height: 1.6; font-weight: 500;">
+                허용 레벨이 높을수록 더 적극적이고 수익 중심적인 광고 콘텐츠가 생성됩니다.<br>
+                <span style="color: #667eea;">모든 레벨은 법적 범위 내에서 작성됩니다.</span>
+            </p>
+            <div class="length-buttons">
+                <button class="length-btn" onclick="setPermissionLevel('L0', event)">
+                    <span class="length-label">L0</span>
+                    <span class="length-desc">가장 안전</span>
+                </button>
+                <button class="length-btn" onclick="setPermissionLevel('L1', event)">
+                    <span class="length-label">L1</span>
+                    <span class="length-desc">보수적</span>
+                </button>
+                <button class="length-btn" onclick="setPermissionLevel('L2', event)">
+                    <span class="length-label">L2</span>
+                    <span class="length-desc">중간</span>
+                </button>
+                <button class="length-btn" onclick="setPermissionLevel('L3', event)">
+                    <span class="length-label">L3</span>
+                    <span class="length-desc">적극적</span>
+                </button>
+                <button class="length-btn" onclick="setPermissionLevel('L4', event)">
+                    <span class="length-label">L4</span>
+                    <span class="length-desc">공격적</span>
+                </button>
+                <button class="length-btn" onclick="setPermissionLevel('L5', event)">
+                    <span class="length-label">L5</span>
+                    <span class="length-desc">최대 수익</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab Content 1: Empathy Ads -->
+        <div class="tab-content active">
+            <div class="ad-card">
+                <div class="ad-header">
+                    <div class="ad-title">광고 콘텐츠 #1: 환자 중심 스토리</div>
+                    <div class="ad-actions">
+                        <button class="action-btn edit-btn" onclick="openEditModal(1)">✏️ 수정</button>
+                        <button class="cardnews-btn" onclick="openCardNews(1)">🎨 카드뉴스</button>
+                        <button class="action-btn" onclick="copyAd(1)">📋 복사</button>
+                        <button class="action-btn" onclick="downloadAd(1)">💾 저장</button>
+                    </div>
+                </div>
+                <div class="ad-content" data-content-type="empathy" data-variant="1">
+                    "치과 치료가 두려우셨나요?"<br><br>
+
+                    많은 분들이 치과 방문을 미루는 이유, 저희는 잘 알고 있습니다.<br>
+                    그래서 [치과명]은 환자분의 불안을 먼저 이해하고 공감하는 것부터 시작합니다.<br><br>
+
+                    • 충분한 상담 시간<br>
+                    • 무리한 권유 없는 진료<br>
+                    • 환자의 선택을 존중하는 치료 계획<br><br>
+
+                    당신의 구강 건강, 함께 고민하겠습니다.
+                </div>
+                <div class="ad-reasoning">
+                    <h4>💡 이 광고 콘텐츠를 추천하는 이유</h4>
+                    <p>높은 공감 점수와 관계 중심 원장 스타일을 반영했습니다. 환자의 불안을 이해하고 신뢰를 구축하는 메시지로, 치과 방문을 망설이는 잠재 고객에게 효과적입니다.</p>
+                </div>
+                <div class="ad-channels">
+                    <span class="channel-tag">네이버 블로그</span>
+                    <span class="channel-tag">인스타그램</span>
+                    <span class="channel-tag">지역 커뮤니티</span>
+                </div>
+            </div>
+
+            <div class="ad-card">
+                <div class="ad-header">
+                    <div class="ad-title">광고 콘텐츠 #2: 환자 후기 스토리</div>
+                    <div class="ad-actions">
+                        <button class="action-btn edit-btn" onclick="openEditModal(2)">✏️ 수정</button>
+                        <button class="cardnews-btn" onclick="openCardNews(2)">🎨 카드뉴스</button>
+                        <button class="action-btn" onclick="copyAd(2)">📋 복사</button>
+                        <button class="action-btn" onclick="downloadAd(2)">💾 저장</button>
+                    </div>
+                </div>
+                <div class="ad-content" data-content-type="empathy" data-variant="2">
+                    "10년 만에 치과에 갔어요"<br><br>
+
+                    치과 공포증이 있던 김○○님의 이야기입니다.<br>
+                    [치과명]에서는 환자분의 페이스에 맞춰 천천히,
+                    한 단계씩 치료를 진행했습니다.<br><br>
+
+                    "원장님이 제 이야기를 끝까지 들어주셨어요.<br>
+                    무서워하는 저를 이해해 주시고,<br>
+                    제가 준비될 때까지 기다려 주셨습니다."<br><br>
+
+                    이제는 정기 검진도 빠짐없이 받으러 오십니다.
+                </div>
+                <div class="ad-reasoning">
+                    <h4>💡 이 광고 콘텐츠를 추천하는 이유</h4>
+                    <p>실제 환자 경험을 통해 신뢰를 구축합니다. 공감과 이해를 중시하는 치과의 철학이 잘 드러나며, 비슷한 고민을 가진 잠재 고객의 공감을 얻을 수 있습니다.</p>
+                </div>
+                <div class="ad-channels">
+                    <span class="channel-tag">인스타그램</span>
+                    <span class="channel-tag">페이스북</span>
+                    <span class="channel-tag">유튜브</span>
+                </div>
+            </div>
+
+            <div class="ad-card">
+                <div class="ad-header">
+                    <div class="ad-title">광고 콘텐츠 #3: 스토리텔링 - 환자의 여정</div>
+                    <div class="ad-actions">
+                        <button class="action-btn edit-btn" onclick="openEditModal(3)">✏️ 수정</button>
+                        <button class="cardnews-btn" onclick="openCardNews(3)">🎨 카드뉴스</button>
+                        <button class="action-btn" onclick="copyAd(3)">📋 복사</button>
+                        <button class="action-btn" onclick="downloadAd(3)">💾 저장</button>
+                    </div>
+                </div>
+                <div class="ad-content" id="storytelling-empathy">
+                    <!-- 공감형 스토리텔링 콘텐츠가 동적으로 생성됩니다 -->
+                </div>
+                <div class="ad-reasoning">
+                    <h4>💡 이 광고 콘텐츠를 추천하는 이유</h4>
+                    <p>완전한 내러티브 구조(시작→갈등→해결→변화)로 구성된 스토리텔링 콘텐츠입니다. 환자의 실제 여정을 재현하여 깊은 감정적 연결을 만들고, 장문 콘텐츠가 효과적인 블로그, 유튜브 스크립트, 브랜드 스토리 등에 활용할 수 있습니다.</p>
+                </div>
+                <div class="ad-channels">
+                    <span class="channel-tag">네이버 블로그</span>
+                    <span class="channel-tag">유튜브</span>
+                    <span class="channel-tag">브랜드 스토리</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content 2: Understanding Ads -->
+        <div class="tab-content">
+            <div class="ad-card">
+                <div class="ad-header">
+                    <div class="ad-title">광고 콘텐츠 #3: 교육 콘텐츠</div>
+                    <div class="ad-actions">
+                        <button class="action-btn edit-btn" onclick="openEditModal(3)">✏️ 수정</button>
+                        <button class="cardnews-btn" onclick="openCardNews(3)">🎨 카드뉴스</button>
+                        <button class="action-btn" onclick="copyAd(3)">📋 복사</button>
+                        <button class="action-btn" onclick="downloadAd(3)">💾 저장</button>
+                    </div>
+                </div>
+                <div class="ad-content" data-content-type="understanding" data-variant="1">
+                    "임플란트, 정말 필요할까요?"<br><br>
+
+                    많은 분들이 치료 전에 가장 궁금해하시는 질문입니다.<br>
+                    [치과명]에서는 치료를 권하기 전에, 먼저 정확한 정보를 제공합니다.<br><br>
+
+                    ✓ 임플란트가 필요한 경우<br>
+                    ✓ 다른 치료 옵션과의 비교<br>
+                    ✓ 장단점과 예상 기간<br>
+                    ✓ 비용 안내<br><br>
+
+                    환자분이 충분히 이해하고 선택할 수 있도록,<br>
+                    투명하게 모든 정보를 공유합니다.
+                </div>
+                <div class="ad-reasoning">
+                    <h4>💡 이 광고 콘텐츠를 추천하는 이유</h4>
+                    <p>높은 이해 점수를 바탕으로 교육적 접근을 활용합니다. 정보 제공을 통해 전문성을 드러내고, 투명한 진료 방식으로 신뢰를 구축합니다.</p>
+                </div>
+                <div class="ad-channels">
+                    <span class="channel-tag">네이버 블로그</span>
+                    <span class="channel-tag">유튜브</span>
+                </div>
+            </div>
+
+            <div class="ad-card">
+                <div class="ad-header">
+                    <div class="ad-title">광고 콘텐츠 #3-2: 치료 설명 중심</div>
+                    <div class="ad-actions">
+                        <button class="action-btn edit-btn" onclick="openEditModal('3-2')">✏️ 수정</button>
+                        <button class="cardnews-btn" onclick="openCardNews('3-2')">🎨 카드뉴스</button>
+                        <button class="action-btn" onclick="copyAd('3-2')">📋 복사</button>
+                        <button class="action-btn" onclick="downloadAd('3-2')">💾 저장</button>
+                    </div>
+                </div>
+                <div class="ad-content" data-content-type="understanding" data-variant="2">
+                    "궁금증이 해결되면 불안도 사라집니다"<br><br>
+
+                    [치과명]은 환자분이 완전히 이해할 때까지<br>
+                    설명을 아끼지 않습니다.<br><br>
+
+                    • 3D 영상으로 보여드리는 진단 결과<br>
+                    • 각 치료 옵션의 명확한 비교<br>
+                    • 단계별 치료 과정 상세 설명<br>
+                    • 예상 비용과 기간 투명 공개<br><br>
+
+                    "이해가 선행되어야 올바른 결정을 내릴 수 있습니다."
+                </div>
+                <div class="ad-reasoning">
+                    <h4>💡 이 광고 콘텐츠를 추천하는 이유</h4>
+                    <p>명확한 정보 전달과 투명성을 강조하여 신뢰를 구축합니다. 시각 자료 활용을 강조하여 전문성과 체계성을 어필합니다.</p>
+                </div>
+                <div class="ad-channels">
+                    <span class="channel-tag">네이버 블로그</span>
+                    <span class="channel-tag">인스타그램</span>
+                    <span class="channel-tag">유튜브</span>
+                </div>
+            </div>
+
+            <div class="ad-card">
+                <div class="ad-header">
+                    <div class="ad-title">광고 콘텐츠 #4: 스토리텔링 - 환자의 여정</div>
+                    <div class="ad-actions">
+                        <button class="action-btn edit-btn" onclick="openEditModal(4)">✏️ 수정</button>
+                        <button class="cardnews-btn" onclick="openCardNews(4)">🎨 카드뉴스</button>
+                        <button class="action-btn" onclick="copyAd(4)">📋 복사</button>
+                        <button class="action-btn" onclick="downloadAd(4)">💾 저장</button>
+                    </div>
+                </div>
+                <div class="ad-content" id="storytelling-understanding">
+                    <!-- 이해형 스토리텔링 콘텐츠가 동적으로 생성됩니다 -->
+                </div>
+                <div class="ad-reasoning">
+                    <h4>💡 이 광고 콘텐츠를 추천하는 이유</h4>
+                    <p>완전한 내러티브 구조(시작→갈등→해결→변화)로 구성된 스토리텔링 콘텐츠입니다. 환자의 실제 여정을 재현하여 깊은 감정적 연결을 만들고, 장문 콘텐츠가 효과적인 블로그, 유튜브 스크립트, 브랜드 스토리 등에 활용할 수 있습니다.</p>
+                </div>
+                <div class="ad-channels">
+                    <span class="channel-tag">네이버 블로그</span>
+                    <span class="channel-tag">유튜브</span>
+                    <span class="channel-tag">브랜드 스토리</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content 3: Decision Ads -->
+        <div class="tab-content">
+            <div class="ad-card">
+                <div class="ad-header">
+                    <div class="ad-title">광고 콘텐츠 #4: 선택권 강조</div>
+                    <div class="ad-actions">
+                        <button class="action-btn edit-btn" onclick="openEditModal('decision-4')">✏️ 수정</button>
+                        <button class="cardnews-btn" onclick="openCardNews('decision-4')">🎨 카드뉴스</button>
+                        <button class="action-btn" onclick="copyAd(4)">📋 복사</button>
+                        <button class="action-btn" onclick="downloadAd(4)">💾 저장</button>
+                    </div>
+                </div>
+                <div class="ad-content" data-content-type="decision" data-variant="1">
+                    "결정은 언제나 환자님의 몫입니다"<br><br>
+
+                    [치과명]의 진료 철학:<br><br>
+
+                    1. 정확한 진단과 여러 치료 옵션 제시<br>
+                    2. 각 옵션의 장단점 상세 설명<br>
+                    3. 환자분의 상황과 선호도 반영<br>
+                    4. 충분한 고민 시간 제공<br>
+                    5. 선택을 존중하는 치료 진행<br><br>
+
+                    "무리하게 권하지 않습니다.<br>
+                    오히려 여러 선택지를 알려주시고,<br>
+                    제가 선택할 수 있게 도와주셨어요."
+                </div>
+                <div class="ad-reasoning">
+                    <h4>💡 이 광고 콘텐츠를 추천하는 이유</h4>
+                    <p>결정 자율성 점수를 바탕으로 환자의 선택권을 강조합니다. 무리한 권유가 없다는 메시지로 신뢰를 얻고, 치과 선택에 신중한 고객에게 효과적입니다.</p>
+                </div>
+                <div class="ad-channels">
+                    <span class="channel-tag">네이버 블로그</span>
+                    <span class="channel-tag">인스타그램</span>
+                    <span class="channel-tag">지역 커뮤니티</span>
+                </div>
+            </div>
+
+            <div class="ad-card">
+                <div class="ad-header">
+                    <div class="ad-title">광고 콘텐츠 #4-2: 환자 권리 존중</div>
+                    <div class="ad-actions">
+                        <button class="action-btn edit-btn" onclick="openEditModal('4-2')">✏️ 수정</button>
+                        <button class="cardnews-btn" onclick="openCardNews('4-2')">🎨 카드뉴스</button>
+                        <button class="action-btn" onclick="copyAd('4-2')">📋 복사</button>
+                        <button class="action-btn" onclick="downloadAd('4-2')">💾 저장</button>
+                    </div>
+                </div>
+                <div class="ad-content" data-content-type="decision" data-variant="2">
+                    "강요하지 않는 진료, 존중하는 관계"<br><br>
+
+                    이전 치과에서 불편한 경험이 있으셨나요?<br>
+                    [치과명]은 환자님의 권리를 최우선으로 생각합니다.<br><br>
+
+                    ✓ 압박 없는 상담 분위기<br>
+                    ✓ 여러 치료 옵션 제시<br>
+                    ✓ 충분한 고민 시간 제공<br>
+                    ✓ 거절할 권리 존중<br>
+                    ✓ 천천히 결정해도 괜찮습니다<br><br>
+
+                    "당신이 편안해야 우리도 편안합니다."
+                </div>
+                <div class="ad-reasoning">
+                    <h4>💡 이 광고 콘텐츠를 추천하는 이유</h4>
+                    <p>과잉진료나 강요 경험이 있는 잠재 고객을 타겟팅합니다. 환자의 권리와 자율성을 존중하는 메시지로 차별화를 명확히 합니다.</p>
+                </div>
+                <div class="ad-channels">
+                    <span class="channel-tag">인스타그램</span>
+                    <span class="channel-tag">페이스북</span>
+                    <span class="channel-tag">지역 커뮤니티</span>
+                </div>
+            </div>
+
+            <div class="ad-card">
+                <div class="ad-header">
+                    <div class="ad-title">광고 콘텐츠 #5: 스토리텔링 - 환자의 여정</div>
+                    <div class="ad-actions">
+                        <button class="action-btn edit-btn" onclick="openEditModal(5)">✏️ 수정</button>
+                        <button class="cardnews-btn" onclick="openCardNews(5)">🎨 카드뉴스</button>
+                        <button class="action-btn" onclick="copyAd(5)">📋 복사</button>
+                        <button class="action-btn" onclick="downloadAd(5)">💾 저장</button>
+                    </div>
+                </div>
+                <div class="ad-content" id="storytelling-decision">
+                    <!-- 결정형 스토리텔링 콘텐츠가 동적으로 생성됩니다 -->
+                </div>
+                <div class="ad-reasoning">
+                    <h4>💡 이 광고 콘텐츠를 추천하는 이유</h4>
+                    <p>완전한 내러티브 구조(시작→갈등→해결→변화)로 구성된 스토리텔링 콘텐츠입니다. 환자의 실제 여정을 재현하여 깊은 감정적 연결을 만들고, 장문 콘텐츠가 효과적인 블로그, 유튜브 스크립트, 브랜드 스토리 등에 활용할 수 있습니다.</p>
+                </div>
+                <div class="ad-channels">
+                    <span class="channel-tag">네이버 블로그</span>
+                    <span class="channel-tag">유튜브</span>
+                    <span class="channel-tag">브랜드 스토리</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content 4: Value Delivery Ads -->
+        <div class="tab-content">
+            <div class="ad-card">
+                <div class="ad-header">
+                    <div class="ad-title">광고 콘텐츠 #5: 가치 증명 스토리</div>
+                    <div class="ad-actions">
+                        <button class="action-btn edit-btn" onclick="openEditModal('value-5')">✏️ 수정</button>
+                        <button class="cardnews-btn" onclick="openCardNews('value-5')">🎨 카드뉴스</button>
+                        <button class="action-btn" onclick="copyAd(5)">📋 복사</button>
+                        <button class="action-btn" onclick="downloadAd(5)">💾 저장</button>
+                    </div>
+                </div>
+                <div class="ad-content" data-content-type="value" data-variant="1">
+                    "치료 후 3년, 여전히 만족합니다"<br><br>
+
+                    [치과명]에서 임플란트 시술을 받은 박○○님.<br>
+                    3년이 지난 지금도 정기 검진을 받으러 오십니다.<br><br>
+
+                    "처음엔 비용이 부담됐어요.<br>
+                    하지만 원장님이 단순히 치료만 하는 게 아니라,<br>
+                    10년, 20년 후를 생각하며 계획을 세워주셨죠."<br><br>
+
+                    ✓ 3년간 정기 검진 무료<br>
+                    ✓ 평생 A/S 보증<br>
+                    ✓ 구강 건강 관리 프로그램<br><br>
+
+                    치료가 끝나도 끝이 아닙니다.<br>
+                    평생 파트너로 함께합니다.
+                </div>
+                <div class="ad-reasoning">
+                    <h4>💡 이 광고 콘텐츠를 추천하는 이유</h4>
+                    <p>가치 전달 점수를 기반으로 장기적인 가치와 지속적인 케어를 강조합니다. 단순 치료가 아닌 평생 관리 시스템을 부각하여, 가격 대비 가치를 중시하는 고객에게 효과적입니다.</p>
+                </div>
+                <div class="ad-channels">
+                    <span class="channel-tag">네이버 블로그</span>
+                    <span class="channel-tag">유튜브</span>
+                    <span class="channel-tag">페이스북</span>
+                </div>
+            </div>
+
+            <div class="ad-card">
+                <div class="ad-header">
+                    <div class="ad-title">광고 콘텐츠 #6: 결과 중심 메시지</div>
+                    <div class="ad-actions">
+                        <button class="action-btn edit-btn" onclick="openEditModal(6)">✏️ 수정</button>
+                        <button class="cardnews-btn" onclick="openCardNews(6)">🎨 카드뉴스</button>
+                        <button class="action-btn" onclick="copyAd(6)">📋 복사</button>
+                        <button class="action-btn" onclick="downloadAd(6)">💾 저장</button>
+                    </div>
+                </div>
+                <div class="ad-content" data-content-type="value" data-variant="2">
+                    "보이는 것보다 중요한 건, 보이지 않는 것"<br><br>
+
+                    [치과명]의 치료는 겉으로 보이는 심미성만을 추구하지 않습니다.<br><br>
+
+                    ✓ 정밀 진단 시스템으로 근본 원인 파악<br>
+                    ✓ 잇몸뼈, 신경, 혈관까지 고려한 통합 치료<br>
+                    ✓ 씹는 기능과 발음까지 개선하는 기능 회복<br>
+                    ✓ 5년, 10년 후에도 문제없는 내구성<br><br>
+
+                    "예뻐 보이는 것보다<br>
+                    오래 쓸 수 있는 게 더 중요하다고 하셨어요.<br>
+                    그래서 더 믿음이 갔습니다."<br><br>
+
+                    진짜 가치는 시간이 지나야 알 수 있습니다.
+                </div>
+                <div class="ad-reasoning">
+                    <h4>💡 이 광고 콘텐츠를 추천하는 이유</h4>
+                    <p>단기적 결과가 아닌 장기적 가치를 강조합니다. 가격보다 품질과 내구성을 중시하는 고객층에게 효과적이며, 치과의 전문성과 책임감을 동시에 전달합니다.</p>
+                </div>
+                <div class="ad-channels">
+                    <span class="channel-tag">네이버 블로그</span>
+                    <span class="channel-tag">인스타그램</span>
+                    <span class="channel-tag">유튜브</span>
+                </div>
+            </div>
+
+            <div class="ad-card">
+                <div class="ad-header">
+                    <div class="ad-title">광고 콘텐츠 #7: 스토리텔링 - 환자의 여정</div>
+                    <div class="ad-actions">
+                        <button class="action-btn edit-btn" onclick="openEditModal(7)">✏️ 수정</button>
+                        <button class="cardnews-btn" onclick="openCardNews(7)">🎨 카드뉴스</button>
+                        <button class="action-btn" onclick="copyAd(7)">📋 복사</button>
+                        <button class="action-btn" onclick="downloadAd(7)">💾 저장</button>
+                    </div>
+                </div>
+                <div class="ad-content" id="storytelling-value">
+                    <!-- 가치전달형 스토리텔링 콘텐츠가 동적으로 생성됩니다 -->
+                </div>
+                <div class="ad-reasoning">
+                    <h4>💡 이 광고 콘텐츠를 추천하는 이유</h4>
+                    <p>완전한 내러티브 구조(시작→갈등→해결→변화)로 구성된 스토리텔링 콘텐츠입니다. 환자의 실제 여정을 재현하여 깊은 감정적 연결을 만들고, 장문 콘텐츠가 효과적인 블로그, 유튜브 스크립트, 브랜드 스토리 등에 활용할 수 있습니다.</p>
+                </div>
+                <div class="ad-channels">
+                    <span class="channel-tag">네이버 블로그</span>
+                    <span class="channel-tag">유튜브</span>
+                    <span class="channel-tag">브랜드 스토리</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content 5: Trust Building Ads -->
+        <div class="tab-content">
+            <div class="ad-card">
+                <div class="ad-header">
+                    <div class="ad-title">광고 콘텐츠 #7: 관계 구축 메시지</div>
+                    <div class="ad-actions">
+                        <button class="action-btn edit-btn" onclick="openEditModal('trust-7')">✏️ 수정</button>
+                        <button class="cardnews-btn" onclick="openCardNews('trust-7')">🎨 카드뉴스</button>
+                        <button class="action-btn" onclick="copyAd(7)">📋 복사</button>
+                        <button class="action-btn" onclick="downloadAd(7)">💾 저장</button>
+                    </div>
+                </div>
+                <div class="ad-content" data-content-type="trust" data-variant="1">
+                    "우리 가족 주치의, [치과명]"<br><br>
+
+                    이○○님 가족은 3대가 함께 다니는 치과가 있습니다.<br>
+                    할머니부터 손자까지, 15년째 한결같은 곳.<br><br>
+
+                    "처음엔 제 치료로 시작했어요.<br>
+                    그런데 원장님이 우리 딸의 치아 배열까지 신경 써주시더라고요.<br>
+                    지금은 손자 치아 관리까지 맡기고 있습니다."<br><br>
+
+                    • 환자 개개인의 히스토리 기억<br>
+                    • 생애 주기별 맞춤 관리<br>
+                    • 가족 구강 건강 통합 케어<br><br>
+
+                    한 번의 치료가 아닌,<br>
+                    평생의 관계를 만듭니다.
+                </div>
+                <div class="ad-reasoning">
+                    <h4>💡 이 광고 콘텐츠를 추천하는 이유</h4>
+                    <p>신뢰 관계 점수를 바탕으로 장기적 관계 형성을 강조합니다. 3대가 다니는 스토리로 신뢰성을 극대화하며, 가족 단위 고객 유치에 효과적입니다.</p>
+                </div>
+                <div class="ad-channels">
+                    <span class="channel-tag">네이버 블로그</span>
+                    <span class="channel-tag">지역 커뮤니티</span>
+                    <span class="channel-tag">페이스북</span>
+                </div>
+            </div>
+
+            <div class="ad-card">
+                <div class="ad-header">
+                    <div class="ad-title">광고 콘텐츠 #8: 원장 철학 전달</div>
+                    <div class="ad-actions">
+                        <button class="action-btn edit-btn" onclick="openEditModal(8)">✏️ 수정</button>
+                        <button class="cardnews-btn" onclick="openCardNews(8)">🎨 카드뉴스</button>
+                        <button class="action-btn" onclick="copyAd(8)">📋 복사</button>
+                        <button class="action-btn" onclick="downloadAd(8)">💾 저장</button>
+                    </div>
+                </div>
+                <div class="ad-content" data-content-type="trust" data-variant="2">
+                    "제 부모님께 하는 마음으로"<br><br>
+
+                    [치과명] [원장명] 원장의 진료 철학입니다.<br><br>
+
+                    "환자분을 볼 때마다 생각합니다.<br>
+                    이 분이 제 부모님이라면, 제 가족이라면,<br>
+                    어떤 치료를 권할 것인가?"<br><br>
+
+                    그래서 [치과명]은:<br>
+                    • 필요 없는 치료는 권하지 않습니다<br>
+                    • 더 저렴한 대안이 있다면 솔직히 말씀드립니다<br>
+                    • 치료 후에도 책임지고 관리합니다<br>
+                    • 환자의 평생 구강 건강을 생각합니다<br><br>
+
+                    "광고 콘텐츠보다 환자의 입소문이<br>
+                    저의 자부심입니다."
+                </div>
+                <div class="ad-reasoning">
+                    <h4>💡 이 광고 콘텐츠를 추천하는 이유</h4>
+                    <p>원장의 진솔한 철학을 직접 전달하여 인간적 신뢰를 형성합니다. 과잉진료 우려가 있는 잠재 고객에게 안심을 주고, 브랜드 정체성을 명확히 합니다.</p>
+                </div>
+                <div class="ad-channels">
+                    <span class="channel-tag">인스타그램</span>
+                    <span class="channel-tag">네이버 블로그</span>
+                    <span class="channel-tag">유튜브</span>
+                </div>
+            </div>
+
+            <div class="ad-card">
+                <div class="ad-header">
+                    <div class="ad-title">광고 콘텐츠 #9: 스토리텔링 - 환자의 여정</div>
+                    <div class="ad-actions">
+                        <button class="action-btn edit-btn" onclick="openEditModal(9)">✏️ 수정</button>
+                        <button class="cardnews-btn" onclick="openCardNews(9)">🎨 카드뉴스</button>
+                        <button class="action-btn" onclick="copyAd(9)">📋 복사</button>
+                        <button class="action-btn" onclick="downloadAd(9)">💾 저장</button>
+                    </div>
+                </div>
+                <div class="ad-content" id="storytelling-trust">
+                    <!-- 신뢰형 스토리텔링 콘텐츠가 동적으로 생성됩니다 -->
+                </div>
+                <div class="ad-reasoning">
+                    <h4>💡 이 광고 콘텐츠를 추천하는 이유</h4>
+                    <p>완전한 내러티브 구조(시작→갈등→해결→변화)로 구성된 스토리텔링 콘텐츠입니다. 환자의 실제 여정을 재현하여 깊은 감정적 연결을 만들고, 장문 콘텐츠가 효과적인 블로그, 유튜브 스크립트, 브랜드 스토리 등에 활용할 수 있습니다.</p>
+                </div>
+                <div class="ad-channels">
+                    <span class="channel-tag">네이버 블로그</span>
+                    <span class="channel-tag">유튜브</span>
+                    <span class="channel-tag">브랜드 스토리</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 카드뉴스 생성 안내 -->
+        <div class="bottom-actions" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin-bottom: 20px;">
+            <h3 style="color: white;">🎨 카드뉴스로 만들기</h3>
+            <p style="color: rgba(255,255,255,0.9);">
+                생성된 광고 콘텐츠를 바탕으로 SNS에 바로 사용할 수 있는<br>
+                5장 카드뉴스를 AI가 자동으로 생성해 드립니다.
+            </p>
+            <div class="button-group">
+                <a href="cardnews.html" target="_blank" class="primary-btn" style="background: white; color: #667eea; border: none;">📱 카드뉴스 생성하기 (새 창)</a>
+            </div>
+        </div>
+
+        <!-- Bottom Actions -->
+        <div class="bottom-actions">
+            <h3>다음 단계</h3>
+            <p>
+                생성된 광고 콘텐츠를 검토하고, 귀 치과에 맞게 수정하여 사용하세요.<br>
+                더 많은 전략이 필요하시면 새로운 케이스를 생성하거나,
+                이 결과를 저장하여 나중에 다시 확인할 수 있습니다.
+            </p>
+            <div class="button-group">
+                <button class="primary-btn" onclick="saveCase()">💾 이 결과 저장하기</button>
+                <a href="input.html" class="secondary-btn">🔄 새로운 케이스 생성</a>
+                <a href="cases.html" class="secondary-btn">📂 저장된 케이스 보기</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Marketing Engine -->
+    <script src="marketing-engine.js"></script>
+
+    <script>
+        // Load form data
+        let formData = {};
+        let marketingEngine = null;
+
+        /**
+         * 카드뉴스 생성기를 새 창에서 열고 해당 콘텐츠 데이터 전달
+         */
+        function openCardNews(adId) {
+            // 해당 광고 콘텐츠의 제목과 내용 가져오기
+            const adCard = event.target.closest('.ad-card');
+            if (!adCard) {
+                alert('콘텐츠를 찾을 수 없습니다.');
+                return;
+            }
+
+            const adTitle = adCard.querySelector('.ad-title')?.textContent || '';
+            const adContent = adCard.querySelector('.ad-content')?.textContent?.trim() || '';
+            const adReasoning = adCard.querySelector('.ad-reasoning p')?.textContent || '';
+
+            // 카드뉴스 생성기에 전달할 데이터 구성
+            const cardNewsData = {
+                fromAdContent: true,
+                adId: adId,
+                topic: adTitle,
+                mainMessage: adContent.substring(0, 300), // 최대 300자
+                businessName: formData.clinicName || formData.directorName + '치과' || '',
+                contactNumber: formData.phone || '',
+                domain: 'hospital',
+                targetAudience: '30대 직장인',
+                keywords: [],
+                tone: 'professional',
+                reasoning: adReasoning
+            };
+
+            // localStorage에 저장
+            localStorage.setItem('cardnews_prefill_data', JSON.stringify(cardNewsData));
+
+            // 새 창에서 카드뉴스 생성기 열기
+            window.open('cardnews.html', '_blank', 'width=1200,height=900');
+        }
+
+        function loadData() {
+            const data = localStorage.getItem('dentalFormData');
+            if (data) {
+                formData = JSON.parse(data);
+
+                // Initialize Marketing Engine
+                marketingEngine = new MarketingEngine();
+
+                // Check if this is a sample case
+                if (formData.sampleDescription) {
+                    showSampleInfo();
+                }
+
+                updateDisplay();
+                generateAllAdContents();
+
+                // Display existing profile number if available
+                if (formData.profileNumber) {
+                    displayProfileNumber(formData.profileNumber);
+                }
+
+                // Auto-save the case (중복 체크 포함)
+                saveCase(true);
+            } else {
+                // No data found, redirect to index page
+                alert('데이터가 없습니다. 먼저 정보를 입력해주세요.');
+                window.location.href = 'index.html';
+            }
+        }
+
+        /**
+         * 샘플 케이스 정보 표시
+         */
+        function showSampleInfo() {
+            // Show sample badge
+            document.getElementById('sampleBadge').style.display = 'block';
+
+            // Show input data card
+            document.getElementById('inputDataCard').style.display = 'block';
+
+            // Populate input data
+            document.getElementById('inputClinicName').textContent = formData.clinicName || '-';
+            document.getElementById('inputLocation').textContent = formData.location || '-';
+            document.getElementById('inputSpecialty').textContent = formData.specialty || '-';
+
+            // Revenue & Style
+            const revenueText1 = getStageText(formData.revenueStage1);
+            const revenueText2 = formData.revenueStage2 ? getStageText(formData.revenueStage2) : '';
+            document.getElementById('inputRevenue').innerHTML = revenueText2
+                ? `1순위: ${revenueText1}<br>2순위: ${revenueText2}`
+                : revenueText1;
+
+            const styleText1 = getStyleText(formData.directorStyle1);
+            const styleText2 = formData.directorStyle2 ? getStyleText(formData.directorStyle2) : '';
+            document.getElementById('inputStyle').innerHTML = styleText2
+                ? `1순위: ${styleText1}<br>2순위: ${styleText2}`
+                : styleText1;
+
+            // Trust scores
+            document.getElementById('inputEmpathy').textContent = formData.empathy || '50';
+            document.getElementById('inputUnderstanding').textContent = formData.understanding || '50';
+            document.getElementById('inputDecision').textContent = formData.decision || '50';
+            document.getElementById('inputValue').textContent = formData.value || '50';
+            document.getElementById('inputTrust').textContent = formData.trust || '50';
+            document.getElementById('inputSpace').textContent = formData.space || '50';
+
+            // Philosophy & Differentiation
+            document.getElementById('inputPhilosophy').textContent = formData.philosophy || '-';
+            document.getElementById('inputDifferentiation').textContent = formData.differentiation || '-';
+        }
+
+        /**
+         * 마케팅 엔진을 사용하여 모든 광고 콘텐츠 생성
+         */
+        function generateAllAdContents(length = 'basic', permissionLevel = 'L3') {
+            console.log('=== generateAllAdContents called ===');
+            console.log('Length:', length, 'Permission Level:', permissionLevel);
+
+            // Select only ad-content elements that have data-content-type (excludes storytelling)
+            const adContents = document.querySelectorAll('.ad-content[data-content-type]');
+
+            console.log('Found', adContents.length, 'ad-content elements with data-content-type');
+
+            adContents.forEach((adContent, index) => {
+                // Read content type and variant from data attributes
+                const type = adContent.getAttribute('data-content-type');
+                const variant = parseInt(adContent.getAttribute('data-variant')) || 1;
+
+                if (type) {
+                    const context = {
+                        contentType: type,
+                        variant: variant, // Add variant to context
+                        revenueStage: formData.revenueStage1 || '3',
+                        directorStyle: formData.directorStyle1 || 'E',
+                        trustScores: {
+                            empathy: parseInt(formData.empathy) || 50,
+                            understanding: parseInt(formData.understanding) || 50,
+                            decision: parseInt(formData.decision) || 50,
+                            value: parseInt(formData.value) || 50,
+                            trust: parseInt(formData.trust) || 50,
+                            space: parseInt(formData.space) || 50
+                        },
+                        clinicName: formData.clinicName || '치과',
+                        directorName: formData.directorName || '원장',
+                        location: formData.location || '지역',
+                        philosophy: formData.philosophy || '',
+                        differentiation: formData.differentiation || '',
+                        length: length,
+                        permissionLevel: permissionLevel
+                    };
+
+                    console.log(`Generating content #${index + 1} for ${type} with permission ${permissionLevel}`);
+
+                    // Generate title using clinic name + director name
+                    const title = marketingEngine.generateAdTitle(
+                        context.clinicName,
+                        context.directorName,
+                        type,
+                        permissionLevel
+                    );
+
+                    let contentResult = marketingEngine.generateIntegratedContent(context);
+                    let content = contentResult.content || contentResult; // content 속성이 있으면 사용, 없으면 전체 사용
+
+                    // 길이에 따른 추가 확장
+                    if (length === 'medium') {
+                        content = expandContentToMedium(content, context);
+                    } else if (length === 'long') {
+                        content = expandContentToLong(content, context);
+                    }
+
+                    // Prepend title above the Hook
+                    const fullContent = `<div style="text-align: center; margin-bottom: 25px; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px;">
+    <strong style="font-size: 22px; color: white; line-height: 1.4;">${title}</strong>
+</div>
+<br>
+${content}`;
+
+                    adContent.innerHTML = fullContent;
+                }
+            });
+
+            // Generate storytelling content
+            console.log('Generating storytelling content...');
+            generateStorytellingContent(length, permissionLevel);
+        }
+
+        /**
+         * 스토리텔링 콘텐츠 생성 - 모든 탭에 대해
+         */
+        function generateStorytellingContent(length = 'basic', permissionLevel = 'L3') {
+            const contentTypes = ['empathy', 'understanding', 'decision', 'value', 'trust'];
+
+            const trustScores = {
+                empathy: parseInt(formData.empathy) || 50,
+                understanding: parseInt(formData.understanding) || 50,
+                decision: parseInt(formData.decision) || 50,
+                value: parseInt(formData.value) || 50,
+                trust: parseInt(formData.trust) || 50,
+                space: parseInt(formData.space) || 50
+            };
+
+            // 각 탭별로 스토리텔링 콘텐츠 생성
+            contentTypes.forEach(contentType => {
+                const elementId = `storytelling-${contentType}`;
+                const storytellingElement = document.getElementById(elementId);
+
+                if (!storytellingElement) return;
+
+                const context = {
+                    contentType: contentType,
+                    revenueStage: formData.revenueStage1 || '3',
+                    directorStyle: formData.directorStyle1 || 'E',
+                    trustScores: trustScores,
+                    clinicName: formData.clinicName || '우리 치과',
+                    directorName: formData.directorName || '원장',
+                    location: formData.location || '이 지역',
+                    philosophy: formData.philosophy || '환자 중심의 진료를 추구합니다.',
+                    differentiation: formData.differentiation || '',
+                    length: length,
+                    permissionLevel: permissionLevel
+                };
+
+                // Generate title for storytelling
+                const storyTitle = marketingEngine.generateAdTitle(
+                    context.clinicName,
+                    context.directorName,
+                    contentType,
+                    permissionLevel
+                );
+
+                // Generate storytelling content
+                let storyContent = marketingEngine.generateStorytelling(context);
+
+                // Prepend title to storytelling content
+                storyContent = `<div style="text-align: center; margin-bottom: 25px; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px;">
+    <strong style="font-size: 22px; color: white; line-height: 1.4;">${storyTitle}</strong>
+</div>
+<br>
+${storyContent}`;
+
+                // For medium and long, add usage tips
+                if (length === 'medium') {
+                    storyContent += `<br><br><div style="padding: 15px; background: #f8f9fa; border-radius: 8px; font-size: 14px; color: #666;">`;
+                    storyContent += `<strong>💡 활용 팁:</strong> 이 스토리를 블로그 포스트나 유튜브 영상 스크립트로 활용하세요. `;
+                    storyContent += `환자의 감정 변화에 초점을 맞추면 더욱 공감을 얻을 수 있습니다.`;
+                    storyContent += `</div>`;
+                } else if (length === 'long') {
+                    storyContent += `<br><br><div style="padding: 15px; background: #f8f9fa; border-radius: 8px; font-size: 14px; color: #666;">`;
+                    storyContent += `<strong>💡 활용 팁:</strong> 이 스토리를 브랜드 스토리나 홈페이지 소개 페이지에 활용하세요. `;
+                    storyContent += `실제 환자의 사진이나 영상과 함께 제시하면 신뢰도가 더욱 높아집니다.<br><br>`;
+                    storyContent += `<strong>📹 영상 제작 시:</strong><br>`;
+                    storyContent += `• 도입부(0-30초): 캐릭터 소개 및 문제 제시<br>`;
+                    storyContent += `• 전개부(30초-2분): 갈등과 고민의 과정<br>`;
+                    storyContent += `• 절정부(2-3분): 치과와의 만남, 해결 과정<br>`;
+                    storyContent += `• 결말부(3-4분): 변화와 현재 상태<br>`;
+                    storyContent += `• 마무리(4-5분): 메시지와 행동 유도`;
+                    storyContent += `</div>`;
+                }
+
+                storytellingElement.innerHTML = storyContent;
+            });
+        }
+
+        /**
+         * 중문으로 확장
+         */
+        function expandContentToMedium(baseContent, context) {
+            const additionalContent = `<br><br>
+
+<strong style="color: #667eea;">【 추가 상세 내용 】</strong><br><br>
+
+저희 ${context.clinicName}은 단순히 치료만 제공하는 곳이 아닙니다.<br>
+환자분의 전체적인 구강 건강과 삶의 질 향상을 목표로 합니다.<br><br>
+
+<strong>■ 차별화 포인트</strong><br>
+${context.differentiation || '• 최신 장비를 활용한 정밀 진단<br>• 환자 맞춤형 치료 계획 수립<br>• 치료 후 지속적인 사후 관리<br>• 편안한 진료 환경 제공'}<br><br>
+
+<strong>■ 환자 중심 철학</strong><br>
+${context.philosophy || '"처음 방문했을 때부터 달랐어요. 단순히 아픈 곳만 치료하는 게 아니라, 전체적인 구강 상태를 체크하고, 앞으로의 관리 방법까지 알려주셨습니다."'}<br><br>
+
+환자분의 만족이 저희의 자부심입니다.`;
+
+            return baseContent + additionalContent;
+        }
+
+        /**
+         * 장문으로 확장
+         */
+        function expandContentToLong(baseContent, context) {
+            const mediumContent = expandContentToMedium(baseContent, context);
+
+            const longAdditional = `<br><br>
+
+<strong style="color: #667eea;">【 체계적인 진료 시스템 】</strong><br><br>
+
+<strong>1. 첨단 진단 시스템</strong><br>
+   • 3D CT 촬영으로 정밀 진단<br>
+   • AI 기반 치아 상태 분석<br>
+   • 구강 내 카메라로 실시간 확인<br>
+   • 디지털 진단 시스템<br><br>
+
+<strong>2. 5단계 상담 프로세스</strong><br>
+   • 1단계 <strong>공감</strong>: 환자의 고민과 불안을 깊이 이해<br>
+   • 2단계 <strong>이해</strong>: 정밀 검진 결과를 쉽게 설명<br>
+   • 3단계 <strong>결정</strong>: 여러 치료 옵션 제시 및 선택 지원<br>
+   • 4단계 <strong>가치</strong>: 장기적 가치와 효과 설명<br>
+   • 5단계 <strong>신뢰</strong>: 지속적인 관계 구축<br><br>
+
+<strong>3. 안전한 치료 환경</strong><br>
+   • 철저한 멸균 시스템<br>
+   • 1회용 기구 사용 원칙<br>
+   • 감염 관리 프로토콜 준수<br>
+   • 최신 안전 장비 구비<br><br>
+
+<strong style="color: #667eea;">【 실제 환자 사례 】</strong><br><br>
+
+"30대 직장인 A씨의 경우, 치과 공포증으로 10년간 치과를 방문하지 못했습니다.<br>
+저희 치과를 처음 방문했을 때도 매우 긴장한 상태였죠.<br><br>
+
+<strong>첫 방문</strong>에서는 치료를 강요하지 않고, 단순히 상담만 진행했습니다.<br>
+환자의 불안 요인을 파악하고, 치료 과정을 상세히 설명했습니다.<br><br>
+
+<strong>두 번째 방문</strong>에서는 간단한 스케일링만 진행하며,<br>
+치과 치료가 두렵지 않다는 것을 경험하게 했습니다.<br><br>
+
+<strong>현재</strong> A씨는 필요한 모든 치료를 완료하고,<br>
+3개월마다 정기 검진을 받으러 오고 계십니다."<br><br>
+
+<strong style="color: #667eea;">【 평생 케어 시스템 】</strong><br><br>
+
+• <strong>치료 후 1주일</strong>: 상태 확인 전화<br>
+• <strong>치료 후 1개월</strong>: 경과 관찰 검진<br>
+• <strong>3개월마다</strong>: 정기 검진 안내<br>
+• <strong>1년마다</strong>: 종합 구강 검진<br>
+• <strong>평생</strong>: A/S 및 관리 프로그램<br><br>
+
+<strong style="color: #667eea;">【 환자분께 드리는 약속 】</strong><br><br>
+
+1. <strong>과잉 진료는 절대 하지 않습니다</strong><br>
+2. <strong>투명한 비용 안내</strong>를 원칙으로 합니다<br>
+3. <strong>치료 후에도 지속적으로 관리</strong>합니다<br>
+4. <strong>환자의 의견을 최우선</strong>으로 존중합니다<br>
+5. <strong>평생 파트너</strong>로 함께합니다<br><br>
+
+<em style="color: #666;">"저희 ${context.clinicName}을 찾아주시는 모든 분들이<br>
+건강한 미소를 되찾으실 수 있도록,<br>
+항상 최선을 다하겠습니다."</em><br><br>
+
+<strong>- ${context.clinicName} 전체 직원 일동</strong>`;
+
+            return mediumContent + longAdditional;
+        }
+
+        function updateDisplay() {
+            // Update clinic name
+            if (formData.clinicName) {
+                document.getElementById('clinicName').textContent = formData.clinicName + ' - 귀원의 상황과 목표에 적합한 맞춤식 광고 콘텐츠를 제공합니다!';
+            }
+
+            // Calculate permission level
+            const avgTrust = calculateAvgTrust();
+            const level = calculatePermissionLevel(avgTrust);
+            document.getElementById('permissionLevel').textContent = `광고 콘텐츠 허용 레벨: ${level}`;
+
+            // Update diagnosis text
+            const stageText1 = getStageText(formData.revenueStage1);
+            const stageText2 = formData.revenueStage2 ? getStageText(formData.revenueStage2) : null;
+            const styleText1 = getStyleText(formData.directorStyle1);
+            const styleText2 = formData.directorStyle2 ? getStyleText(formData.directorStyle2) : null;
+
+            let diagnosisHTML = `
+                귀 치과는 현재 <strong>${stageText1}</strong> 단계를 주 단계로`;
+
+            if (stageText2) {
+                diagnosisHTML += `, <strong>${stageText2}</strong>를 보조 단계로`;
+            }
+
+            diagnosisHTML += ` 가지고 있으며,
+                <strong>평균 신뢰 점수 ${avgTrust}점</strong>으로
+                ${level === 'L0' || level === 'L1' ? '신뢰 구축에 집중해야 하는' : '안정적인 광고 콘텐츠 전략을 구사할 수 있는'} 단계입니다.
+                ${styleText1}의 원장 스타일을 주 유형으로`;
+
+            if (styleText2) {
+                diagnosisHTML += `, ${styleText2}을 보조 유형으로`;
+            }
+
+            diagnosisHTML += ` 가지고 계시며,
+                ${getRecommendation(formData.directorStyle1)}
+            `;
+
+            document.getElementById('diagnosisText').innerHTML = diagnosisHTML;
+        }
+
+        function calculateAvgTrust() {
+            const scores = [
+                parseInt(formData.empathy) || 50,
+                parseInt(formData.understanding) || 50,
+                parseInt(formData.decision) || 50,
+                parseInt(formData.value) || 50,
+                parseInt(formData.trust) || 50,
+                parseInt(formData.space) || 50
+            ];
+            return Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+        }
+
+        function calculatePermissionLevel(avgTrust) {
+            if (avgTrust < 30) return 'L0';
+            if (avgTrust < 45) return 'L1';
+            if (avgTrust < 60) return 'L2';
+            if (avgTrust < 75) return 'L3';
+            if (avgTrust < 90) return 'L4';
+            return 'L5';
+        }
+
+        function getStageText(stage) {
+            const stages = {
+                '1': '1형 - 수익 정체·감소',
+                '2': '2형 - 수익 유지·불안정',
+                '3': '3형 - 원장 과부하',
+                '4': '4형 - 수익 안정·확장 준비',
+                '5': '5형 - 고수익·브랜드형'
+            };
+            return stages[stage] || '3형 - 원장 과부하';
+        }
+
+        function getStyleText(style) {
+            const styles = {
+                'A': 'A형 - 결단·속도형',
+                'B': 'B형 - 구조·안정형',
+                'C': 'C형 - 팀·교육형',
+                'D': 'D형 - 수익·경영형',
+                'E': 'E형 - 환자·신뢰형'
+            };
+            return styles[style] || 'E형 - 환자·신뢰형';
+        }
+
+        function getRecommendation(style) {
+            const recommendations = {
+                'A': '빠른 결정과 실행력을 강조한 마케팅이 효과적입니다.',
+                'B': '체계적이고 안정적인 진료 시스템을 강조한 마케팅이 효과적입니다.',
+                'C': '팀워크와 전문 교육을 받은 스태프를 강조한 마케팅이 효과적입니다.',
+                'D': '효율적인 진료와 합리적인 가격을 강조한 마케팅이 효과적입니다.',
+                'E': '환자와의 신뢰 관계 구축에 집중한 마케팅이 효과적입니다.'
+            };
+            return recommendations[style] || '환자와의 신뢰 관계 구축에 집중한 마케팅이 효과적입니다.';
+        }
+
+        // Tab switching
+        function switchTab(index) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+
+            tabs[index].classList.add('active');
+            contents[index].classList.add('active');
+        }
+
+        // Content length settings
+        let currentContentLength = 'basic';
+        let currentPermissionLevel = 'L3'; // 기본값
+
+        // Set content length
+        function setContentLength(length, evt) {
+            currentContentLength = length;
+
+            // Update button states - only for length buttons (first 3 buttons)
+            const allButtons = document.querySelectorAll('.length-btn');
+            const lengthButtons = Array.from(allButtons).slice(0, 3); // First 3 length buttons
+            lengthButtons.forEach(btn => btn.classList.remove('active'));
+
+            if (evt && evt.currentTarget) {
+                evt.currentTarget.classList.add('active');
+            }
+
+            // Regenerate all contents with new length and permission level
+            console.log('Regenerating content with length:', length);
+            generateAllAdContents(length, currentPermissionLevel);
+        }
+
+        // Set permission level
+        function setPermissionLevel(level, evt) {
+            currentPermissionLevel = level;
+
+            // Update button states - only for permission level buttons (second control group)
+            const allButtons = document.querySelectorAll('.length-btn');
+            const permissionButtons = Array.from(allButtons).slice(3); // Skip first 3 length buttons
+            permissionButtons.forEach(btn => btn.classList.remove('active'));
+
+            if (evt && evt.currentTarget) {
+                evt.currentTarget.classList.add('active');
+            }
+
+            // Update the display level
+            document.getElementById('permissionLevel').textContent = `광고 콘텐츠 허용 레벨: ${level}`;
+
+            // Regenerate all contents with current length and new permission level
+            console.log('Regenerating content with permission level:', level);
+            generateAllAdContents(currentContentLength, level);
+        }
+
+        // Copy ad
+        function copyAd(adNumber) {
+            const contents = document.querySelectorAll('.ad-content');
+            const content = contents[adNumber - 1].textContent.trim();
+
+            navigator.clipboard.writeText(content).then(() => {
+                alert('광고 콘텐츠 문구가 클립보드에 복사되었습니다!');
+            }).catch(err => {
+                console.error('복사 실패:', err);
+                alert('복사에 실패했습니다. 다시 시도해주세요.');
+            });
+        }
+
+        // Download ad
+        function downloadAd(adNumber) {
+            const contents = document.querySelectorAll('.ad-content');
+            const content = contents[adNumber - 1].textContent.trim();
+
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `광고 콘텐츠_${adNumber}_${formData.clinicName || '치과'}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Save case
+        function saveCase(autoSave = false) {
+            // Get existing cases
+            const cases = JSON.parse(localStorage.getItem('dentalCases') || '[]');
+
+            // Check if this case already exists (avoid duplicates)
+            const existingIndex = cases.findIndex(c =>
+                c.clinicName === formData.clinicName &&
+                c.directorName === formData.directorName &&
+                c.createdAt === formData.createdAt
+            );
+
+            if (existingIndex !== -1) {
+                // Already saved, skip - but show the profile number
+                if (!autoSave) {
+                    alert('이미 저장된 케이스입니다!');
+                }
+                // Display existing profile number
+                displayProfileNumber(cases[existingIndex].profileNumber);
+                return;
+            }
+
+            // Add current case
+            formData.savedAt = new Date().toISOString();
+            formData.id = Date.now();
+
+            // Assign profile number based on creation date order
+            // Get all cases sorted by creation date (oldest first)
+            const sortedByCreation = [...cases].sort((a, b) =>
+                new Date(a.savedAt || a.createdAt) - new Date(b.savedAt || b.createdAt)
+            );
+
+            // Calculate new profile number
+            const newProfileNumber = String(sortedByCreation.length + 1).padStart(4, '0');
+            formData.profileNumber = newProfileNumber;
+
+            cases.push(formData);
+
+            // Reassign all profile numbers to maintain consistency
+            const allSortedCases = [...cases].sort((a, b) =>
+                new Date(a.savedAt || a.createdAt) - new Date(b.savedAt || b.createdAt)
+            );
+
+            allSortedCases.forEach((profile, index) => {
+                profile.profileNumber = String(index + 1).padStart(4, '0');
+            });
+
+            // Save back to localStorage
+            localStorage.setItem('dentalCases', JSON.stringify(cases));
+
+            // Display the profile number
+            displayProfileNumber(formData.profileNumber);
+
+            if (!autoSave) {
+                alert(`케이스가 저장되었습니다!\n프로필 번호: #${formData.profileNumber}`);
+            }
+        }
+
+        // Display profile number
+        function displayProfileNumber(profileNumber) {
+            const profileNumberElement = document.getElementById('profileNumber');
+            if (profileNumberElement && profileNumber) {
+                profileNumberElement.textContent = `프로필 번호: #${profileNumber}`;
+                profileNumberElement.style.display = 'inline-block';
+            }
+        }
+
+        // Initialize
+        loadData();
+
+        // Set initial permission level button as active
+        window.addEventListener('DOMContentLoaded', function() {
+            const allButtons = document.querySelectorAll('.length-btn');
+            const permissionButtons = Array.from(allButtons).slice(3); // Skip first 3 length buttons
+            // L3 is the 4th permission button (index 3 in permissionButtons array)
+            if (permissionButtons[3]) {
+                permissionButtons[3].classList.add('active');
+            }
+        });
+
+        // ============================================
+        // Edit Functionality
+        // ============================================
+
+        // Store which ad is being edited
+        let currentEditingAdId = null;
+
+        /**
+         * Opens the edit modal for a specific ad
+         * @param {string|number} adId - The ID of the ad being edited
+         */
+        function openEditModal(adId) {
+            currentEditingAdId = adId;
+            const modal = document.getElementById('editModal');
+            const textarea = document.getElementById('editRequest');
+
+            // Clear previous input
+            textarea.value = '';
+
+            // Show modal with animation
+            modal.style.display = 'flex';
+
+            // Focus on textarea
+            setTimeout(() => {
+                textarea.focus();
+            }, 100);
+        }
+
+        /**
+         * Closes the edit modal and clears the textarea
+         */
+        function closeEditModal() {
+            const modal = document.getElementById('editModal');
+            const textarea = document.getElementById('editRequest');
+
+            // Hide modal
+            modal.style.display = 'none';
+
+            // Clear input
+            textarea.value = '';
+
+            // Reset editing ad ID
+            currentEditingAdId = null;
+        }
+
+        /**
+         * Submits the edit request and regenerates the ad content
+         */
+        function submitEdit() {
+            const editRequest = document.getElementById('editRequest').value.trim();
+
+            // Validate input
+            if (!editRequest) {
+                alert('수정 요청사항을 입력해주세요.');
+                return;
+            }
+
+            if (!currentEditingAdId) {
+                alert('오류: 편집 중인 광고를 찾을 수 없습니다.');
+                closeEditModal();
+                return;
+            }
+
+            try {
+                // Find the ad card being edited
+                let adElement = null;
+                let contentElement = null;
+
+                // Try to find by storytelling ID first
+                if (typeof currentEditingAdId === 'number') {
+                    // Check if it's a storytelling ad
+                    const storytellingIds = {
+                        3: 'storytelling-empathy',
+                        4: 'storytelling-understanding',
+                        5: 'storytelling-decision',
+                        7: 'storytelling-value',
+                        9: 'storytelling-trust'
+                    };
+
+                    if (storytellingIds[currentEditingAdId]) {
+                        contentElement = document.getElementById(storytellingIds[currentEditingAdId]);
+                    }
+                }
+
+                // If not storytelling, find by data attributes or ID
+                if (!contentElement) {
+                    // Find all ad-content elements
+                    const allAdContents = document.querySelectorAll('.ad-content');
+
+                    // Try to match based on currentEditingAdId
+                    for (let el of allAdContents) {
+                        const parentCard = el.closest('.ad-card');
+                        if (!parentCard) continue;
+
+                        // Check if this is the right ad by looking at action buttons
+                        const buttons = parentCard.querySelectorAll('.action-btn');
+                        for (let btn of buttons) {
+                            const onclick = btn.getAttribute('onclick');
+                            if (onclick && onclick.includes(currentEditingAdId)) {
+                                contentElement = el;
+                                break;
+                            }
+                        }
+
+                        if (contentElement) break;
+                    }
+                }
+
+                if (!contentElement) {
+                    alert('오류: 광고 콘텐츠를 찾을 수 없습니다.');
+                    closeEditModal();
+                    return;
+                }
+
+                // Get current content
+                const currentContent = contentElement.innerHTML;
+
+                // Extract context from the element
+                const contentType = contentElement.getAttribute('data-content-type');
+                const variant = parseInt(contentElement.getAttribute('data-variant')) || 1;
+
+                // Get current settings
+                const activeLength = document.querySelector('.length-btn.active[onclick*="changeContentLength"]');
+                const activePermission = document.querySelector('.length-btn.active[onclick*="changePermissionLevel"]');
+
+                const contentLength = activeLength ? activeLength.textContent.includes('기본형') ? 'basic' :
+                                                    activeLength.textContent.includes('중간형') ? 'medium' : 'long' : 'basic';
+                const permissionLevel = activePermission ? activePermission.textContent.trim() : 'L3';
+
+                // For storytelling content, regenerate with edit instructions
+                if (contentElement.id && contentElement.id.includes('storytelling')) {
+                    const type = contentElement.id.replace('storytelling-', '');
+
+                    const context = {
+                        contentType: type,
+                        contentLength: contentLength,
+                        permissionLevel: permissionLevel,
+                        clinicName: formData.clinicName || '치과',
+                        directorName: formData.directorName || '원장',
+                        location: formData.location || '지역',
+                        specialty: formData.specialty || '일반진료',
+                        philosophy: formData.philosophy || '',
+                        differentiation: formData.differentiation || '',
+                        editInstructions: editRequest  // Add edit instructions
+                    };
+
+                    // Generate new storytelling content
+                    const newContent = marketingEngine.generateStorytelling(context);
+
+                    // Add edit instructions box if present
+                    let editBox = '';
+                    if (editRequest) {
+                        editBox = `<div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(240, 147, 251, 0.3);">
+        <div style="display: flex; align-items: center; margin-bottom: 12px;">
+            <span style="font-size: 20px; margin-right: 8px;">✏️</span>
+            <strong style="color: white; font-size: 18px;">반영된 수정사항</strong>
+        </div>
+        <div style="background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 8px; color: #333; line-height: 1.6; font-size: 15px;">
+            ${editRequest.replace(/\n/g, '<br>')}
+        </div>
+        <div style="margin-top: 10px; font-size: 13px; color: rgba(255, 255, 255, 0.9); font-style: italic;">
+            💡 이 수정사항을 참고하여 콘텐츠를 활용하시면 더욱 효과적입니다.
+        </div>
+    </div>`;
+                    }
+
+                    contentElement.innerHTML = editBox + newContent;
+
+                } else if (contentType) {
+                    // Regular ad content
+                    const context = {
+                        contentType: contentType,
+                        variant: variant,
+                        contentLength: contentLength,
+                        permissionLevel: permissionLevel,
+                        clinicName: formData.clinicName || '치과',
+                        directorName: formData.directorName || '원장',
+                        location: formData.location || '지역',
+                        specialty: formData.specialty || '일반진료',
+                        philosophy: formData.philosophy || '',
+                        differentiation: formData.differentiation || '',
+                        revenueStage: formData.revenueStage1 || '3',
+                        directorStyle: formData.directorStyle1 || 'C',
+                        trustScores: {
+                            empathy: parseInt(formData.empathy) || 50,
+                            understanding: parseInt(formData.understanding) || 50,
+                            decision: parseInt(formData.decision) || 50,
+                            value: parseInt(formData.value) || 50,
+                            trust: parseInt(formData.trust) || 50,
+                            space: parseInt(formData.space) || 50
+                        },
+                        length: contentLength,
+                        editInstructions: editRequest  // Add edit instructions
+                    };
+
+                    // Generate content using marketing engine
+                    const contentResult = marketingEngine.generateIntegratedContent(context);
+                    const content = contentResult.content || contentResult; // content 속성이 있으면 사용, 없으면 전체 사용
+
+                    // Generate title
+                    const title = marketingEngine.generateAdTitle(
+                        context.clinicName,
+                        context.directorName,
+                        contentType,
+                        permissionLevel
+                    );
+
+                    // Expand content based on length
+                    let finalContent = content;
+                    if (contentLength === 'medium') {
+                        finalContent = expandContentToMedium(content, context);
+                    } else if (contentLength === 'long') {
+                        finalContent = expandContentToLong(content, context);
+                    }
+
+                    // Add edit instructions box if present
+                    let editBox = '';
+                    if (editRequest) {
+                        editBox = `<div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(240, 147, 251, 0.3);">
+        <div style="display: flex; align-items: center; margin-bottom: 12px;">
+            <span style="font-size: 20px; margin-right: 8px;">✏️</span>
+            <strong style="color: white; font-size: 18px;">반영된 수정사항</strong>
+        </div>
+        <div style="background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 8px; color: #333; line-height: 1.6; font-size: 15px;">
+            ${editRequest.replace(/\n/g, '<br>')}
+        </div>
+        <div style="margin-top: 10px; font-size: 13px; color: rgba(255, 255, 255, 0.9); font-style: italic;">
+            💡 이 수정사항을 참고하여 콘텐츠를 활용하시면 더욱 효과적입니다.
+        </div>
+    </div>`;
+                    }
+
+                    // Add title and update
+                    const fullContent = `${editBox}<div style="text-align: center; margin-bottom: 25px; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px;">
+        <strong style="font-size: 22px; color: white; line-height: 1.4;">${title}</strong>
+    </div>
+    <br>
+    ${finalContent}`;
+
+                    contentElement.innerHTML = fullContent;
+                }
+
+                // Close modal
+                closeEditModal();
+
+                // Show success message
+                alert('✅ 광고 콘텐츠가 수정되었습니다!');
+
+                // Scroll to the updated ad
+                contentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            } catch (error) {
+                console.error('Edit error:', error);
+                alert('오류가 발생했습니다: ' + error.message);
+                closeEditModal();
+            }
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target === modal) {
+                closeEditModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modal = document.getElementById('editModal');
+                if (modal.style.display === 'flex') {
+                    closeEditModal();
+                }
+            }
+        });
+    </script>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✏️ 광고 콘텐츠 수정</h2>
+                <span class="modal-close" onclick="closeEditModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p style="color: #666; margin-bottom: 20px; line-height: 1.6;">
+                    추가하거나 변경하고 싶은 내용, 또는 다른 지시사항을 자유롭게 입력하세요.<br>
+                    예: "더 친근한 톤으로 바꿔주세요", "50대 여성 환자를 타겟으로 수정", "가격 정보 추가" 등
+                </p>
+                <textarea id="editRequest" placeholder="수정 요청사항을 입력하세요...&#10;&#10;예시:&#10;- 더 전문적인 톤으로 수정해주세요&#10;- 임플란트에 대한 설명을 추가해주세요&#10;- 할인 이벤트 문구를 넣어주세요" rows="8"></textarea>
+                <div class="modal-warning">
+                    <strong>💡 팁:</strong> 구체적으로 요청할수록 더 정확한 결과를 얻을 수 있습니다.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn cancel-btn" onclick="closeEditModal()">취소</button>
+                <button class="modal-btn submit-btn" onclick="submitEdit()">수정 적용</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-title">심재우 대표</div>
+            <div class="footer-info">
+                <div class="footer-info-item">
+                    <span class="footer-info-icon">📞</span>
+                    <a href="tel:01023975734" class="footer-link">010-2397-5734</a>
+                </div>
+                <div class="footer-info-item">
+                    <span class="footer-info-icon">📧</span>
+                    <a href="mailto:jaiwshim@gmail.com" class="footer-link">jaiwshim@gmail.com</a>
+                </div>
+            </div>
+            <div class="footer-brand">덴탈 클리닉 파인더</div>
+            <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <a href="user-guide.html" class="footer-admin-btn">📖 사용자 가이드</a>
+                <a href="admin-dashboard.html" class="footer-admin-btn">🎛️ 관리자 대시보드</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

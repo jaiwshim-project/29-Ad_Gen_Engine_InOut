@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마케팅 엔진 원리 - 기술 문서</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
+            background: #f5f7fa;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header .subtitle {
+            font-size: 1.3em;
+            opacity: 0.95;
+            margin-bottom: 20px;
+        }
+
+        .back-link {
+            display: inline-block;
+            padding: 12px 30px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .pdf-button {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #f44336;
+            border: 2px solid #f44336;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-left: 15px;
+        }
+
+        .pdf-button:hover {
+            background: #d32f2f;
+            border-color: #d32f2f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+        }
+
+        .pdf-button:active {
+            transform: translateY(0);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: -40px auto 30px;
+            padding: 0 20px;
+        }
+
+        .overview-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        }
+
+        .section-title {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 4px solid #667eea;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-subtitle {
+            font-size: 1.5em;
+            color: #667eea;
+            margin: 20px 0 15px;
+            font-weight: 700;
+        }
+
+        .diagram {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 15px;
+            margin: 15px 0;
+            border: 2px solid #e0e0e0;
+        }
+
+        .diagram pre {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: auto;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            line-height: 1.6;
+        }
+
+        .code-block .comment {
+            color: #6a9955;
+        }
+
+        .code-block .keyword {
+            color: #569cd6;
+        }
+
+        .code-block .function {
+            color: #dcdcaa;
+        }
+
+        .code-block .string {
+            color: #ce9178;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 5px solid #2196f3;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .info-box h3 {
+            color: #1565c0;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .warning-box {
+            background: #fff3e0;
+            border-left: 5px solid #ff9800;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .warning-box h3 {
+            color: #e65100;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .success-box {
+            background: #e8f5e9;
+            border-left: 5px solid #4caf50;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .success-box h3 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tr:hover {
+            background: #f8f9ff;
+        }
+
+        .layer-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 12px 0;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .layer-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .stage-flow {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .stage-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .stage-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .stage-box h3 {
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .stage-box ul {
+            list-style: none;
+            text-align: left;
+        }
+
+        .stage-box li {
+            margin: 8px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .stage-box li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+        }
+
+        .theory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .theory-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-top: 4px solid #667eea;
+        }
+
+        .theory-card h4 {
+            color: #667eea;
+            margin-bottom: 12px;
+            font-size: 1.3em;
+        }
+
+        .theory-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .theory-card li {
+            padding: 6px 0;
+            color: #555;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .theory-card li:last-child {
+            border-bottom: none;
+        }
+
+        ul, ol {
+            margin: 10px 0 10px 25px;
+        }
+
+        li {
+            margin: 6px 0;
+            color: #555;
+        }
+
+        .highlight {
+            background: #fff9c4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+
+        .architecture-diagram {
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            margin: 15px 0;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .header .subtitle {
+                font-size: 1.1em;
+            }
+
+            .content-card {
+                padding: 25px;
+            }
+
+            .section-title {
+                font-size: 1.5em;
+            }
+
+            .stage-flow {
+                grid-template-columns: 1fr;
+            }
+
+            .theory-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>⚙️ 마케팅 엔진 원리</h1>
+        <p class="subtitle">신뢰 기반 콘텐츠 자동 생성 시스템의 구조와 작동 원리</p>
+        <div>
+            <a href="admin-dashboard.html" class="back-link">← 관리자 대시보드로 돌아가기</a>
+            <button onclick="downloadPDF()" class="pdf-button">📄 PDF 다운로드</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 시스템 개요 -->
+        <div class="overview-card">
+            <h2 style="font-size: 2em; color: #667eea; margin-bottom: 20px;">📌 시스템 개요</h2>
+            <p style="font-size: 1.1em; line-height: 1.8; color: #555; margin-bottom: 20px;">
+                본 마케팅 엔진은 <strong>신뢰를 훼손하지 않으면서도 효과적인 마케팅 콘텐츠를 자동 생성</strong>하는 시스템입니다.
+                단순한 템플릿 기반 생성이 아닌, <span class="highlight">병원의 신뢰 단계(STAGE)</span>에 따라
+                <span class="highlight">사용 가능한 언어와 구조를 동적으로 조절</span>합니다.
+            </p>
+            <div class="diagram">
+                <pre>
+┌─────────────────────────────────────────────────────────────┐
+│              덴탈클리닉파인더 마케팅 엔진 v1.0                │
+│                                                             │
+│  입력: 진단 결과 (STAGE, 점수) + 채널 + 주제                  │
+│  출력: 신뢰 기반 최적화된 콘텐츠                              │
+│                                                             │
+│  핵심 원리: 말할 수 있는 자격을 관리하는 엔진                  │
+└─────────────────────────────────────────────────────────────┘
+                </pre>
+            </div>
+        </div>
+
+        <!-- 전체 아키텍처 -->
+        <div class="content-card">
+            <h2 class="section-title">🏗️ 전체 아키텍처</h2>
+
+            <div class="architecture-diagram">
+                <pre style="font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.6;">
+사용자 입력
+    ↓
+┌───────────────────────────────────────────┐
+│  진단 시스템                               │
+│  - STAGE 판별 (1-5)                       │
+│  - 점수 산출 (공감/이해/결정)              │
+└───────────┬───────────────────────────────┘
+            ↓
+┌───────────────────────────────────────────┐
+│  MarketingEngine 클래스 (2,600+ lines)    │
+│                                           │
+│  ┌─────────────────────────────────────┐ │
+│  │  1. 조건부 단어풀 시스템 (4 Layers) │ │
+│  │     - Layer 1: 공통 허용             │ │
+│  │     - Layer 2: STAGE별 조건부        │ │
+│  │     - Layer 3: 고급 조건부 (1인칭)   │ │
+│  │     - Layer 4: 절대 금지             │ │
+│  └─────────────────────────────────────┘ │
+│                                           │
+│  ┌─────────────────────────────────────┐ │
+│  │  2. 채널별 라우팅 시스템             │ │
+│  │     generateByChannel()              │ │
+│  │     ├─ 'naver_place'                 │ │
+│  │     ├─ 'blog'                        │ │
+│  │     ├─ 'landing'                     │ │
+│  │     └─ 'identity'                    │ │
+│  └─────────────────────────────────────┘ │
+│                                           │
+│  ┌─────────────────────────────────────┐ │
+│  │  3. 네이버 플레이스 4단계 블록       │ │
+│  │     - Block 1: 공감 시작             │ │
+│  │     - Block 2: 선택 기준 설명        │ │
+│  │     - Block 3: 결론 유보             │ │
+│  │     - Block 4: 질문형 종결 (필수)    │ │
+│  └─────────────────────────────────────┘ │
+│                                           │
+│  ┌─────────────────────────────────────┐ │
+│  │  4. 금지어 필터링 시스템             │ │
+│  │     - 실시간 감지                    │ │
+│  │     - 자동 제거/대체                 │ │
+│  │     - 위반 로그 기록                 │ │
+│  └─────────────────────────────────────┘ │
+└───────────┬───────────────────────────────┘
+            ↓
+     최종 콘텐츠 출력
+                </pre>
+            </div>
+        </div>
+
+        <!-- 이론적 기반 -->
+        <div class="content-card">
+            <h2 class="section-title">📚 이론적 기반</h2>
+            <p style="margin-bottom: 25px; color: #666;">
+                본 엔진은 6가지 마케팅 이론을 통합하여 설계되었습니다:
+            </p>
+
+            <div class="theory-grid">
+                <div class="theory-card">
+                    <h4>1️⃣ 러셀 브런슨 (Russell Brunson)</h4>
+                    <ul>
+                        <li><strong>Hook-Story-Offer</strong> 구조</li>
+                        <li><strong>Value Ladder</strong> 단계별 가치 제공</li>
+                        <li><strong>AIDA</strong> 모델 (Attention, Interest, Desire, Action)</li>
+                    </ul>
+                </div>
+
+                <div class="theory-card">
+                    <h4>2️⃣ 간다 마사노리 (Masanori Kanda)</h4>
+                    <ul>
+                        <li><strong>마케팅 피라미드</strong></li>
+                        <li>고객 인지 단계별 접근</li>
+                        <li>관계 중심 마케팅</li>
+                    </ul>
+                </div>
+
+                <div class="theory-card">
+                    <h4>3️⃣ NLP (Neuro-Linguistic Programming)</h4>
+                    <ul>
+                        <li><strong>Pacing & Leading</strong> (공감과 유도)</li>
+                        <li>언어 패턴 설계</li>
+                        <li>감정 트리거 활용</li>
+                    </ul>
+                </div>
+
+                <div class="theory-card">
+                    <h4>4️⃣ 5단계 신뢰 구축</h4>
+                    <ul>
+                        <li>STAGE 1: 공감 (Empathy)</li>
+                        <li>STAGE 2: 이해 (Understanding)</li>
+                        <li>STAGE 3: 결정권 제공 (Decision)</li>
+                        <li>STAGE 4: 가치 전달 (Value)</li>
+                        <li>STAGE 5: 신뢰 관계 (Trust)</li>
+                    </ul>
+                </div>
+
+                <div class="theory-card">
+                    <h4>5️⃣ 조 비테일 (Joe Vitale)</h4>
+                    <ul>
+                        <li><strong>Spiritual Marketing</strong></li>
+                        <li>감정 중심 공감</li>
+                        <li>진정성 기반 접근</li>
+                    </ul>
+                </div>
+
+                <div class="theory-card">
+                    <h4>6️⃣ 짐 에드워드 (Jim Edwards)</h4>
+                    <ul>
+                        <li><strong>카피라이팅 공식</strong></li>
+                        <li>감정 트리거 설계</li>
+                        <li>행동 유도 기법</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 조건부 단어풀 시스템 -->
+        <div class="content-card">
+            <h2 class="section-title">🔤 조건부 단어풀 시스템 (핵심)</h2>
+
+            <div class="info-box">
+                <h3>시스템의 핵심 철학</h3>
+                <p style="font-size: 1.1em; line-height: 1.8;">
+                    <strong>"말할 수 있는 자격을 관리한다"</strong><br><br>
+                    신뢰를 쌓지 않은 상태에서 관계 언어를 사용하면 거부감이 발생합니다.
+                    따라서 병원의 STAGE에 따라 <span class="highlight">사용 가능한 단어를 동적으로 제어</span>합니다.
+                </p>
+            </div>
+
+            <h3 class="section-subtitle">4개 레이어 구조</h3>
+
+            <div class="layer-card">
+                <h4>Layer 1: 공통 허용 단어 (항상 사용 가능)</h4>
+                <p style="color: #666; margin-bottom: 15px;">모든 STAGE에서 안전하게 사용할 수 있는 중립적 단어들</p>
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                    <strong>예시:</strong> 설명, 안내, 이해, 확인, 질문, 답변, 대화, 소통, 경청, 천천히, 충분히, 서두르지 않고, 신중하게, 고민, 생각, 과정, 부담을 줄이다
+                </div>
+                <div class="code-block" style="margin-top: 15px;">
+<span class="keyword">this</span>.<span class="function">commonAllowedWords</span> = [
+    <span class="string">'설명'</span>, <span class="string">'안내'</span>, <span class="string">'이해'</span>, <span class="string">'확인'</span>, <span class="string">'질문'</span>, <span class="string">'답변'</span>,
+    <span class="string">'천천히'</span>, <span class="string">'충분히'</span>, <span class="string">'서두르지 않고'</span>,
+    <span class="string">'고민'</span>, <span class="string">'생각'</span>, <span class="string">'과정'</span>
+];
+                </div>
+            </div>
+
+            <div class="layer-card">
+                <h4>Layer 2: STAGE별 조건부 허용 단어</h4>
+                <p style="color: #666; margin-bottom: 15px;">STAGE에 따라 해금되는 단어들</p>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>STAGE</th>
+                                <th>허용 단어 유형</th>
+                                <th>예시</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1-2</td>
+                                <td>불안 공감 키워드</td>
+                                <td>불안, 걱정, 망설임, 쉽지 않은 결정, 조심스럽게</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>환자 존중 키워드</td>
+                                <td>선택권, 결정은 환자분의 몫, 충분히 생각한 뒤, 오늘 결정하지 않아도</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>철학·기준 키워드</td>
+                                <td>기준, 원칙, 방향, 이유, 중요하게 생각하는, 제 생각</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>관계 지속 키워드</td>
+                                <td>함께, 오래, 계속, 관계, 끝까지, 앞으로도, 평생</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="layer-card">
+                <h4>Layer 3: 고급 조건부 허용 (원장 1인칭)</h4>
+                <p style="color: #666; margin-bottom: 15px;">특정 조건을 만족해야만 사용 가능</p>
+                <div class="warning-box">
+                    <h3>해금 조건</h3>
+                    <ul>
+                        <li>STAGE ≥ 3</li>
+                        <li>공감 점수 ≥ 60</li>
+                        <li>이해 점수 ≥ 60</li>
+                    </ul>
+                    <p style="margin-top: 15px;"><strong>허용 단어:</strong> 제가, 저는, 제 생각에, 제가 중요하게 여기는, 제 진료 기준은</p>
+                    <p style="color: #e65100;"><strong>사용 제한:</strong> 콘텐츠당 최대 2-3회</p>
+                </div>
+            </div>
+
+            <div class="layer-card" style="border-left-color: #f44336;">
+                <h4>Layer 4: 절대 금지 단어</h4>
+                <p style="color: #666; margin-bottom: 15px;">어떤 STAGE에서도 사용 불가능한 단어들</p>
+                <div style="background: #ffebee; padding: 15px; border-radius: 8px; border-left: 4px solid #f44336;">
+                    <p style="color: #c62828; font-weight: 600; margin-bottom: 10px;">5가지 카테고리:</p>
+                    <ul style="color: #c62828;">
+                        <li><strong>보장/확약:</strong> 반드시, 무조건, 완치, 보장, 100%, 확실히</li>
+                        <li><strong>과장:</strong> 최고, 최상, 유일, 독보적, 업계 1위</li>
+                        <li><strong>상업적:</strong> 이벤트, 할인, 혜택, 특가, 프로모션, 무료</li>
+                        <li><strong>비교:</strong> Before/After, 타 병원, 경쟁 병원</li>
+                        <li><strong>의료법 위반:</strong> 치료 보장, 효과 보장, 부작용 없음</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- STAGE별 작동 방식 -->
+        <div class="content-card">
+            <h2 class="section-title">🎯 STAGE별 작동 방식</h2>
+
+            <div class="stage-flow">
+                <div class="stage-box" style="background: linear-gradient(135deg, #42a5f5 0%, #1e88e5 100%);">
+                    <h3>STAGE 1-2</h3>
+                    <p style="margin-bottom: 15px;">공감 · 이해</p>
+                    <ul>
+                        <li>원장 1인칭 금지</li>
+                        <li>철학 선언 금지</li>
+                        <li>관계 언어 금지</li>
+                        <li>불안 공감 중심</li>
+                    </ul>
+                </div>
+
+                <div class="stage-box" style="background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);">
+                    <h3>STAGE 3</h3>
+                    <p style="margin-bottom: 15px;">결정권 제공</p>
+                    <ul>
+                        <li>원장 1인칭 1회 허용</li>
+                        <li>환자 존중 강조</li>
+                        <li>선택권 부여</li>
+                        <li>결론 유보</li>
+                    </ul>
+                </div>
+
+                <div class="stage-box" style="background: linear-gradient(135deg, #ffa726 0%, #f57c00 100%);">
+                    <h3>STAGE 4</h3>
+                    <p style="margin-bottom: 15px;">가치 전달</p>
+                    <ul>
+                        <li>원장 1인칭 2회 허용</li>
+                        <li>철학·기준 언급</li>
+                        <li>가치 중심 설명</li>
+                        <li>장기적 관점</li>
+                    </ul>
+                </div>
+
+                <div class="stage-box" style="background: linear-gradient(135deg, #ef5350 0%, #e53935 100%);">
+                    <h3>STAGE 5</h3>
+                    <p style="margin-bottom: 15px;">신뢰 관계</p>
+                    <ul>
+                        <li>원장 1인칭 3회 허용</li>
+                        <li>관계 언어 사용</li>
+                        <li>장기 관계 암시</li>
+                        <li>책임·신뢰 강조</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="info-box" style="margin-top: 30px;">
+                <h3>STAGE 전환 로직</h3>
+                <p style="margin-bottom: 15px;">시스템은 입력받은 STAGE에 따라 자동으로 단어풀을 전환합니다:</p>
+                <div class="code-block">
+<span class="function">getStageKey</span>(stage) {
+    <span class="keyword">if</span> (stage <= <span class="string">2</span>) <span class="keyword">return</span> <span class="string">'stage1_2'</span>;
+    <span class="keyword">if</span> (stage === <span class="string">3</span>) <span class="keyword">return</span> <span class="string">'stage3'</span>;
+    <span class="keyword">if</span> (stage === <span class="string">4</span>) <span class="keyword">return</span> <span class="string">'stage4'</span>;
+    <span class="keyword">if</span> (stage === <span class="string">5</span>) <span class="keyword">return</span> <span class="string">'stage5'</span>;
+}
+                </div>
+            </div>
+        </div>
+
+        <!-- 네이버 플레이스 4단계 블록 구조 -->
+        <div class="content-card">
+            <h2 class="section-title">📍 네이버 플레이스 4단계 블록 구조</h2>
+
+            <div class="success-box">
+                <h3>핵심 철학</h3>
+                <p style="font-size: 1.1em; line-height: 1.8;">
+                    <strong>"반응을 만들지 않고, 반응이 생길 수밖에 없는 구조를 설계한다"</strong><br><br>
+                    네이버 플레이스 알고리즘이 신뢰 신호로 인식하는 요소들(체류시간, 공감, 댓글, 저장)을
+                    <span class="highlight">자연스럽게 발생시키는 콘텐츠 구조</span>를 자동 생성합니다.
+                </p>
+            </div>
+
+            <h3 class="section-subtitle">4단계 블록 상세</h3>
+
+            <div class="diagram">
+                <pre>
+┌─────────────────────────────────────────────────────────────┐
+│                    4단계 블록 구조                            │
+└─────────────────────────────────────────────────────────────┘
+
+[Block 1] 공감 시작 (Empathy Intro)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+목적: 네이버 플레이스 "공감(좋아요)" 신호 최적화
+위치: 초반 20%
+내용: 환자가 느끼는 불안이나 고민을 구체적으로 언급
+예시: "임플란트를 앞두고 걱정이 생기는 것은 자연스러운 일입니다."
+
+↓
+
+[Block 2] 선택 기준 설명 (Explanation)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+목적: "체류 시간" 증가 + "저장" 유도
+내용: 치료 방법이나 선택지를 2~3가지 제시, 객관적 설명
+정보 밀도: High (가치 있는 정보 제공)
+예시: "치료 방법을 선택할 때는 과정, 기간, 그리고
+      본인에게 맞는 방향을 충분히 이해하는 것이 중요합니다."
+
+↓
+
+[Block 3] 결론 유보 (Decision Hold)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+목적: 환자 자율성 존중 + 서두르지 않는 태도
+특징: 명확한 정답을 제시하지 않음
+예시: "이 부분은 상황에 따라 다를 수 있습니다.
+      서두르지 않고 생각해보셔도 괜찮습니다."
+
+↓
+
+[Block 4] 질문형 종결 (Question Ending) ⭐ 필수
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+목적: "댓글" 유도 + 사용자 참여 촉진
+필수 조건: 반드시 물음표(?)로 끝나야 함
+특징: 정답을 유도하지 않는 열린 질문
+예시: "여러분은 어떤 기준이 더 중요하셨나요?"
+                </pre>
+            </div>
+
+            <h3 class="section-subtitle">네이버 플레이스 신호 매핑</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>네이버 신호</th>
+                            <th>플랫폼 의도</th>
+                            <th>우리의 대응 전략</th>
+                            <th>구현 방법</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>체류 시간</td>
+                            <td>관심·몰입</td>
+                            <td>설명형 구조화, 과장 제거</td>
+                            <td>Block 2에서 정보 밀도 유지</td>
+                        </tr>
+                        <tr>
+                            <td>공감(좋아요)</td>
+                            <td>감정 동조</td>
+                            <td>공감 문장 초반 배치</td>
+                            <td>Block 1을 상위 20%에 배치</td>
+                        </tr>
+                        <tr>
+                            <td>댓글</td>
+                            <td>신뢰·참여</td>
+                            <td>질문형 종결, 결론 유보</td>
+                            <td>Block 4 필수, Block 3 정답 미제시</td>
+                        </tr>
+                        <tr>
+                            <td>저장(북마크)</td>
+                            <td>가치 인식</td>
+                            <td>정보 밀도 유지</td>
+                            <td>Block 2에서 실용적 정보 제공</td>
+                        </tr>
+                        <tr>
+                            <td>재방문</td>
+                            <td>관계</td>
+                            <td>톤 일관성, 시리즈 콘텐츠</td>
+                            <td>STAGE별 일관된 톤 유지</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="code-block" style="margin-top: 25px;">
+<span class="comment">// 네이버 플레이스 콘텐츠 생성 메인 메서드</span>
+<span class="function">generateNaverPlaceContent</span>(context) {
+    <span class="keyword">const</span> blocks = {
+        block1: <span class="keyword">this</span>.<span class="function">generateNaverBlock1_Empathy</span>(topic, stage),
+        block2: <span class="keyword">this</span>.<span class="function">generateNaverBlock2_Explanation</span>(topic, stage),
+        block3: <span class="keyword">this</span>.<span class="function">generateNaverBlock3_DecisionHold</span>(stage),
+        block4: <span class="keyword">this</span>.<span class="function">generateNaverBlock4_QuestionEnding</span>(topic, stage)
+    };
+
+    <span class="comment">// 금지 단어 필터링</span>
+    <span class="keyword">const</span> filtered = <span class="keyword">this</span>.<span class="function">filterNaverPlaceContent</span>(blocks, stage);
+
+    <span class="comment">// 검증 (질문형 종결 확인)</span>
+    <span class="keyword">const</span> validation = <span class="keyword">this</span>.<span class="function">validateNaverPlaceContent</span>(filtered);
+
+    <span class="keyword">return</span> filtered;
+}
+            </div>
+        </div>
+
+        <!-- 채널별 라우팅 -->
+        <div class="content-card">
+            <h2 class="section-title">🔀 채널별 라우팅 시스템</h2>
+
+            <div class="info-box">
+                <h3>통합 진입점</h3>
+                <p style="margin-bottom: 15px;">
+                    사용자는 하나의 메서드만 호출하면, 시스템이 채널에 따라 자동으로 적절한 생성 메서드로 라우팅합니다.
+                </p>
+                <div class="code-block">
+<span class="function">generateByChannel</span>(channel, context) {
+    <span class="keyword">switch</span> (channel) {
+        <span class="keyword">case</span> <span class="string">'naver_place'</span>:
+            <span class="keyword">return</span> <span class="keyword">this</span>.<span class="function">generateNaverPlaceContent</span>(context);
+
+        <span class="keyword">case</span> <span class="string">'blog'</span>:
+            <span class="keyword">return</span> <span class="keyword">this</span>.<span class="function">generateStorytelling</span>(context);
+
+        <span class="keyword">case</span> <span class="string">'landing'</span>:
+            <span class="keyword">return</span> <span class="keyword">this</span>.<span class="function">generateIntegratedContent</span>(context);
+
+        <span class="keyword">case</span> <span class="string">'identity'</span>:
+            <span class="keyword">return</span> <span class="keyword">this</span>.<span class="function">generateIdentityStyle</span>(context);
+
+        <span class="keyword">default</span>:
+            <span class="keyword">return</span> <span class="keyword">this</span>.<span class="function">generateIntegratedContent</span>(context);
+    }
+}
+                </div>
+            </div>
+
+            <h3 class="section-subtitle">지원 채널</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>채널</th>
+                            <th>생성 메서드</th>
+                            <th>특징</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>네이버 플레이스</td>
+                            <td>generateNaverPlaceContent()</td>
+                            <td>4단계 블록 구조, 질문형 종결 필수</td>
+                        </tr>
+                        <tr>
+                            <td>블로그</td>
+                            <td>generateStorytelling()</td>
+                            <td>스토리텔링 중심, Hook-Story-Offer</td>
+                        </tr>
+                        <tr>
+                            <td>랜딩 페이지</td>
+                            <td>generateIntegratedContent()</td>
+                            <td>통합 콘텐츠, AIDA 모델</td>
+                        </tr>
+                        <tr>
+                            <td>정체성 기반</td>
+                            <td>generateIdentityStyle()</td>
+                            <td>원장 철학 중심, STAGE 4-5 전용</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 금지어 필터링 시스템 -->
+        <div class="content-card">
+            <h2 class="section-title">🛡️ 금지어 필터링 시스템</h2>
+
+            <div class="warning-box">
+                <h3>실시간 감지 및 처리</h3>
+                <p style="margin-bottom: 15px;">
+                    콘텐츠 생성 후 자동으로 금지어를 감지하고, 발견 시 제거 또는 대체합니다.
+                    모든 위반은 로그에 기록되어 추후 분석 가능합니다.
+                </p>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// 금지 단어 감지 및 필터링</span>
+<span class="function">filterNaverPlaceContent</span>(blocks, stage, scores) {
+    <span class="keyword">const</span> filtered = {};
+
+    <span class="keyword">for</span> (<span class="keyword">const</span> blockKey <span class="keyword">in</span> blocks) {
+        <span class="keyword">let</span> content = blocks[blockKey];
+
+        <span class="comment">// 1. 기본 금지 단어 체크</span>
+        <span class="keyword">for</span> (<span class="keyword">const</span> word <span class="keyword">of</span> <span class="keyword">this</span>.forbiddenWords) {
+            <span class="keyword">if</span> (content.<span class="function">includes</span>(word)) {
+                <span class="function">console.warn</span>(<span class="string">`🚨 금지 단어 감지: "${word}"`</span>);
+                <span class="comment">// 대체어로 변경</span>
+                content = content.<span class="function">replace</span>(word, <span class="keyword">this</span>.<span class="function">getReplacementWord</span>(word));
+            }
+        }
+
+        <span class="comment">// 2. 네이버 플레이스 특화 패턴 체크</span>
+        <span class="keyword">const</span> patterns = [
+            <span class="string">/이벤트/g</span>, <span class="string">/할인/g</span>, <span class="string">/혜택/g</span>,
+            <span class="string">/타\s*병원/g</span>, <span class="string">/Before.*After/gi</span>
+        ];
+
+        <span class="keyword">for</span> (<span class="keyword">const</span> pattern <span class="keyword">of</span> patterns) {
+            <span class="keyword">if</span> (pattern.<span class="function">test</span>(content)) {
+                content = content.<span class="function">replace</span>(pattern, <span class="string">''</span>);
+            }
+        }
+
+        filtered[blockKey] = content;
+    }
+
+    <span class="keyword">return</span> filtered;
+}
+            </div>
+
+            <h3 class="section-subtitle">위반 로그 시스템</h3>
+            <div class="info-box">
+                <p style="margin-bottom: 15px;">모든 금지어 감지는 자동으로 기록됩니다:</p>
+                <ul>
+                    <li><strong>블록 위치</strong>: 어느 블록에서 발생했는지</li>
+                    <li><strong>금지어 목록</strong>: 감지된 모든 단어</li>
+                    <li><strong>원본/수정본</strong>: 필터링 전후 비교</li>
+                    <li><strong>타임스탬프</strong>: 발생 시각</li>
+                </ul>
+                <p style="margin-top: 15px; color: #1565c0;">
+                    이 로그는 시스템 개선과 가맹점 교육에 활용됩니다.
+                </p>
+            </div>
+        </div>
+
+        <!-- 실제 사용 예시 -->
+        <div class="content-card">
+            <h2 class="section-title">💻 실제 사용 예시</h2>
+
+            <div class="success-box">
+                <h3>Step 1: 엔진 인스턴스 생성</h3>
+                <div class="code-block">
+<span class="keyword">const</span> engine = <span class="keyword">new</span> <span class="function">MarketingEngine</span>();
+                </div>
+            </div>
+
+            <div class="success-box">
+                <h3>Step 2: 컨텍스트 구성</h3>
+                <div class="code-block">
+<span class="keyword">const</span> context = {
+    topic: <span class="string">'임플란트 치료'</span>,
+    contentType: <span class="string">'empathy'</span>,
+    revenueStage: <span class="string">'STAGE3'</span>,
+    clinicName: <span class="string">'행복치과'</span>,
+    directorName: <span class="string">'김행복 원장'</span>,
+    trustScores: {
+        empathy: <span class="string">72</span>,
+        understanding: <span class="string">68</span>,
+        decision_support: <span class="string">65</span>
+    }
+};
+                </div>
+            </div>
+
+            <div class="success-box">
+                <h3>Step 3: 콘텐츠 생성</h3>
+                <div class="code-block">
+<span class="comment">// 네이버 플레이스 콘텐츠 생성</span>
+<span class="keyword">const</span> result = engine.<span class="function">generateByChannel</span>(<span class="string">'naver_place'</span>, context);
+
+<span class="comment">// 결과 구조</span>
+{
+    title: <span class="string">"임플란트를 결정하기 전에 가장 많이 고민하시는 부분"</span>,
+    body: [
+        <span class="string">"임플란트를 앞두고 걱정이 생기는 것은 자연스러운 일입니다."</span>,
+        <span class="string">"치료 방법을 선택할 때는 과정, 기간, 그리고..."</span>,
+        <span class="string">"이 부분은 상황에 따라 다를 수 있습니다..."</span>,
+        <span class="string">"여러분은 어떤 기준이 더 중요하셨나요?"</span>
+    ],
+    metadata: {
+        channel: <span class="string">'naver_place'</span>,
+        stage: <span class="string">'STAGE3'</span>,
+        structure: <span class="string">'four_block'</span>,
+        hasQuestionEnding: <span class="keyword">true</span>,
+        conclusionHold: <span class="keyword">true</span>
+    }
+}
+                </div>
+            </div>
+
+            <div class="success-box">
+                <h3>Step 4: 검증</h3>
+                <div class="code-block">
+<span class="keyword">const</span> validation = engine.<span class="function">validateNaverPlaceContent</span>(result);
+
+<span class="keyword">if</span> (!validation.valid) {
+    <span class="function">console.error</span>(<span class="string">'검증 실패:'</span>, validation.errors);
+} <span class="keyword">else</span> {
+    <span class="function">console.log</span>(<span class="string">'✅ 모든 검증 통과'</span>);
+}
+                </div>
+            </div>
+        </div>
+
+        <!-- 시스템 확장성 -->
+        <div class="content-card">
+            <h2 class="section-title">🚀 시스템 확장성</h2>
+
+            <div class="info-box">
+                <h3>향후 확장 가능 영역</h3>
+                <ul style="margin-top: 15px;">
+                    <li><strong>새로운 채널 추가</strong>
+                        <ul>
+                            <li>인스타그램 릴스 전용 생성 메서드</li>
+                            <li>유튜브 쇼츠 전용 생성 메서드</li>
+                            <li>카카오톡 채널 메시지 생성</li>
+                        </ul>
+                    </li>
+                    <li><strong>AI 모델 통합</strong>
+                        <ul>
+                            <li>GPT-4 API 연동으로 더 자연스러운 문장 생성</li>
+                            <li>단, 조건부 단어풀 시스템은 유지 (안전장치)</li>
+                        </ul>
+                    </li>
+                    <li><strong>다국어 지원</strong>
+                        <ul>
+                            <li>영어, 중국어, 일본어 등 다국어 단어풀</li>
+                            <li>문화적 차이를 고려한 STAGE별 조정</li>
+                        </ul>
+                    </li>
+                    <li><strong>AB 테스트 시스템</strong>
+                        <ul>
+                            <li>동일한 입력으로 여러 변형 생성</li>
+                            <li>성과 추적 및 최적화</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 요약 -->
+        <div class="content-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <h2 style="color: white; margin-bottom: 25px; font-size: 2em;">📝 핵심 요약</h2>
+
+            <div style="background: rgba(255,255,255,0.1); padding: 30px; border-radius: 15px; line-height: 1.8;">
+                <p style="font-size: 1.2em; margin-bottom: 20px;">
+                    <strong>본 마케팅 엔진은 "말할 수 있는 자격을 관리하는 시스템"입니다.</strong>
+                </p>
+
+                <ol style="margin-left: 20px;">
+                    <li style="margin: 15px 0;"><strong>조건부 단어풀 시스템</strong>으로 STAGE별 언어 사용 제한</li>
+                    <li style="margin: 15px 0;"><strong>4단계 블록 구조</strong>로 네이버 플레이스 신호 최적화</li>
+                    <li style="margin: 15px 0;"><strong>채널별 라우팅</strong>으로 다양한 채널 대응</li>
+                    <li style="margin: 15px 0;"><strong>실시간 금지어 필터링</strong>으로 리스크 차단</li>
+                    <li style="margin: 15px 0;"><strong>6가지 마케팅 이론</strong> 통합 적용</li>
+                </ol>
+
+                <p style="font-size: 1.2em; margin-top: 25px; padding-top: 25px; border-top: 1px solid rgba(255,255,255,0.3);">
+                    <strong>결과:</strong> 신뢰를 훼손하지 않으면서도 효과적인 마케팅 콘텐츠 자동 생성
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- html2pdf 라이브러리 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <script>
+        function downloadPDF() {
+            // 버튼 비활성화 및 텍스트 변경
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '⏳ PDF 생성 중...';
+            button.disabled = true;
+            button.style.opacity = '0.6';
+            button.style.cursor = 'not-allowed';
+
+            // PDF용 제목 섹션 생성
+            const titleSection = document.createElement('div');
+            titleSection.id = 'pdf-title-section';
+            titleSection.style.cssText = `
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 40px;
+                text-align: center;
+                border-radius: 15px;
+                margin-bottom: 30px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            `;
+            titleSection.innerHTML = `
+                <h1 style="font-size: 2.5em; margin-bottom: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2);">
+                    ⚙️ 마케팅 엔진 원리
+                </h1>
+                <p style="font-size: 1.3em; opacity: 0.95;">
+                    신뢰 기반 콘텐츠 자동 생성 시스템의 구조와 작동 원리
+                </p>
+                <p style="font-size: 1em; opacity: 0.85; margin-top: 20px;">
+                    생성일: ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}
+                </p>
+            `;
+
+            // 컨테이너 요소 선택 및 제목 추가
+            const container = document.querySelector('.container');
+            container.insertBefore(titleSection, container.firstChild);
+
+            // PDF 생성 옵션
+            const opt = {
+                margin: [10, 10, 10, 10],
+                filename: '마케팅_엔진_원리_' + new Date().toISOString().split('T')[0] + '.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false
+                },
+                jsPDF: {
+                    unit: 'mm',
+                    format: 'a4',
+                    orientation: 'portrait'
+                },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            };
+
+            // PDF 생성
+            html2pdf().set(opt).from(container).save().then(() => {
+                // 제목 섹션 제거
+                if (titleSection && titleSection.parentNode) {
+                    titleSection.parentNode.removeChild(titleSection);
+                }
+
+                // 버튼 복원
+                button.innerHTML = originalText;
+                button.disabled = false;
+                button.style.opacity = '1';
+                button.style.cursor = 'pointer';
+
+                // 성공 메시지
+                alert('✅ PDF 다운로드가 완료되었습니다!');
+            }).catch(err => {
+                console.error('PDF 생성 오류:', err);
+
+                // 제목 섹션 제거
+                if (titleSection && titleSection.parentNode) {
+                    titleSection.parentNode.removeChild(titleSection);
+                }
+
+                button.innerHTML = originalText;
+                button.disabled = false;
+                button.style.opacity = '1';
+                button.style.cursor = 'pointer';
+                alert('❌ PDF 생성 중 오류가 발생했습니다. 다시 시도해주세요.');
+            });
+        }
+    </script>
+</body>
+</html>
