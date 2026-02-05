@@ -545,14 +545,23 @@ async function loadHospitalsFromSupabase() {
     if (error) throw error;
     if (!data || data.length === 0) return;
 
-    // Supabase 데이터를 dentalCases 형식으로 변환
+    // Supabase 데이터를 dentalCases에 합치기 (이름 기준 매칭)
     let updated = false;
     data.forEach(hospital => {
-      // 이름+전화번호로 중복 확인
-      const exists = dentalCases.some(dc =>
-        dc.clinicName === hospital.name && dc.phone === hospital.phone
+      // 이름으로 기존 항목 찾기
+      const existingIdx = dentalCases.findIndex(dc =>
+        dc.clinicName === hospital.name
       );
-      if (!exists) {
+      if (existingIdx !== -1) {
+        // 기존 항목 업데이트 (Supabase 데이터로 빈 필드 채우기)
+        const dc = dentalCases[existingIdx];
+        if (!dc.phone && hospital.phone) { dc.phone = hospital.phone; updated = true; }
+        if (!dc.directorName && hospital.representative) { dc.directorName = hospital.representative; updated = true; }
+        if (!dc.location && hospital.region) { dc.location = hospital.region; updated = true; }
+        if (!dc.address && hospital.address) { dc.address = hospital.address; updated = true; }
+        if (!dc.hospitalId) { dc.hospitalId = hospital.id; updated = true; }
+      } else {
+        // 새 항목 추가
         dentalCases.push({
           clinicName: hospital.name,
           phone: hospital.phone || '',
