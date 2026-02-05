@@ -520,16 +520,67 @@ function updateStep3Summary() {
 function loadSavedClinics() {
   dentalCases = JSON.parse(localStorage.getItem('dentalCases') || '[]');
 
-  // 등록된 치과 수 표시
-  const countEl = document.getElementById('existing-clinic-count');
-  if (countEl) countEl.textContent = dentalCases.length;
-
   // 이전에 저장된 hospitalId 복원
   if (clinicInfo.hospitalId) {
     currentHospitalId = clinicInfo.hospitalId;
   }
 
-  // 병원 목록 렌더링
+  // localStorage 데이터로 우선 렌더링
+  renderClinicList();
+
+  // Supabase에서 병원 목록도 가져와서 합치기
+  loadHospitalsFromSupabase();
+}
+
+// Supabase hospitals 테이블에서 병원 목록 가져와서 dentalCases에 합치기
+async function loadHospitalsFromSupabase() {
+  if (!supabaseClient) return;
+
+  try {
+    const { data, error } = await supabaseClient
+      .from('hospitals')
+      .select('id, name, representative, phone, region, address')
+      .order('id', { ascending: true });
+
+    if (error) throw error;
+    if (!data || data.length === 0) return;
+
+    // Supabase 데이터를 dentalCases 형식으로 변환
+    let updated = false;
+    data.forEach(hospital => {
+      // 이름+전화번호로 중복 확인
+      const exists = dentalCases.some(dc =>
+        dc.clinicName === hospital.name && dc.phone === hospital.phone
+      );
+      if (!exists) {
+        dentalCases.push({
+          clinicName: hospital.name,
+          phone: hospital.phone || '',
+          directorName: hospital.representative || '',
+          location: hospital.region || '',
+          address: hospital.address || '',
+          hospitalId: hospital.id,
+          fromSupabase: true
+        });
+        updated = true;
+      }
+    });
+
+    if (updated) {
+      // localStorage에도 캐시 저장
+      localStorage.setItem('dentalCases', JSON.stringify(dentalCases));
+      renderClinicList();
+    }
+  } catch (err) {
+    console.warn('Supabase 병원 목록 로드 실패:', err.message);
+  }
+}
+
+// 병원 목록 렌더링 (공통)
+function renderClinicList() {
+  const countEl = document.getElementById('existing-clinic-count');
+  if (countEl) countEl.textContent = dentalCases.length;
+
   if (dentalCases.length === 0) {
     document.getElementById('no-saved-clinics').classList.remove('hidden');
     document.getElementById('saved-clinics-list').innerHTML = '';
@@ -544,9 +595,7 @@ function loadSavedClinics() {
     if (matchIdx !== -1) {
       selectSavedClinic(matchIdx);
     } else {
-      // 수동 입력으로 저장된 치과 → 선택 완료 바로 표시
       showClinicConfirmation(clinicInfo.clinicName, clinicInfo.clinicPhone || '');
-      // hospitalId가 있으면 환자 목록도 로드
       if (currentHospitalId && supabaseConnected) {
         loadPatientsForCurrentHospital();
       }
@@ -684,23 +733,26 @@ async function selectSavedClinic(index) {
   clinicInfo = { clinicName: clinic.clinicName, clinicPhone: clinic.phone || '' };
   localStorage.setItem('patient_msg_clinic_info', JSON.stringify(clinicInfo));
 
-  // 즉시 UI 업데이트 (비동기 Supabase 작업 전에 확인 화면 표시)
+  // 즉시 UI 업데이트
   const detail = [clinic.directorName ? `${clinic.directorName} 원장` : '', clinic.phone || '', clinic.location || ''].filter(Boolean).join(' · ');
   showClinicConfirmation(clinic.clinicName, detail);
   showToast(`${clinic.clinicName} 선택됨`);
 
-  // Supabase hospitals 매칭/생성 (백그라운드)
-  const hospitalId = await findOrCreateHospital({
-    clinicName: clinic.clinicName,
-    clinicPhone: clinic.phone,
-    directorName: clinic.directorName,
-    location: clinic.location
-  });
+  // Supabase 병원 ID 확보
+  let hospitalId = clinic.hospitalId || null;
+  if (!hospitalId) {
+    // localStorage 전용 데이터 → Supabase에서 매칭/생성
+    hospitalId = await findOrCreateHospital({
+      clinicName: clinic.clinicName,
+      clinicPhone: clinic.phone,
+      directorName: clinic.directorName,
+      location: clinic.location
+    });
+  }
   currentHospitalId = hospitalId;
   if (hospitalId) {
     clinicInfo.hospitalId = hospitalId;
     localStorage.setItem('patient_msg_clinic_info', JSON.stringify(clinicInfo));
-    // 해당 병원의 환자 목록 로드
     await loadPatientsForCurrentHospital();
   }
 }
