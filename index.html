@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>치과 광고 콘텐츠 생성기 - 신뢰가 광고 콘텐츠를 대신하다</title>
+    <title>치과 AI 마케팅 플랫폼 - 신규 환자 유입부터 기존 환자 관리까지</title>
     <style>
         * {
             margin: 0;
@@ -170,10 +170,188 @@
             opacity: 0.9;
         }
 
+        /* Marketing Path Selection */
+        .path-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+            max-width: 900px;
+        }
+
+        .path-card {
+            border-radius: 20px;
+            padding: 32px 28px;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .path-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.06);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .path-card:hover {
+            transform: translateY(-6px);
+        }
+
+        .path-card:hover::before {
+            opacity: 1;
+        }
+
+        .path-card.external {
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #ffb347 100%);
+            box-shadow: 0 8px 30px rgba(255, 107, 53, 0.35);
+        }
+
+        .path-card.external:hover {
+            box-shadow: 0 14px 40px rgba(255, 107, 53, 0.5);
+        }
+
+        .path-card.internal {
+            background: linear-gradient(135deg, #00b09b 0%, #2ecc71 50%, #96e6a1 100%);
+            box-shadow: 0 8px 30px rgba(0, 176, 155, 0.35);
+        }
+
+        .path-card.internal:hover {
+            box-shadow: 0 14px 40px rgba(0, 176, 155, 0.5);
+        }
+
+        .path-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.3);
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 14px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .path-icon {
+            font-size: 52px;
+            margin-bottom: 14px;
+            display: block;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+        }
+
+        .path-card h2 {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 6px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        }
+
+        .path-card .path-target {
+            font-size: 15px;
+            font-weight: 600;
+            opacity: 1;
+            margin-bottom: 16px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .path-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 20px 0;
+        }
+
+        .path-features li {
+            font-size: 14px;
+            font-weight: 500;
+            padding: 6px 0;
+            opacity: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .path-features li::before {
+            content: '✓';
+            font-weight: 800;
+            font-size: 12px;
+            background: rgba(255,255,255,0.35);
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .path-sub-links {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+            padding-top: 16px;
+            border-top: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .path-sub-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: rgba(0,0,0,0.15);
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 800;
+            color: #ffe600;
+            text-decoration: none;
+            transition: background 0.2s;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .path-sub-link:hover {
+            background: rgba(0,0,0,0.25);
+            color: #fff176;
+        }
+
+        .path-sub-link .link-arrow {
+            margin-left: auto;
+            opacity: 1;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        @media (max-width: 768px) {
+            .path-section {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .path-card {
+                padding: 24px 20px;
+            }
+
+            .path-card h2 {
+                font-size: 20px;
+            }
+
+            .path-icon {
+                font-size: 40px;
+            }
+        }
+
         .menu-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
             margin-bottom: 20px;
             max-width: 700px;
             margin-left: auto;
@@ -183,7 +361,7 @@
         .menu-card {
             background: white;
             border-radius: 16px;
-            padding: 28px 24px;
+            padding: 22px 20px;
             text-align: center;
             text-decoration: none;
             color: #333;
@@ -196,27 +374,21 @@
             box-shadow: 0 8px 15px rgba(0,0,0,0.2);
         }
 
-        .menu-card.primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            grid-column: 1 / -1;
-        }
-
         .menu-card-icon {
-            font-size: 48px;
-            margin-bottom: 10px;
+            font-size: 36px;
+            margin-bottom: 8px;
         }
 
         .menu-card h2 {
-            font-size: 24px;
-            margin-bottom: 6px;
+            font-size: 18px;
+            margin-bottom: 4px;
             font-weight: 600;
         }
 
         .menu-card p {
-            font-size: 14px;
-            opacity: 0.8;
-            line-height: 1.5;
+            font-size: 12px;
+            opacity: 0.7;
+            line-height: 1.4;
         }
 
         .stats {
@@ -618,7 +790,7 @@
         <div class="top-header-content">
             <a href="index.html" class="header-logo">
                 <img src="로고3.png" alt="치과 맞춤식 광고 콘텐츠 생성기 로고">
-                <span class="header-logo-text">치과 맞춤식 광고 콘텐츠 생성기</span>
+                <span class="header-logo-text">치과 AI 마케팅 플랫폼</span>
             </a>
             <nav class="header-nav">
                 <a href="index.html" class="active">홈</a>
@@ -633,8 +805,49 @@
     <div class="container">
         <div class="header">
             <div class="logo">🦷</div>
-            <h1>치과 광고 콘텐츠 생성기</h1>
-            <p>신뢰가 광고 콘텐츠를 대신하다</p>
+            <h1>치과 AI 마케팅 플랫폼</h1>
+            <p>신규 환자 유입부터 기존 환자 관리까지, 원스톱 마케팅 솔루션</p>
+        </div>
+
+        <!-- Marketing Path Selection -->
+        <div class="path-section">
+            <!-- External Marketing -->
+            <div class="path-card external">
+                <span class="path-badge">OUTBOUND</span>
+                <span class="path-icon">📢</span>
+                <h2>외부 마케팅</h2>
+                <p class="path-target">신규 환자 유입을 위한 광고 콘텐츠</p>
+                <ul class="path-features">
+                    <li>과학적 신뢰 진단 기반 맞춤 광고 문구</li>
+                    <li>AI 카드뉴스 자동 생성 (5장 구조)</li>
+                    <li>SNS, 블로그, 유튜브 채널별 최적화</li>
+                    <li>48가지 콘텐츠 조합 + 4단계 금칙어 필터</li>
+                </ul>
+                <div class="path-sub-links">
+                    <a href="input.html" class="path-sub-link" onclick="clearPreviousData(event)">
+                        🚀 광고 콘텐츠 생성 시작 <span class="link-arrow">→</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Internal Marketing -->
+            <div class="path-card internal">
+                <span class="path-badge">INBOUND</span>
+                <span class="path-icon">💬</span>
+                <h2>내부 마케팅</h2>
+                <p class="path-target">기존 환자 관리 및 소개 유도</p>
+                <ul class="path-features">
+                    <li>치료 후 케어 / 정기검진 리마인드 메시지</li>
+                    <li>소개·추천 리워드 프로그램 안내</li>
+                    <li>SMS + 카카오톡 채널 동시 지원</li>
+                    <li>CSV 일괄 업로드로 대량 메시지 생성</li>
+                </ul>
+                <div class="path-sub-links">
+                    <a href="patient-message.html" class="path-sub-link">
+                        💬 환자용 메시지 생성 시작 <span class="link-arrow">→</span>
+                    </a>
+                </div>
+            </div>
         </div>
 
         <!-- Sample Banner -->
@@ -729,22 +942,22 @@
         </div>
 
         <div class="menu-grid">
-            <a href="input.html" class="menu-card primary" onclick="clearPreviousData(event)">
-                <div class="menu-card-icon">🚀</div>
-                <h2>새로 시작하기</h2>
-                <p>치과 정보를 입력하고 맞춤 광고 콘텐츠 전략을 받아보세요</p>
+            <a href="profiles.html" class="menu-card">
+                <div class="menu-card-icon">👤</div>
+                <h2>내 프로필</h2>
+                <p>저장된 치과 프로필 관리</p>
             </a>
 
             <a href="cases.html" class="menu-card">
                 <div class="menu-card-icon">📂</div>
                 <h2>내 결과 보기</h2>
-                <p>이전에 생성한 결과 확인</p>
+                <p>생성한 콘텐츠 결과 확인</p>
             </a>
 
             <a href="clear-data.html" class="menu-card">
                 <div class="menu-card-icon">🔧</div>
-                <h2>데이터 초기화</h2>
-                <p>저장된 데이터 확인 및 삭제</p>
+                <h2>데이터 관리</h2>
+                <p>저장 데이터 확인 및 삭제</p>
             </a>
         </div>
 

@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>환자 메시지 생성기 - 치과 광고 콘텐츠 생성기</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Noto Sans KR', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    * { font-family: 'Noto Sans KR', sans-serif; }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #1a1c2e 0%, #2d1f3d 50%, #1a2a4a 100%);
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .section-card {
+      background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    .section-card:hover {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+    }
+
+    .spinner {
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top: 3px solid #fff;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-fadeIn { animation: fadeIn 0.5s ease-out; }
+
+    .tab-active {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4);
+    }
+
+    .msg-type-btn.active {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);
+      border-color: transparent;
+    }
+
+    .channel-btn.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-color: transparent;
+    }
+
+    .treatment-btn.active {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      color: white;
+      border-color: transparent;
+    }
+
+    .tone-btn.active {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      border-color: transparent;
+    }
+
+    .clinic-filter-btn {
+      background: #f1f5f9;
+      color: #64748b;
+      border: 1.5px solid transparent;
+    }
+    .clinic-filter-btn:hover {
+      background: #e2e8f0;
+    }
+    .clinic-filter-btn.active {
+      background: linear-gradient(135deg, #11998e, #38ef7d);
+      color: white;
+      box-shadow: 0 2px 8px rgba(17, 153, 142, 0.3);
+    }
+
+    .step1-choice-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+    }
+
+    .clinic-card {
+      padding: 12px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: white;
+    }
+    .clinic-card:hover {
+      border-color: #11998e;
+      background: #f0fdf9;
+    }
+    .clinic-card.selected {
+      border-color: #11998e;
+      background: linear-gradient(135deg, #f0fdf9 0%, #ecfdf5 100%);
+      box-shadow: 0 0 0 3px rgba(17, 153, 142, 0.15);
+    }
+
+    /* SMS Preview */
+    .sms-frame {
+      background: #1a1a1a;
+      border-radius: 32px;
+      padding: 12px;
+      max-width: 320px;
+      margin: 0 auto;
+    }
+    .sms-screen {
+      background: #f2f2f7;
+      border-radius: 24px;
+      padding: 16px;
+      min-height: 200px;
+    }
+    .sms-bubble {
+      background: #e5e5ea;
+      border-radius: 18px;
+      padding: 12px 16px;
+      font-size: 15px;
+      line-height: 1.5;
+      color: #000;
+      max-width: 90%;
+      word-break: keep-all;
+    }
+
+    /* KakaoTalk Preview */
+    .kakao-frame {
+      background: #b2c7d9;
+      border-radius: 24px;
+      padding: 16px;
+      max-width: 360px;
+      margin: 0 auto;
+    }
+    .kakao-profile {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: #fee500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .kakao-bubble {
+      background: white;
+      border-radius: 0 16px 16px 16px;
+      padding: 12px 16px;
+      font-size: 14px;
+      line-height: 1.7;
+      color: #333;
+      white-space: pre-wrap;
+      max-width: 260px;
+      word-break: keep-all;
+    }
+    .kakao-button {
+      background: white;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      font-size: 13px;
+      color: #333;
+      font-weight: 500;
+      border: 1px solid #ddd;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .kakao-button:hover { background: #f5f5f5; }
+
+    /* Side Panel */
+    .side-panel {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 380px;
+      height: 100vh;
+      background: white;
+      box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+      z-index: 1100;
+      transition: right 0.3s ease;
+      overflow-y: auto;
+    }
+    .side-panel.open { right: 0; }
+    .side-panel-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.4);
+      z-index: 1050;
+      display: none;
+    }
+    .side-panel-overlay.open { display: block; }
+
+    /* CSV Drop Zone */
+    .csv-drop-zone {
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 40px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .csv-drop-zone:hover, .csv-drop-zone.dragover {
+      border-color: #11998e;
+      background: rgba(17, 153, 142, 0.05);
+    }
+
+    /* Progress Bar */
+    .progress-bar {
+      height: 6px;
+      background: #e2e8f0;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #333;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      z-index: 9999;
+      transition: transform 0.3s ease;
+      white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* Bulk Results Table */
+    .bulk-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .bulk-table th {
+      background: #f8fafc;
+      padding: 10px 12px;
+      text-align: left;
+      font-weight: 600;
+      color: #475569;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    .bulk-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #f1f5f9;
+      vertical-align: top;
+    }
+    .bulk-table tr:hover { background: #f8fafc; }
+
+    /* Step Indicator */
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-bottom: 32px;
+    }
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .step-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 15px;
+      transition: all 0.4s ease;
+      flex-shrink: 0;
+    }
+    .step-circle.inactive {
+      background: rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.4);
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    .step-circle.active {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      color: white;
+      border: 2px solid transparent;
+      box-shadow: 0 0 20px rgba(17, 153, 142, 0.5);
+      transform: scale(1.1);
+    }
+    .step-circle.done {
+      background: #11998e;
+      color: white;
+      border: 2px solid #38ef7d;
+    }
+    .step-label {
+      font-size: 11px;
+      font-weight: 600;
+      margin-top: 6px;
+      text-align: center;
+      transition: color 0.3s;
+    }
+    .step-label.inactive { color: rgba(255,255,255,0.35); }
+    .step-label.active { color: #38ef7d; }
+    .step-label.done { color: rgba(255,255,255,0.7); }
+    .step-line {
+      width: 60px;
+      height: 3px;
+      border-radius: 2px;
+      margin: 0 8px;
+      margin-bottom: 20px;
+      transition: background 0.4s;
+    }
+    .step-line.inactive { background: rgba(255,255,255,0.15); }
+    .step-line.active { background: linear-gradient(90deg, #11998e, #38ef7d); }
+
+    .step-container {
+      display: none;
+      animation: fadeIn 0.4s ease-out;
+    }
+    .step-container.active {
+      display: block;
+    }
+
+    .step-nav-btn {
+      padding: 14px 0;
+      border-radius: 16px;
+      font-weight: 700;
+      font-size: 15px;
+      transition: all 0.2s;
+      cursor: pointer;
+      text-align: center;
+    }
+    .step-nav-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .patient-chip {
+      padding: 8px 12px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: white;
+    }
+    .patient-chip:hover {
+      border-color: #11998e;
+      background: #f0fdf9;
+    }
+    .patient-chip.selected {
+      border-color: #11998e;
+      background: linear-gradient(135deg, #f0fdf9 0%, #ecfdf5 100%);
+      box-shadow: 0 0 0 3px rgba(17, 153, 142, 0.12);
+    }
+
+    @media (max-width: 768px) {
+      .side-panel { width: 100%; right: -100%; }
+      .sms-frame { max-width: 100%; }
+      .kakao-frame { max-width: 100%; }
+      .step-line { width: 36px; }
+    }
+  </style>
+</head>
+<body class="gradient-bg min-h-screen">
+
+  <!-- Top Navigation -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm shadow-md">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2 text-gray-700 hover:text-green-600 transition font-semibold">
+        <span class="text-lg">&#x1f3e0;</span>
+        <span class="text-sm">홈으로</span>
+      </a>
+      <div class="flex items-center gap-2">
+        <span class="text-xl">&#x1f4ac;</span>
+        <h1 class="text-lg font-bold bg-gradient-to-r from-green-600 to-emerald-500 bg-clip-text text-transparent">
+          AI 환자 메시지 생성기
+        </h1>
+      </div>
+      <button onclick="openPatientPanel()" class="flex items-center gap-1 px-3 py-1.5 bg-green-50 text-green-700 rounded-full text-sm font-medium hover:bg-green-100 transition">
+        <span>&#x1f465;</span> 저장된 환자 <span id="patient-count-badge" class="ml-1 bg-green-600 text-white rounded-full w-5 h-5 text-xs flex items-center justify-content-center hidden">0</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="max-w-3xl mx-auto px-4 pt-20 pb-12">
+
+    <!-- Header -->
+    <div class="text-center mb-6 animate-fadeIn">
+      <h2 class="text-2xl font-bold text-white mb-1">AI 환자 메시지 생성기</h2>
+      <p class="text-gray-400 text-sm">3단계로 간편하게 맞춤형 케어 메시지를 생성하세요</p>
+    </div>
+
+    <!-- Step Indicator -->
+    <div class="step-indicator animate-fadeIn">
+      <div class="flex flex-col items-center">
+        <div class="step-circle active" id="step-circle-1">1</div>
+        <div class="step-label active" id="step-label-1">치과 정보</div>
+      </div>
+      <div class="step-line inactive" id="step-line-1"></div>
+      <div class="flex flex-col items-center">
+        <div class="step-circle inactive" id="step-circle-2">2</div>
+        <div class="step-label inactive" id="step-label-2">환자 정보</div>
+      </div>
+      <div class="step-line inactive" id="step-line-2"></div>
+      <div class="flex flex-col items-center">
+        <div class="step-circle inactive" id="step-circle-3">3</div>
+        <div class="step-label inactive" id="step-label-3">메시지 생성</div>
+      </div>
+    </div>
+
+    <!-- ========== STEP 1: 치과 정보 ========== -->
+    <div class="step-container active" id="step-1">
+
+      <!-- ① 초기 선택 화면: 좌우 카드 -->
+      <div id="step1-chooser">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+
+          <!-- 왼쪽: 기존 등록 치과 -->
+          <div onclick="showExistingClinics()" class="step1-choice-card glass-card rounded-2xl p-6 cursor-pointer transition hover:shadow-xl" style="border: 2px solid rgba(17,153,142,0.3);">
+            <div class="text-center">
+              <div class="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center text-3xl" style="background: linear-gradient(135deg, #11998e, #38ef7d); box-shadow: 0 6px 20px rgba(17,153,142,0.35);">
+                &#x1f3e5;
+              </div>
+              <h4 class="text-base font-bold text-gray-800 mb-1">기존 등록 치과</h4>
+              <p class="text-xs text-gray-500 leading-relaxed">이미 등록된 치과 프로필에서<br>선택하여 바로 시작합니다</p>
+              <div class="mt-4 inline-flex items-center gap-1 text-sm font-bold" style="color: #11998e;">
+                <span id="existing-clinic-count" class="px-2 py-0.5 rounded-full text-white text-xs" style="background: #11998e;">0</span>
+                <span>개 등록됨</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 오른쪽: 새로 등록할 치과 -->
+          <div onclick="showNewClinicForm()" class="step1-choice-card glass-card rounded-2xl p-6 cursor-pointer transition hover:shadow-xl" style="border: 2px solid rgba(249,115,22,0.3);">
+            <div class="text-center">
+              <div class="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center text-3xl" style="background: linear-gradient(135deg, #f59e0b, #f97316); box-shadow: 0 6px 20px rgba(249,115,22,0.35);">
+                &#x2795;
+              </div>
+              <h4 class="text-base font-bold text-gray-800 mb-1">새로 등록할 치과</h4>
+              <p class="text-xs text-gray-500 leading-relaxed">처음 사용하는 치과 정보를<br>직접 입력하여 등록합니다</p>
+              <div class="mt-4 inline-flex items-center gap-1 text-sm font-bold" style="color: #f97316;">
+                <span>직접 입력하기 &rarr;</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ② 기존 치과 목록 서브 페이지 -->
+      <div id="step1-existing" class="hidden">
+        <div class="glass-card rounded-2xl p-6 mb-4">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-bold text-gray-800 flex items-center gap-2">
+              <span class="text-xl">&#x1f3e5;</span> 기존 등록 치과 선택
+            </h3>
+            <button onclick="backToStep1Chooser()" class="text-xs text-gray-400 hover:text-gray-600 transition flex items-center gap-1">&larr; 돌아가기</button>
+          </div>
+          <!-- 검색 필터 -->
+          <div class="mb-4">
+            <div class="flex gap-2 mb-2">
+              <button onclick="setClinicFilter('all')" id="filter-all" class="clinic-filter-btn active px-3 py-1.5 rounded-lg text-xs font-bold transition">전체</button>
+              <button onclick="setClinicFilter('number')" id="filter-number" class="clinic-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold transition">일련번호</button>
+              <button onclick="setClinicFilter('name')" id="filter-name" class="clinic-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold transition">치과명</button>
+              <button onclick="setClinicFilter('director')" id="filter-director" class="clinic-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold transition">원장명</button>
+            </div>
+            <div class="relative">
+              <input type="text" id="clinic-search-input" oninput="filterClinics()" placeholder="검색어를 입력하세요..." class="w-full pl-9 pr-8 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-400 transition">
+              <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              <button onclick="clearClinicSearch()" id="btn-clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 hover:text-gray-500 text-lg hidden">&times;</button>
+            </div>
+            <p id="clinic-search-result" class="text-xs text-gray-400 mt-1.5 hidden"></p>
+          </div>
+
+          <div id="saved-clinics-list" class="space-y-2 max-h-72 overflow-y-auto pr-1"></div>
+          <!-- 프로필 없을 때 -->
+          <div id="no-saved-clinics" class="hidden">
+            <div class="flex flex-col items-center py-8 text-center">
+              <div class="text-4xl mb-3 opacity-30">&#x1f4cb;</div>
+              <p class="text-sm text-gray-400 mb-3">등록된 치과 프로필이 없습니다</p>
+              <button onclick="showNewClinicForm()" class="px-5 py-2.5 text-sm font-bold text-white rounded-xl transition hover:shadow-lg" style="background: linear-gradient(135deg, #f59e0b, #f97316);">
+                새 치과 등록하기 &rarr;
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ③ 새 치과 등록 서브 페이지 -->
+      <div id="step1-new" class="hidden">
+        <div class="glass-card rounded-2xl p-6 mb-4">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-bold text-gray-800 flex items-center gap-2">
+              <span class="text-xl">&#x2795;</span> 새 치과 등록
+            </h3>
+            <button onclick="backToStep1Chooser()" class="text-xs text-gray-400 hover:text-gray-600 transition flex items-center gap-1">&larr; 돌아가기</button>
+          </div>
+          <div id="manual-clinic-form" class="rounded-xl p-5" style="border: 2px solid #fbbf24; background: #fffbeb;">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs text-gray-700 font-bold mb-1.5">치과명 *</label>
+                <input type="text" id="clinic-name" placeholder="예: 화이트서울치과" class="w-full px-4 py-3 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" style="border: 2px solid #fbbf24; background: white;">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-700 font-bold mb-1.5">전화번호 *</label>
+                <input type="tel" id="clinic-phone" placeholder="예: 02-1234-5678" class="w-full px-4 py-3 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" style="border: 2px solid #fbbf24; background: white;">
+              </div>
+            </div>
+            <button onclick="saveClinicInfo()" class="mt-4 w-full py-3 text-sm font-bold text-white rounded-xl transition hover:shadow-lg" style="background: linear-gradient(135deg, #f59e0b, #f97316);">
+              등록하고 다음 단계로 &rarr;
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ④ 선택 완료 표시 + 다음 버튼 -->
+      <div id="selected-clinic-display" class="hidden">
+        <div class="glass-card rounded-2xl p-5 mb-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center text-lg" style="background: linear-gradient(135deg, #11998e, #38ef7d);">&#x2714;&#xfe0f;</div>
+              <div>
+                <span class="text-xs font-bold" style="color: #11998e;">치과 선택 완료</span>
+                <p class="text-base font-bold text-gray-800" id="selected-clinic-name-display"></p>
+                <p class="text-xs text-gray-500" id="selected-clinic-detail-display"></p>
+              </div>
+            </div>
+            <button onclick="deselectClinic()" class="px-4 py-2 text-xs font-semibold text-gray-500 border border-gray-300 rounded-xl hover:bg-gray-50 transition">변경</button>
+          </div>
+        </div>
+        <button onclick="goToStep(2)" class="step-nav-btn w-full text-white" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4);">
+          다음 단계: 환자 정보 입력 &rarr;
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ========== STEP 2: 환자 정보 ========== -->
+    <div class="step-container" id="step-2">
+      <div class="glass-card rounded-2xl p-6 mb-4">
+        <h3 class="text-base font-bold text-gray-800 mb-1 flex items-center gap-2">
+          <span class="text-xl">&#x1f464;</span> 환자 정보 입력
+        </h3>
+        <p class="text-xs text-gray-400 mb-4">메시지를 보낼 환자 정보를 입력하세요</p>
+
+        <!-- Tab Buttons -->
+        <div class="flex gap-2 mb-4">
+          <button onclick="switchInputMode('individual')" id="tab-individual" class="flex-1 py-2.5 rounded-xl text-sm font-semibold transition tab-active">개별 입력</button>
+          <button onclick="switchInputMode('csv')" id="tab-csv" class="flex-1 py-2.5 rounded-xl text-sm font-semibold transition bg-gray-100 text-gray-600 hover:bg-gray-200">CSV 일괄 업로드</button>
+        </div>
+
+        <!-- Tab A: Individual Input -->
+        <div id="input-individual" class="section-card rounded-xl p-5">
+
+          <!-- 저장된 환자 목록 -->
+          <div id="saved-patients-step2" class="hidden mb-4">
+            <div class="flex items-center justify-between mb-2">
+              <p class="text-xs font-bold text-gray-600 flex items-center gap-1.5">
+                <span>&#x1f465;</span> 저장된 환자에서 선택
+              </p>
+              <span id="saved-patients-step2-count" class="text-xs text-gray-400"></span>
+            </div>
+            <!-- 환자 검색 -->
+            <div class="relative mb-2">
+              <input type="text" id="patient-search-input" oninput="filterSavedPatientsStep2()" placeholder="이름 또는 치료내역으로 검색..." class="w-full pl-8 pr-8 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-green-400 transition">
+              <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              <button onclick="clearPatientSearch()" id="btn-clear-patient-search" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-300 hover:text-gray-500 text-sm hidden">&times;</button>
+            </div>
+            <div id="saved-patients-step2-list" class="space-y-1.5 max-h-48 overflow-y-auto pr-1"></div>
+            <div class="border-b border-dashed border-gray-200 mt-4 pt-1"></div>
+            <p class="text-xs text-gray-400 text-center mt-2 mb-1">또는 아래에서 직접 입력하세요</p>
+          </div>
+
+          <div class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">환자 이름 *</label>
+                <input type="text" id="patient-name" placeholder="홍길동" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-400">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">연락처</label>
+                <input type="tel" id="patient-phone" placeholder="010-1234-5678" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-400">
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">최근 방문일 *</label>
+                <input type="date" id="patient-last-visit" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-400">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">다음 권장 방문일</label>
+                <input type="date" id="patient-next-visit" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-400">
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs text-gray-500 mb-2">치료 내역 * <span class="text-gray-400">(복수 선택 가능)</span></label>
+              <div class="flex flex-wrap gap-2" id="treatment-buttons">
+                <button type="button" onclick="toggleTreatment(this)" data-value="임플란트" class="treatment-btn px-3 py-1.5 border border-gray-300 rounded-lg text-sm transition hover:border-green-400">임플란트</button>
+                <button type="button" onclick="toggleTreatment(this)" data-value="보철" class="treatment-btn px-3 py-1.5 border border-gray-300 rounded-lg text-sm transition hover:border-green-400">보철</button>
+                <button type="button" onclick="toggleTreatment(this)" data-value="보존치료" class="treatment-btn px-3 py-1.5 border border-gray-300 rounded-lg text-sm transition hover:border-green-400">보존치료</button>
+                <button type="button" onclick="toggleTreatment(this)" data-value="스케일링" class="treatment-btn px-3 py-1.5 border border-gray-300 rounded-lg text-sm transition hover:border-green-400">스케일링</button>
+                <button type="button" onclick="toggleTreatment(this)" data-value="교정" class="treatment-btn px-3 py-1.5 border border-gray-300 rounded-lg text-sm transition hover:border-green-400">교정</button>
+                <button type="button" onclick="toggleTreatment(this)" data-value="미백" class="treatment-btn px-3 py-1.5 border border-gray-300 rounded-lg text-sm transition hover:border-green-400">미백</button>
+                <button type="button" onclick="toggleTreatment(this)" data-value="발치" class="treatment-btn px-3 py-1.5 border border-gray-300 rounded-lg text-sm transition hover:border-green-400">발치</button>
+                <button type="button" onclick="toggleTreatment(this)" data-value="잇몸치료" class="treatment-btn px-3 py-1.5 border border-gray-300 rounded-lg text-sm transition hover:border-green-400">잇몸치료</button>
+                <button type="button" onclick="toggleTreatment(this)" data-value="기타" class="treatment-btn px-3 py-1.5 border border-gray-300 rounded-lg text-sm transition hover:border-green-400">기타</button>
+              </div>
+            </div>
+            <div class="flex gap-2 pt-2">
+              <button onclick="saveCurrentPatient()" class="px-4 py-2 text-xs text-green-600 border border-green-300 rounded-lg hover:bg-green-50 transition">환자 정보 저장</button>
+              <button onclick="clearPatientForm()" class="px-4 py-2 text-xs text-gray-500 border border-gray-300 rounded-lg hover:bg-gray-50 transition">초기화</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab B: CSV Upload -->
+        <div id="input-csv" class="section-card rounded-xl p-5 hidden">
+          <div class="csv-drop-zone" id="csv-drop-zone">
+            <div class="text-4xl mb-3 text-gray-300">&#x1f4c4;</div>
+            <p class="text-sm text-gray-500 mb-2">CSV 파일을 드래그하거나 클릭하여 업로드</p>
+            <p class="text-xs text-gray-400">형식: 이름, 연락처, 최근방문일, 치료내역, 다음방문일</p>
+            <input type="file" id="csv-file-input" accept=".csv" class="hidden">
+          </div>
+          <div class="flex gap-2 mt-3">
+            <button onclick="downloadSampleCSV()" class="px-4 py-2 text-xs text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50 transition">샘플 CSV 다운로드</button>
+            <button onclick="clearCSV()" id="btn-clear-csv" class="px-4 py-2 text-xs text-red-500 border border-red-300 rounded-lg hover:bg-red-50 transition hidden">CSV 초기화</button>
+          </div>
+          <div id="csv-preview" class="mt-4 hidden">
+            <div class="flex items-center justify-between mb-2">
+              <p class="text-sm font-semibold text-gray-700">업로드된 환자 목록</p>
+              <span id="csv-count" class="text-xs text-gray-400"></span>
+            </div>
+            <div class="overflow-x-auto max-h-64 overflow-y-auto rounded-lg border border-gray-200">
+              <table class="bulk-table" id="csv-table">
+                <thead><tr><th>#</th><th>이름</th><th>연락처</th><th>최근방문일</th><th>치료내역</th><th>다음방문일</th><th>상태</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2 Navigation -->
+      <div class="flex gap-3 mt-2">
+        <button onclick="goToStep(1)" class="step-nav-btn flex-none px-6 text-gray-300 border-2 border-gray-500 hover:border-gray-300" style="background: transparent;">
+          &larr; 이전
+        </button>
+        <button onclick="goToStep(3)" class="step-nav-btn flex-1 text-white" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4);">
+          다음 단계: 메시지 생성 &rarr;
+        </button>
+      </div>
+    </div>
+
+    <!-- ========== STEP 3: 메시지 설정 및 생성 ========== -->
+    <div class="step-container" id="step-3">
+
+      <!-- 선택 요약 -->
+      <div class="glass-card rounded-2xl p-4 mb-4">
+        <div class="flex items-center gap-4 text-xs">
+          <div class="flex items-center gap-1.5">
+            <span class="text-green-500 font-bold">&#x1f3e5;</span>
+            <span class="text-gray-500">치과:</span>
+            <span class="font-bold text-gray-800" id="summary-clinic">-</span>
+          </div>
+          <div class="w-px h-4 bg-gray-200"></div>
+          <div class="flex items-center gap-1.5">
+            <span class="text-green-500 font-bold">&#x1f464;</span>
+            <span class="text-gray-500">환자:</span>
+            <span class="font-bold text-gray-800" id="summary-patient">-</span>
+          </div>
+          <button onclick="goToStep(1)" class="ml-auto text-xs text-gray-400 hover:text-green-600 transition">수정</button>
+        </div>
+      </div>
+
+      <!-- Message Configuration -->
+      <div class="glass-card rounded-2xl p-6 mb-4">
+        <h3 class="text-base font-bold text-gray-800 mb-1 flex items-center gap-2">
+          <span class="text-xl">&#x2699;&#xfe0f;</span> 메시지 설정
+        </h3>
+        <p class="text-xs text-gray-400 mb-4">메시지 유형과 발송 채널을 선택하세요</p>
+
+        <!-- Message Type -->
+        <div class="mb-5">
+          <label class="block text-xs text-gray-500 mb-2 font-medium">메시지 유형 *</label>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="message-type-buttons">
+            <button onclick="selectMessageType('postTreatmentCare')" data-type="postTreatmentCare" class="msg-type-btn p-3 border border-gray-200 rounded-xl text-left transition hover:border-green-400">
+              <div class="text-lg mb-1">&#x1f3e5;</div>
+              <div class="text-xs font-semibold">치료 후 케어</div>
+            </button>
+            <button onclick="selectMessageType('regularCheckup')" data-type="regularCheckup" class="msg-type-btn p-3 border border-gray-200 rounded-xl text-left transition hover:border-green-400">
+              <div class="text-lg mb-1">&#x1f4cb;</div>
+              <div class="text-xs font-semibold">정기검진 리마인드</div>
+            </button>
+            <button onclick="selectMessageType('referralReward')" data-type="referralReward" class="msg-type-btn p-3 border border-gray-200 rounded-xl text-left transition hover:border-green-400">
+              <div class="text-lg mb-1">&#x1f381;</div>
+              <div class="text-xs font-semibold">소개/추천 리워드</div>
+            </button>
+            <button onclick="selectMessageType('seasonalTips')" data-type="seasonalTips" class="msg-type-btn p-3 border border-gray-200 rounded-xl text-left transition hover:border-green-400">
+              <div class="text-lg mb-1">&#x1f33f;</div>
+              <div class="text-xs font-semibold">계절별 구강관리</div>
+            </button>
+            <button onclick="selectMessageType('thankYou')" data-type="thankYou" class="msg-type-btn p-3 border border-gray-200 rounded-xl text-left transition hover:border-green-400">
+              <div class="text-lg mb-1">&#x1f49d;</div>
+              <div class="text-xs font-semibold">감사/안부 인사</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Channel Selection -->
+        <div>
+          <label class="block text-xs text-gray-500 mb-2 font-medium">발송 채널 *</label>
+          <div class="flex gap-2">
+            <button onclick="selectChannel('sms')" data-channel="sms" class="channel-btn flex-1 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold transition hover:border-blue-400">&#x1f4f1; SMS 문자</button>
+            <button onclick="selectChannel('kakao')" data-channel="kakao" class="channel-btn flex-1 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold transition hover:border-blue-400">&#x1f4ac; 카카오톡</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Generate Button -->
+      <button onclick="handleGenerate()" id="btn-generate" class="w-full py-4 rounded-2xl text-white font-bold text-base transition hover:shadow-xl mb-4" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4);">
+        <span id="btn-generate-text">메시지 생성하기</span>
+        <span id="btn-generate-spinner" class="hidden"><span class="spinner inline-block align-middle mr-2"></span>생성 중...</span>
+      </button>
+
+      <!-- Step 3 Back Button -->
+      <button onclick="goToStep(2)" class="step-nav-btn w-full px-6 text-gray-300 border-2 border-gray-500 hover:border-gray-300 mb-4" style="background: transparent;">
+        &larr; 이전 단계로
+      </button>
+
+      <!-- Progress Bar (for bulk) -->
+      <div id="bulk-progress" class="mb-6 hidden">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-xs text-gray-300">일괄 생성 중...</span>
+          <span id="bulk-progress-text" class="text-xs text-gray-300">0/0</span>
+        </div>
+        <div class="progress-bar">
+          <div id="bulk-progress-fill" class="progress-bar-fill" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- Error Display -->
+      <div id="error-display" class="mb-4 hidden">
+        <div class="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-600"></div>
+      </div>
+
+      <!-- Results -->
+      <div id="result-section" class="hidden animate-fadeIn">
+        <!-- Individual Result -->
+        <div id="result-individual" class="hidden">
+          <div class="glass-card rounded-2xl p-6 mb-4">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-bold text-gray-700 flex items-center gap-2">
+                <span>&#x2728;</span> 생성된 메시지
+              </h3>
+              <div class="flex gap-2">
+                <button onclick="regenerate()" id="btn-regenerate" class="px-3 py-1.5 text-xs text-green-600 border border-green-300 rounded-lg hover:bg-green-50 transition">다시 생성</button>
+                <button onclick="startEditMessage()" id="btn-edit-msg" class="px-3 py-1.5 text-xs text-amber-600 border border-amber-300 rounded-lg hover:bg-amber-50 transition font-semibold">수정</button>
+              </div>
+            </div>
+
+            <div id="template-selector" class="mb-4">
+              <label class="block text-xs text-gray-500 mb-2">템플릿 선택</label>
+              <div id="template-list" class="flex gap-2 flex-wrap"></div>
+            </div>
+
+            <!-- ===== 미리보기 모드 ===== -->
+            <div id="preview-mode">
+              <!-- SMS Preview -->
+              <div id="preview-sms" class="hidden mb-6">
+                <p class="text-xs text-gray-500 mb-2 text-center">SMS 미리보기</p>
+                <div class="sms-frame">
+                  <div class="sms-screen">
+                    <div class="text-center text-xs text-gray-400 mb-3">문자 메시지</div>
+                    <div class="sms-bubble" id="sms-message-text"></div>
+                    <div class="text-right text-xs text-gray-400 mt-2"><span id="sms-char-count">0</span>/90자</div>
+                  </div>
+                </div>
+                <div class="flex gap-2 mt-3 justify-center">
+                  <button onclick="copyMessage('sms')" class="px-4 py-2 text-xs text-white bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg hover:shadow-lg transition font-semibold">복사</button>
+                  <button onclick="downloadMessage('sms')" class="px-4 py-2 text-xs text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition">다운로드</button>
+                </div>
+              </div>
+
+              <!-- KakaoTalk Preview -->
+              <div id="preview-kakao" class="hidden mb-4">
+                <p class="text-xs text-gray-500 mb-2 text-center">카카오톡 미리보기</p>
+                <div class="kakao-frame">
+                  <div class="text-center text-xs font-semibold text-gray-600 mb-4">카카오톡</div>
+                  <div class="flex gap-2 items-start">
+                    <div class="kakao-profile">&#x1f9b7;</div>
+                    <div>
+                      <div class="text-xs font-semibold text-gray-700 mb-1" id="kakao-clinic-name"></div>
+                      <div class="kakao-bubble" id="kakao-message-text"></div>
+                      <div id="kakao-buttons" class="mt-2 flex flex-col gap-1 max-w-[260px]"></div>
+                    </div>
+                  </div>
+                  <div class="text-right text-xs text-gray-500 mt-2"><span id="kakao-char-count">0</span>/1000자</div>
+                </div>
+                <div class="flex gap-2 mt-3 justify-center">
+                  <button onclick="copyMessage('kakao')" class="px-4 py-2 text-xs text-white bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg hover:shadow-lg transition font-semibold">복사</button>
+                  <button onclick="downloadMessage('kakao')" class="px-4 py-2 text-xs text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition">다운로드</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===== 수정 모드 ===== -->
+            <div id="edit-mode" class="hidden">
+              <div class="rounded-xl p-4 mb-3" style="border: 2px solid #f59e0b; background: #fffbeb;">
+                <div class="flex items-center justify-between mb-2">
+                  <p class="text-xs font-bold text-amber-700">메시지 직접 수정</p>
+                  <span id="edit-char-count" class="text-xs text-gray-400">0자</span>
+                </div>
+                <textarea id="edit-textarea" rows="8" class="w-full px-4 py-3 rounded-xl text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-amber-400 resize-y" style="border: 2px solid #fbbf24; background: white; min-height: 120px;" oninput="updateEditCharCount()"></textarea>
+                <p class="text-xs text-gray-400 mt-2">내용을 자유롭게 수정하거나 추가하세요. 수정 완료 후 [수정 완료] 버튼을 눌러주세요.</p>
+              </div>
+              <div class="flex gap-2">
+                <button onclick="applyEditMessage()" class="flex-1 py-3 text-sm font-bold text-white rounded-xl transition hover:shadow-lg" style="background: linear-gradient(135deg, #f59e0b, #f97316);">수정 완료</button>
+                <button onclick="cancelEditMessage()" class="px-5 py-3 text-sm font-semibold text-gray-500 border border-gray-300 rounded-xl hover:bg-gray-50 transition">취소</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Bulk Result -->
+        <div id="result-bulk" class="hidden">
+          <div class="glass-card rounded-2xl p-6 mb-4">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-bold text-gray-700 flex items-center gap-2">
+                <span>&#x1f4e8;</span> 일괄 생성 결과
+              </h3>
+              <span id="bulk-result-count" class="text-xs text-gray-400"></span>
+            </div>
+            <div class="overflow-x-auto max-h-96 overflow-y-auto rounded-lg border border-gray-200">
+              <table class="bulk-table" id="bulk-result-table">
+                <thead><tr><th>#</th><th>이름</th><th>연락처</th><th>메시지</th><th></th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <div class="flex gap-2 mt-4">
+              <button onclick="exportBulkCSV()" class="px-5 py-2.5 text-sm text-white bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl hover:shadow-lg transition font-semibold">CSV 내보내기</button>
+              <button onclick="exportBulkText()" class="px-5 py-2.5 text-sm text-gray-600 border border-gray-300 rounded-xl hover:bg-gray-50 transition">텍스트 내보내기</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center text-gray-500 text-xs mt-8 pb-4">
+      <p>덴탈 클리닉 파인더 | 심재우 대표</p>
+    </div>
+  </div>
+
+  <!-- Saved Patient Side Panel -->
+  <div class="side-panel-overlay" id="panel-overlay" onclick="closePatientPanel()"></div>
+  <div class="side-panel" id="patient-panel">
+    <div class="p-5 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white z-10">
+      <h3 class="font-bold text-gray-800 flex items-center gap-2">
+        <span>&#x1f465;</span> &#xc800;&#xc7a5;&#xb41c; &#xd658;&#xc790; &#xbaa9;&#xb85d;
+      </h3>
+      <button onclick="closePatientPanel()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 text-lg">&times;</button>
+    </div>
+    <div class="p-4">
+      <div id="saved-patients-list" class="space-y-2">
+        <p class="text-sm text-gray-400 text-center py-8">&#xc800;&#xc7a5;&#xb41c; &#xd658;&#xc790;&#xac00; &#xc5c6;&#xc2b5;&#xb2c8;&#xb2e4;</p>
+      </div>
+      <button onclick="clearAllPatients()" id="btn-clear-patients" class="mt-4 w-full py-2 text-xs text-red-500 border border-red-200 rounded-lg hover:bg-red-50 transition hidden">&#xc804;&#xccb4; &#xc0ad;&#xc81c;</button>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- App Script -->
+  <script src="patient-message-app.js"></script>
+</body>
+</html>
