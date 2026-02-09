@@ -7,6 +7,10 @@
 *.jpeg
 *.gif
 
+# Logo exceptions
+!로고*.png
+!로고*.jpg
+
 # Video files
 *.mp4
 
