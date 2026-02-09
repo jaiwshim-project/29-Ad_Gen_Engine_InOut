@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>사용자 가이드 - 치과 광고 콘텐츠 생성기</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -432,7 +433,12 @@
     <div class="header">
         <h1>📖 사용자 가이드</h1>
         <p>치과 광고 콘텐츠 생성기 사용 방법을 안내합니다</p>
-        <a href="index.html" class="back-btn">🏠 홈으로 돌아가기</a>
+        <div style="display: flex; gap: 12px; justify-content: center; margin-top: 15px; flex-wrap: wrap;">
+            <a href="index.html" class="back-btn">🏠 홈으로 돌아가기</a>
+            <button onclick="downloadPDF()" id="pdf-download-btn" class="back-btn" style="cursor: pointer; font-size: inherit; font-family: inherit;">
+                📥 PDF 다운로드
+            </button>
+        </div>
     </div>
 
     <div class="container">
@@ -490,6 +496,12 @@
                     <span class="nav-card-icon">🔄</span>
                     <div class="nav-card-title">새로 생성</div>
                     <div class="nav-card-desc">재생성 방법</div>
+                </a>
+
+                <a href="#cardnews-guide" class="nav-card">
+                    <span class="nav-card-icon">🎨</span>
+                    <div class="nav-card-title">카드뉴스</div>
+                    <div class="nav-card-desc">AI 카드뉴스 생성</div>
                 </a>
 
                 <a href="#faq" class="nav-card">
@@ -1087,6 +1099,178 @@
             </div>
         </div>
 
+        <!-- AI 카드뉴스 생성 가이드 -->
+        <div class="section" id="cardnews-guide">
+            <div class="section-icon">🎨</div>
+            <h2>AI 카드뉴스 생성하기</h2>
+
+            <p style="font-size: 15px; color: #555; line-height: 1.7; margin-bottom: 20px;">
+                주제만 입력하면 AI가 <strong>5장의 매력적인 카드뉴스</strong>를 자동으로 생성합니다.
+                SNS, 블로그, 홈페이지 등 다양한 채널에서 바로 활용할 수 있는 비주얼 콘텐츠를 만들어 보세요.
+            </p>
+
+            <div class="step">
+                <span class="step-number">1</span>
+                <h3>카드뉴스 페이지로 이동</h3>
+                <p>홈페이지 메뉴 또는 아래 경로로 AI 카드뉴스 생성기에 접속합니다.</p>
+                <ul>
+                    <li><strong>홈페이지:</strong> 메인 메뉴에서 "카드뉴스" 클릭</li>
+                    <li><strong>직접 접속:</strong> cardnews.html 페이지로 이동</li>
+                </ul>
+            </div>
+
+            <div class="step">
+                <span class="step-number">2</span>
+                <h3>API 키 설정</h3>
+                <p>카드뉴스 생성을 위해 Gemini API 키가 필요합니다.</p>
+                <ul>
+                    <li><strong>발급처:</strong> <a href="https://ai.google.dev" target="_blank" style="color: #667eea; text-decoration: underline;">ai.google.dev</a>에서 무료로 발급</li>
+                    <li><strong>입력:</strong> 페이지 상단의 API 키 입력란에 키를 입력 후 "저장" 클릭</li>
+                    <li><strong>보관:</strong> 한 번 저장하면 브라우저에 기억되어 다시 입력할 필요 없음</li>
+                </ul>
+                <div class="tip-box">
+                    <strong>💡 TIP:</strong> API 키는 브라우저의 localStorage에 안전하게 저장되며 외부로 전송되지 않습니다.
+                </div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">3</span>
+                <h3>도메인(분야) 선택</h3>
+                <p>카드뉴스의 분야를 선택합니다. 8가지 도메인 중 하나를 선택하세요.</p>
+                <ul>
+                    <li><strong>병원/의료:</strong> 치과, 임플란트, 치아미백, 교정 등</li>
+                    <li><strong>선거/정치:</strong> 정치 캠페인, 정책 홍보</li>
+                    <li><strong>교육:</strong> 학원, 교육 프로그램, 강좌 안내</li>
+                    <li><strong>부동산:</strong> 매물 소개, 분양 안내, 부동산 정보</li>
+                    <li><strong>금융/보험:</strong> 금융 상품, 보험 안내, 재테크 정보</li>
+                    <li><strong>뷰티/미용:</strong> 피부관리, 시술 소개, 미용 정보</li>
+                    <li><strong>음식/요식업:</strong> 메뉴 소개, 맛집 홍보, 신메뉴 안내</li>
+                    <li><strong>+ 직접입력:</strong> 위 목록에 없는 분야를 자유롭게 입력</li>
+                </ul>
+            </div>
+
+            <div class="step">
+                <span class="step-number">4</span>
+                <h3>타겟 대상 설정</h3>
+                <p>카드뉴스의 대상 독자를 설정합니다. 연령대와 직업군을 각각 선택하세요.</p>
+                <ul>
+                    <li><strong>연령대:</strong> 10대 ~ 70대 중 선택</li>
+                    <li><strong>직업군:</strong> 직장인, 자영업자, 주부, 학생, 프리랜서, 은퇴자, 전문직 중 선택 (직접 입력도 가능)</li>
+                </ul>
+                <div class="tip-box">
+                    <strong>💡 TIP:</strong> 타겟 대상에 따라 AI가 어조, 용어, 관심사를 자동으로 맞춰 콘텐츠를 생성합니다.
+                </div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">5</span>
+                <h3>주제 및 핵심 메시지 입력</h3>
+                <p>카드뉴스의 주제와 전달하고자 하는 핵심 메시지를 입력합니다.</p>
+                <ul>
+                    <li><strong>주제:</strong> 카드뉴스의 제목이 될 주제 입력 (예: "치아 미백의 효과와 주의사항")</li>
+                    <li><strong>핵심 메시지:</strong> 독자에게 전달하고 싶은 내용을 2~3문장으로 작성</li>
+                    <li><strong>키워드:</strong> 관련 키워드를 추가로 선택하거나 직접 입력 (복수 선택 가능)</li>
+                </ul>
+            </div>
+
+            <div class="step">
+                <span class="step-number">6</span>
+                <h3>업체 정보 입력 (선택)</h3>
+                <p>카드뉴스에 업체 정보를 포함시킬 수 있습니다.</p>
+                <ul>
+                    <li><strong>업체명:</strong> 병원명 또는 사업체명</li>
+                    <li><strong>연락처:</strong> 전화번호</li>
+                    <li><strong>주소:</strong> 위치 정보</li>
+                </ul>
+                <p style="margin-top: 8px; font-size: 13px; color: #888;">업체 정보는 자동으로 저장되어 다음 생성 시 재사용할 수 있습니다. 상단 "업체 정보" 버튼에서 저장된 정보를 관리할 수 있습니다.</p>
+            </div>
+
+            <div class="step">
+                <span class="step-number">7</span>
+                <h3>카드뉴스 생성 및 확인</h3>
+                <p>"카드뉴스 생성하기" 버튼을 클릭하면 AI가 5장의 카드뉴스를 자동 생성합니다.</p>
+                <ul>
+                    <li><strong>1장 (Hook):</strong> 시선을 사로잡는 강렬한 제목과 핵심 키워드</li>
+                    <li><strong>2장 (Empathy):</strong> 독자의 고민과 상황에 공감하는 스토리</li>
+                    <li><strong>3장 (Problem):</strong> 구체적인 문제점과 위험성 제기</li>
+                    <li><strong>4장 (Solution):</strong> 해결 방법과 차별화 포인트 제시</li>
+                    <li><strong>5장 (CTA):</strong> 행동을 유도하는 마무리 (내원, 문의 등)</li>
+                </ul>
+                <div class="tip-box">
+                    <strong>💡 TIP:</strong> 각 카드는 고유한 그라데이션 컬러로 디자인되어 시각적 일관성과 차별화를 동시에 제공합니다.
+                </div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">8</span>
+                <h3>카드뉴스 다운로드</h3>
+                <p>생성된 카드뉴스를 이미지 파일로 다운로드하여 바로 활용할 수 있습니다.</p>
+                <ul>
+                    <li><strong>개별 다운로드:</strong> 각 카드 아래의 다운로드 버튼으로 개별 PNG 저장</li>
+                    <li><strong>이미지 규격:</strong> 800 x 1000px (SNS 최적화 사이즈)</li>
+                </ul>
+            </div>
+
+            <!-- 카드뉴스 활용 채널 -->
+            <div style="margin-top: 25px; padding: 20px; background: #f8f9ff; border-radius: 12px; border-left: 4px solid #667eea;">
+                <h4 style="color: #667eea; margin-bottom: 15px; font-size: 16px;">📱 카드뉴스 활용 채널</h4>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">📷</div>
+                        <h4>인스타그램</h4>
+                        <p>캐러셀 포스트로 5장 슬라이드 업로드. 스와이프 유도로 높은 인게이지먼트 확보</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📘</div>
+                        <h4>페이스북</h4>
+                        <p>이미지 앨범 또는 슬라이드 형태로 공유. 공유·반응 유도에 효과적</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📝</div>
+                        <h4>블로그</h4>
+                        <p>포스팅 내 이미지로 삽입하여 시각적 가독성 향상. 체류시간 증가에 기여</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💬</div>
+                        <h4>카카오톡</h4>
+                        <p>이미지로 직접 전송하거나 채널 게시물로 활용. 환자 안내에 효과적</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 카드뉴스 5장 구조 시각화 -->
+            <div style="margin-top: 25px; padding: 20px; background: #fff9e6; border-radius: 12px; border-left: 4px solid #ffc107;">
+                <strong style="color: #f57c00; font-size: 16px;">🎯 카드뉴스 5장 구조 한눈에 보기</strong>
+                <div style="margin-top: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;">
+                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 12px 8px; border-radius: 8px; text-align: center; font-size: 12px;">
+                        <div style="font-size: 20px; margin-bottom: 6px;">1</div>
+                        <strong>Hook</strong>
+                        <div style="margin-top: 4px; opacity: 0.9;">시선 집중</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #11998e, #38ef7d); color: white; padding: 12px 8px; border-radius: 8px; text-align: center; font-size: 12px;">
+                        <div style="font-size: 20px; margin-bottom: 6px;">2</div>
+                        <strong>Empathy</strong>
+                        <div style="margin-top: 4px; opacity: 0.9;">공감 유도</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #fc4a1a, #f7b733); color: white; padding: 12px 8px; border-radius: 8px; text-align: center; font-size: 12px;">
+                        <div style="font-size: 20px; margin-bottom: 6px;">3</div>
+                        <strong>Problem</strong>
+                        <div style="margin-top: 4px; opacity: 0.9;">문제 제기</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #8E2DE2, #4A00E0); color: white; padding: 12px 8px; border-radius: 8px; text-align: center; font-size: 12px;">
+                        <div style="font-size: 20px; margin-bottom: 6px;">4</div>
+                        <strong>Solution</strong>
+                        <div style="margin-top: 4px; opacity: 0.9;">해결책</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #eb3349, #f45c43); color: white; padding: 12px 8px; border-radius: 8px; text-align: center; font-size: 12px;">
+                        <div style="font-size: 20px; margin-bottom: 6px;">5</div>
+                        <strong>CTA</strong>
+                        <div style="margin-top: 4px; opacity: 0.9;">행동 유도</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- FAQ -->
         <div class="section" id="faq">
             <div class="section-icon">❓</div>
@@ -1141,6 +1325,26 @@
                 <div class="faq-question">Q. 프로필 번호를 변경할 수 있나요?</div>
                 <div class="faq-answer">A. 아니오, 프로필 번호는 생성 순서에 따라 자동으로 부여되며 변경할 수 없습니다. 이는 각 프로필을 고유하게 식별하기 위한 시스템입니다. 프로필 번호 대신 병원명이나 원장명으로 검색하여 찾는 것을 권장합니다.</div>
             </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Q. 카드뉴스 생성에 비용이 드나요?</div>
+                <div class="faq-answer">A. 카드뉴스 생성은 Gemini API를 사용하며, API 키는 ai.google.dev에서 무료로 발급받을 수 있습니다. 무료 사용량 범위 내에서 추가 비용 없이 이용 가능합니다.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Q. 카드뉴스를 병원 외 다른 분야에서도 사용할 수 있나요?</div>
+                <div class="faq-answer">A. 네, 카드뉴스 생성기는 병원/의료, 교육, 부동산, 금융, 뷰티, 음식점, 선거 등 7개 도메인을 지원하며, "직접 입력" 옵션으로 어떤 분야든 자유롭게 활용할 수 있습니다.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Q. 생성된 카드뉴스의 디자인을 수정할 수 있나요?</div>
+                <div class="faq-answer">A. 현재는 AI가 자동으로 디자인을 적용합니다. 각 카드(Hook, Empathy, Problem, Solution, CTA)에 고유한 그라데이션 컬러가 적용되며, PNG 이미지로 다운로드한 후 별도 디자인 도구에서 추가 편집이 가능합니다.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Q. 카드뉴스에 저장한 업체 정보는 어디에서 관리하나요?</div>
+                <div class="faq-answer">A. 카드뉴스 페이지 상단의 "업체 정보" 버튼을 클릭하면 저장된 업체 정보를 확인·삭제할 수 있습니다. 업체 정보는 카드뉴스 생성 시 자동 저장되며 다음 생성 때 재사용할 수 있습니다.</div>
+            </div>
         </div>
 
         <!-- CTA -->
@@ -1168,5 +1372,102 @@
             <a href="admin-dashboard.html" class="footer-admin-btn">🎛️ 관리자 대시보드</a>
         </div>
     </footer>
+
+    <!-- PDF 다운로드 로딩 오버레이 -->
+    <div id="pdf-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; justify-content:center; align-items:center;">
+        <div style="background:white; padding:30px 40px; border-radius:16px; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+            <div style="width:50px; height:50px; border:4px solid #e8eaff; border-top:4px solid #667eea; border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 15px;"></div>
+            <p style="font-size:16px; font-weight:600; color:#333; margin-bottom:5px;">PDF 생성 중...</p>
+            <p style="font-size:13px; color:#888;">잠시만 기다려주세요</p>
+        </div>
+    </div>
+
+    <style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media print {
+            .header, .footer, #pdf-download-btn {
+                break-inside: avoid;
+            }
+        }
+    </style>
+
+    <script>
+        function downloadPDF() {
+            var btn = document.getElementById('pdf-download-btn');
+            var overlay = document.getElementById('pdf-overlay');
+            var originalText = btn.innerHTML;
+
+            // 버튼 비활성화 + 로딩 표시
+            btn.innerHTML = '⏳ 생성 중...';
+            btn.style.opacity = '0.6';
+            btn.style.pointerEvents = 'none';
+            overlay.style.display = 'flex';
+
+            // PDF로 변환할 영역 (헤더 + 컨테이너 + 푸터)
+            var content = document.createElement('div');
+
+            // 헤더 복제
+            var header = document.querySelector('.header').cloneNode(true);
+            // PDF에서 버튼 영역 제거
+            var btnArea = header.querySelector('div[style*="flex"]');
+            if (btnArea) btnArea.remove();
+            content.appendChild(header);
+
+            // 컨테이너 복제
+            var container = document.querySelector('.container').cloneNode(true);
+            content.appendChild(container);
+
+            // 푸터 복제
+            var footer = document.querySelector('.footer').cloneNode(true);
+            content.appendChild(footer);
+
+            // 스타일 복사 적용
+            var styles = document.querySelectorAll('style');
+            styles.forEach(function(style) {
+                content.insertBefore(style.cloneNode(true), content.firstChild);
+            });
+
+            var opt = {
+                margin:       [10, 10, 10, 10],
+                filename:     '사용자_가이드_치과_AI_마케팅_플랫폼.pdf',
+                image:        { type: 'jpeg', quality: 0.95 },
+                html2canvas:  {
+                    scale: 2,
+                    useCORS: true,
+                    letterRendering: true,
+                    logging: false
+                },
+                jsPDF:        {
+                    unit: 'mm',
+                    format: 'a4',
+                    orientation: 'portrait'
+                },
+                pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+            };
+
+            html2pdf().set(opt).from(content).save().then(function() {
+                // 완료 후 복원
+                btn.innerHTML = '✅ 다운로드 완료!';
+                btn.style.opacity = '1';
+                overlay.style.display = 'none';
+
+                setTimeout(function() {
+                    btn.innerHTML = originalText;
+                    btn.style.pointerEvents = 'auto';
+                }, 2000);
+            }).catch(function(err) {
+                console.error('PDF 생성 오류:', err);
+                btn.innerHTML = originalText;
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+                overlay.style.display = 'none';
+                alert('PDF 생성 중 오류가 발생했습니다. 다시 시도해주세요.');
+            });
+        }
+    </script>
 </body>
 </html>

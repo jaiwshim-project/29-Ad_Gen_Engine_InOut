@@ -1067,10 +1067,164 @@
         });
     </script>
 
-    <!-- TalkerSDK Chatbot -->
-    <script src="https://chatbot-sdk.aitalker.co.kr/talker-sdk.umd.js"></script>
+    <!-- AI 환자 상담 튜터 플로팅 버튼 + iframe -->
+    <style>
+        .ai-tutor-fab {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            z-index: 9000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 22px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+            box-shadow: 0 6px 24px rgba(102, 126, 234, 0.45);
+            transition: all 0.3s ease;
+        }
+        .ai-tutor-fab:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 32px rgba(102, 126, 234, 0.55);
+        }
+        .ai-tutor-fab-icon {
+            width: 28px;
+            height: 28px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        .ai-tutor-fab.open {
+            border-radius: 16px;
+            padding: 10px 18px;
+            bottom: calc(600px + 36px);
+        }
+
+        .ai-tutor-iframe-wrap {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            width: 400px;
+            height: 600px;
+            z-index: 8999;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.25);
+            display: none;
+            background: white;
+            animation: tutorSlideUp 0.3s ease;
+        }
+        @keyframes tutorSlideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .ai-tutor-iframe-wrap.show { display: block; }
+
+        .ai-tutor-iframe-header {
+            height: 48px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+        }
+        .ai-tutor-iframe-title {
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+        }
+        .ai-tutor-iframe-close {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .ai-tutor-iframe-close:hover { background: rgba(255,255,255,0.35); }
+
+        .ai-tutor-iframe-wrap iframe {
+            width: 100%;
+            height: calc(100% - 48px);
+            border: none;
+        }
+
+        @media (max-width: 480px) {
+            .ai-tutor-iframe-wrap {
+                width: calc(100% - 20px);
+                height: 70vh;
+                right: 10px;
+                bottom: 10px;
+            }
+            .ai-tutor-fab.open {
+                bottom: calc(70vh + 18px);
+                right: 10px;
+            }
+            .ai-tutor-fab {
+                right: 10px;
+                bottom: 16px;
+                padding: 12px 18px;
+                font-size: 14px;
+            }
+        }
+    </style>
+
+    <!-- 플로팅 버튼 -->
+    <button class="ai-tutor-fab" id="aiTutorFab" onclick="toggleAiTutor()">
+        <span class="ai-tutor-fab-icon">🤖</span>
+        <span id="aiTutorFabLabel">AI 환자 상담 튜터</span>
+    </button>
+
+    <!-- iframe 패널 -->
+    <div class="ai-tutor-iframe-wrap" id="aiTutorPanel">
+        <div class="ai-tutor-iframe-header">
+            <span class="ai-tutor-iframe-title">🤖 AI 환자 상담 튜터</span>
+            <button class="ai-tutor-iframe-close" onclick="toggleAiTutor()" title="닫기">&times;</button>
+        </div>
+        <iframe id="aiTutorIframe" src="about:blank" allow="microphone; camera"></iframe>
+    </div>
+
     <script>
-        TalkerSDK.initializeTalkerSDK({ code: "biz018", position: "right" });
+        var aiTutorOpen = false;
+        var aiTutorLoaded = false;
+
+        function toggleAiTutor() {
+            var fab = document.getElementById('aiTutorFab');
+            var panel = document.getElementById('aiTutorPanel');
+            var iframe = document.getElementById('aiTutorIframe');
+            var label = document.getElementById('aiTutorFabLabel');
+
+            aiTutorOpen = !aiTutorOpen;
+
+            if (aiTutorOpen) {
+                if (!aiTutorLoaded) {
+                    iframe.src = 'https://aitalker.co.kr/biz018';
+                    aiTutorLoaded = true;
+                }
+                panel.classList.add('show');
+                fab.classList.add('open');
+                label.textContent = '닫기';
+            } else {
+                panel.classList.remove('show');
+                fab.classList.remove('open');
+                label.textContent = 'AI 환자 상담 튜터';
+            }
+        }
     </script>
 </body>
 </html>
