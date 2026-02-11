@@ -2536,7 +2536,7 @@
         }
 
         // Handle form submission
-        document.getElementById('dentalForm').addEventListener('submit', function(e) {
+        document.getElementById('dentalForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
             // Validate priority selections
@@ -2569,8 +2569,6 @@
             }
 
             // 샘플이 아닌 일반 케이스임을 명시
-            // (sampleDescription 필드가 없으면 샘플이 아님)
-            // 이전 샘플 데이터를 완전히 덮어쓰기 위해 명시적으로 제거
             delete data.sampleDescription;
 
             // 진단 데이터 추가
@@ -2584,6 +2582,40 @@
 
             // Save to localStorage
             localStorage.setItem('dentalFormData', JSON.stringify(data));
+
+            // 선택된 프로필이 있으면 Supabase 업데이트
+            if (window._selectedProfileNumber) {
+                try {
+                    const profileData = {
+                        profileNumber: window._selectedProfileNumber,
+                        clinicName: data.clinicName || '',
+                        directorName: data.directorName || '',
+                        phone: data.phone || '',
+                        location: data.location || '',
+                        specialty: data.specialty || '',
+                        revenueStage1: data.revenueStage1 || '',
+                        revenueStage2: data.revenueStage2 || '',
+                        directorStyle1: data.directorStyle1 || '',
+                        directorStyle2: data.directorStyle2 || '',
+                        empathy: data.empathy || 0,
+                        understanding: data.understanding || 0,
+                        decision: data.decision || 0,
+                        value: data.value || 0,
+                        trust: data.trust || 0,
+                        space: data.space || 0,
+                        philosophy: data.philosophy || '',
+                        differentiation: data.differentiation || '',
+                        channel: data.channel || [],
+                        content: data.content || [],
+                        accessPassword: data.accessPassword || '',
+                        savedAt: new Date().toISOString()
+                    };
+                    await saveProfileToSupabase(profileData);
+                    console.log('[Input] 프로필 업데이트 완료:', window._selectedProfileNumber);
+                } catch (err) {
+                    console.error('[Input] 프로필 업데이트 실패:', err);
+                }
+            }
 
             // Redirect to loading page
             window.location.href = 'loading.html';
@@ -2676,11 +2708,15 @@
         renderBusinessList(filtered);
     }
 
+    // 선택된 프로필 번호 (업데이트용)
+    window._selectedProfileNumber = null;
+
     function selectRegisteredBusiness(index) {
         const profiles = window._loadedProfiles;
         if (!profiles || !profiles[index]) return;
 
         const p = profiles[index];
+        window._selectedProfileNumber = p.profileNumber || null;
 
         // 선택 하이라이트
         document.querySelectorAll('.business-select-item').forEach((el, i) => {
