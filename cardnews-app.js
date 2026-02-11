@@ -1482,6 +1482,73 @@ async function downloadAllCards() {
 }
 
 // ============================================
+// 카드 텍스트 수정
+// ============================================
+const CARD_TYPE_LABELS_KR = {
+  HOOK: '관심 유도',
+  EMPATHY: '공감 형성',
+  PROBLEM: '문제 제기',
+  SOLUTION: '해결책 제시',
+  CTA: '행동 유도'
+};
+
+function openEditModal() {
+  if (!currentCards.length) return;
+
+  const card = currentCards[currentCardIndex];
+  const modal = document.getElementById('edit-modal');
+  const titleInput = document.getElementById('edit-title');
+  const contentInput = document.getElementById('edit-content');
+
+  document.getElementById('edit-modal-title').textContent = `카드 ${currentCardIndex + 1} 텍스트 수정`;
+  document.getElementById('edit-modal-type').textContent = CARD_TYPE_LABELS_KR[card.type] || '';
+
+  titleInput.value = card.title;
+  contentInput.value = card.content;
+
+  document.getElementById('edit-title-count').textContent = card.title.length;
+  document.getElementById('edit-content-count').textContent = card.content.length;
+
+  titleInput.oninput = () => {
+    document.getElementById('edit-title-count').textContent = titleInput.value.length;
+  };
+  contentInput.oninput = () => {
+    document.getElementById('edit-content-count').textContent = contentInput.value.length;
+  };
+
+  modal.classList.remove('hidden');
+}
+
+function closeEditModal() {
+  document.getElementById('edit-modal').classList.add('hidden');
+}
+
+function saveEditedCard() {
+  const titleInput = document.getElementById('edit-title');
+  const contentInput = document.getElementById('edit-content');
+
+  const newTitle = titleInput.value.trim();
+  const newContent = contentInput.value.trim();
+
+  if (!newTitle) {
+    alert('제목을 입력해주세요.');
+    titleInput.focus();
+    return;
+  }
+
+  currentCards[currentCardIndex].title = newTitle;
+  currentCards[currentCardIndex].content = newContent;
+
+  // 현재 카드 재렌더링
+  showCard(currentCardIndex);
+
+  // 썸네일 프리뷰도 갱신
+  renderAllCardsPreview(currentCards);
+
+  closeEditModal();
+}
+
+// ============================================
 // 유틸리티 함수
 // ============================================
 function setLoading(isLoading) {
