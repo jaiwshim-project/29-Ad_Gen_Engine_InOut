@@ -1,9 +1,59 @@
 // ============================================
-// AI 카드뉴스 생성기 - 로컬 버전
+// AI 카드뉴스 생성기
 // ============================================
 
+// Supabase 설정
+const CARDNEWS_SUPABASE_URL = 'https://haxcktfnuudlqciyljtp.supabase.co';
+const CARDNEWS_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhheGNrdGZudXVkbHFjaXlsanRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkzMDUwNDAsImV4cCI6MjA4NDg4MTA0MH0.suN7BeaHx3MjaNlMDQa0940P-rMl2XPyk4ksoQEU3YM';
+let cardnewsSupabase = null;
+
+function initCardnewsSupabase() {
+  try {
+    if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
+      cardnewsSupabase = window.supabase.createClient(CARDNEWS_SUPABASE_URL, CARDNEWS_SUPABASE_KEY);
+      console.log('[CardNews] Supabase 연결 성공');
+    }
+  } catch (err) {
+    console.error('[CardNews] Supabase 초기화 실패:', err);
+  }
+}
+
+async function loadApiKeyFromSupabase() {
+  if (!cardnewsSupabase) return '';
+  try {
+    const { data, error } = await cardnewsSupabase
+      .from('app_settings')
+      .select('setting_value')
+      .eq('setting_key', 'gemini_api_key')
+      .single();
+    if (error) throw error;
+    return data?.setting_value || '';
+  } catch (err) {
+    console.warn('[CardNews] API 키 로드 실패:', err.message);
+    return '';
+  }
+}
+
+async function saveApiKeyToSupabase(key) {
+  if (!cardnewsSupabase) return false;
+  try {
+    const { error } = await cardnewsSupabase
+      .from('app_settings')
+      .upsert(
+        { setting_key: 'gemini_api_key', setting_value: key, updated_at: new Date().toISOString() },
+        { onConflict: 'setting_key' }
+      );
+    if (error) throw error;
+    console.log('[CardNews] API 키 Supabase 저장 완료');
+    return true;
+  } catch (err) {
+    console.error('[CardNews] API 키 저장 실패:', err.message);
+    return false;
+  }
+}
+
 // 전역 변수
-let apiKey = localStorage.getItem('gemini_api_key') || '';
+let apiKey = '';
 let currentCards = [];
 let currentDomain = 'general';
 let currentCardIndex = 0;
@@ -285,8 +335,11 @@ const TONE_MAP = {
 // ============================================
 // 초기화
 // ============================================
-document.addEventListener('DOMContentLoaded', () => {
-  // API 키 로드
+document.addEventListener('DOMContentLoaded', async () => {
+  // Supabase 초기화 후 API 키 로드
+  initCardnewsSupabase();
+  apiKey = await loadApiKeyFromSupabase();
+
   if (apiKey) {
     document.getElementById('api-key-input').value = apiKey;
     showApiKeyStatus('API 키가 저장되어 있습니다.', 'success');
@@ -841,7 +894,7 @@ function addCustomKeyword() {
 // ============================================
 // API 키 관리
 // ============================================
-function saveApiKey() {
+async function saveApiKey() {
   const input = document.getElementById('api-key-input');
   apiKey = input.value.trim();
 
@@ -850,8 +903,12 @@ function saveApiKey() {
     return;
   }
 
-  localStorage.setItem('gemini_api_key', apiKey);
-  showApiKeyStatus('API 키가 저장되었습니다.', 'success');
+  const saved = await saveApiKeyToSupabase(apiKey);
+  if (saved) {
+    showApiKeyStatus('API 키가 저장되었습니다.', 'success');
+  } else {
+    showApiKeyStatus('API 키 저장에 실패했습니다.', 'error');
+  }
 }
 
 function showApiKeyStatus(message, type) {
