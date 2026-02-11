@@ -359,8 +359,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 초기 핵심 메시지 placeholder 설정
   updateMessagePlaceholder();
 
-  // 업체 정보 배지 초기화
-  updateBusinessCountBadge();
+  // 업체 선택 목록 렌더링
+  renderBusinessSelectList();
 
   // 광고 콘텐츠에서 전달된 데이터가 있으면 자동 채우기
   loadPrefillData();
@@ -1299,50 +1299,105 @@ function goHome() {
 }
 
 // ============================================
-// 업체 정보 패널 관리
+// 업체 선택 목록 렌더링
 // ============================================
-function openBusinessInfoPanel() {
-  const panel = document.getElementById('business-info-panel');
-  const content = document.getElementById('business-panel-content');
+function renderBusinessSelectList() {
+  const listContainer = document.getElementById('business-select-list');
+  const emptyState = document.getElementById('business-select-empty');
+  if (!listContainer) return;
 
-  panel.classList.remove('hidden');
-  // 애니메이션을 위해 약간의 지연 후 슬라이드
-  setTimeout(() => {
-    content.classList.remove('translate-x-full');
-  }, 10);
+  if (savedBusinessInfoList.length === 0) {
+    listContainer.innerHTML = '';
+    if (emptyState) emptyState.classList.remove('hidden');
+    return;
+  }
 
-  // 업체 정보 목록 렌더링
-  renderBusinessInfoList();
+  if (emptyState) emptyState.classList.add('hidden');
+
+  listContainer.innerHTML = savedBusinessInfoList.map((info, index) => {
+    const domainLabel = DOMAIN_RULES[info.domain]?.displayName || info.domain;
+
+    return `
+      <div class="flex items-center gap-3 p-3 rounded-xl border-2 border-slate-200 bg-white hover:border-indigo-400 hover:bg-indigo-50 cursor-pointer transition-all group" onclick="selectBusinessFromList(${index})">
+        <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+          <span class="text-white text-xs font-bold">${info.businessName.charAt(0)}</span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="font-semibold text-slate-800 text-sm truncate">${info.businessName}</div>
+          <div class="text-xs text-slate-400">${info.contactNumber} · ${domainLabel}</div>
+        </div>
+        <div class="flex items-center gap-1">
+          <span class="text-xs text-indigo-500 font-medium opacity-0 group-hover:opacity-100 transition-opacity">선택</span>
+          <svg class="w-4 h-4 text-slate-300 group-hover:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
-function closeBusinessInfoPanel() {
-  const panel = document.getElementById('business-info-panel');
-  const content = document.getElementById('business-panel-content');
+// ============================================
+// 업체 선택 시 자동 적용
+// ============================================
+async function selectBusinessFromList(index) {
+  const info = savedBusinessInfoList[index];
+  if (!info) return;
 
-  content.classList.add('translate-x-full');
-  setTimeout(() => {
-    panel.classList.add('hidden');
-  }, 300);
+  // 선택된 항목 하이라이트
+  const items = document.querySelectorAll('#business-select-list > div');
+  items.forEach((el, i) => {
+    if (i === index) {
+      el.classList.remove('border-slate-200', 'bg-white');
+      el.classList.add('border-indigo-500', 'bg-indigo-50');
+    } else {
+      el.classList.remove('border-indigo-500', 'bg-indigo-50');
+      el.classList.add('border-slate-200', 'bg-white');
+    }
+  });
+
+  // API 키 자동 로드
+  const loadedKey = await loadApiKeyFromSupabase();
+  if (loadedKey) {
+    apiKey = loadedKey;
+    document.getElementById('api-key-input').value = apiKey;
+    showApiKeyStatus('API 키가 자동으로 불러와졌습니다.', 'success');
+  }
+
+  // 도메인 선택
+  if (info.domain) {
+    selectDomain(info.domain);
+  }
+
+  // 업체명
+  if (info.businessName) {
+    document.getElementById('business-name').value = info.businessName;
+  }
+
+  // 연락처
+  if (info.contactNumber) {
+    document.getElementById('contact-number').value = info.contactNumber;
+  }
+
+  // 폼 섹션으로 스크롤
+  document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' });
 }
 
 // ============================================
 // 업체 정보 저장
 // ============================================
 function saveBusinessInfo(businessData) {
-  // 중복 체크 (같은 업체명이 있으면 업데이트)
   const existingIndex = savedBusinessInfoList.findIndex(
     item => item.businessName === businessData.businessName
   );
 
   if (existingIndex > -1) {
-    // 기존 정보 업데이트
     savedBusinessInfoList[existingIndex] = {
       ...savedBusinessInfoList[existingIndex],
       ...businessData,
       updatedAt: new Date().toISOString()
     };
   } else {
-    // 새 정보 추가
     savedBusinessInfoList.unshift({
       id: Date.now().toString(),
       ...businessData,
@@ -1351,99 +1406,8 @@ function saveBusinessInfo(businessData) {
     });
   }
 
-  // localStorage에 저장
   localStorage.setItem('saved_business_info', JSON.stringify(savedBusinessInfoList));
-
-  // 배지 업데이트
-  updateBusinessCountBadge();
-}
-
-// ============================================
-// 업체 정보 목록 렌더링
-// ============================================
-function renderBusinessInfoList() {
-  const listContainer = document.getElementById('saved-business-list');
-  const emptyState = document.getElementById('empty-business-state');
-
-  if (savedBusinessInfoList.length === 0) {
-    listContainer.innerHTML = '';
-    emptyState.classList.remove('hidden');
-    return;
-  }
-
-  emptyState.classList.add('hidden');
-
-  listContainer.innerHTML = savedBusinessInfoList.map((info, index) => {
-    const domainLabel = DOMAIN_RULES[info.domain]?.displayName || info.domain;
-
-    return `
-      <div class="bg-slate-800 rounded-xl p-4 border border-slate-700 hover:border-slate-600 transition-all">
-        <div class="flex items-start justify-between mb-3">
-          <div>
-            <h3 class="font-bold text-white text-base">${info.businessName}</h3>
-            <p class="text-slate-400 text-sm">${info.contactNumber}</p>
-          </div>
-          <span class="px-2 py-1 rounded-lg bg-indigo-600/30 text-indigo-300 text-xs font-medium">${domainLabel}</span>
-        </div>
-
-        <div class="flex gap-2">
-          <button onclick="loadBusinessInfo(${index})" class="flex-1 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium transition-all flex items-center justify-center gap-1">
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
-            </svg>
-            불러오기
-          </button>
-          <button onclick="deleteBusinessInfo(${index})" class="px-3 py-2 rounded-lg bg-red-600/20 hover:bg-red-600/30 text-red-400 text-xs font-medium transition-all">
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-            </svg>
-          </button>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-// ============================================
-// 업체 정보 불러오기
-// ============================================
-async function loadBusinessInfo(index) {
-  const info = savedBusinessInfoList[index];
-  if (!info) return;
-
-  // 폼으로 이동
-  resetForm();
-  closeBusinessInfoPanel();
-
-  // API 키 자동 로드
-  const loadedKey = await loadApiKeyFromSupabase();
-  if (loadedKey) {
-    apiKey = loadedKey;
-    document.getElementById('api-key-input').value = apiKey;
-    document.getElementById('api-key-status').textContent = 'API 키가 자동으로 불러와졌습니다.';
-    document.getElementById('api-key-status').className = 'text-xs text-green-600 mt-1';
-  }
-
-  // 폼에 데이터 채우기 (업체명, 연락처, 도메인만)
-  setTimeout(() => {
-    // 도메인 선택
-    if (info.domain) {
-      selectDomain(info.domain);
-    }
-
-    // 업체명
-    if (info.businessName) {
-      document.getElementById('business-name').value = info.businessName;
-    }
-
-    // 연락처
-    if (info.contactNumber) {
-      document.getElementById('contact-number').value = info.contactNumber;
-    }
-
-    // 스크롤
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, 100);
+  renderBusinessSelectList();
 }
 
 // ============================================
@@ -1454,40 +1418,17 @@ function deleteBusinessInfo(index) {
 
   savedBusinessInfoList.splice(index, 1);
   localStorage.setItem('saved_business_info', JSON.stringify(savedBusinessInfoList));
-
-  renderBusinessInfoList();
-  updateBusinessCountBadge();
+  renderBusinessSelectList();
 }
 
 // ============================================
 // 전체 업체 정보 삭제
 // ============================================
 function clearAllBusinessInfo() {
-  if (savedBusinessInfoList.length === 0) {
-    alert('삭제할 업체 정보가 없습니다.');
-    return;
-  }
-
-  if (!confirm('모든 업체 정보를 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) return;
+  if (savedBusinessInfoList.length === 0) return;
+  if (!confirm('모든 업체 정보를 삭제하시겠습니까?')) return;
 
   savedBusinessInfoList = [];
   localStorage.setItem('saved_business_info', JSON.stringify(savedBusinessInfoList));
-
-  renderBusinessInfoList();
-  updateBusinessCountBadge();
-}
-
-// ============================================
-// 업체 정보 개수 배지 업데이트
-// ============================================
-function updateBusinessCountBadge() {
-  const badge = document.getElementById('business-count-badge');
-  if (!badge) return;
-
-  if (savedBusinessInfoList.length > 0) {
-    badge.textContent = savedBusinessInfoList.length;
-    badge.classList.remove('hidden');
-  } else {
-    badge.classList.add('hidden');
-  }
+  renderBusinessSelectList();
 }
