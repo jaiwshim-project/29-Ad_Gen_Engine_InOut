@@ -1,12 +1,12 @@
 /**
- * 샘플 데이터 - 하얀이치과 임영일 원장
+ * 샘플 데이터 - 하얀이치과 홍길동 원장
  * 리포트.pdf의 실제 진단 결과 기반
  */
 
 const sampleData = {
     // 기본 정보
     clinicName: '하얀이치과',
-    directorName: '임영일',
+    directorName: '홍길동',
     location: '서울 강남구',
     specialty: '임플란트, 심미치료, 일반진료',
 
