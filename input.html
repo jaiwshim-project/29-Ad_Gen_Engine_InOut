@@ -436,6 +436,77 @@
             transform: translateY(0);
         }
 
+        /* 업체 선택 카드 */
+        .business-select-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            border: 2px solid #e1e4e8;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .business-select-item:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .business-select-item.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .business-select-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .business-select-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .business-select-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .business-select-detail {
+            font-size: 12px;
+            color: #888;
+            margin-top: 2px;
+        }
+
+        .business-select-arrow {
+            color: #ccc;
+            font-size: 18px;
+            transition: color 0.2s;
+        }
+
+        .business-select-item:hover .business-select-arrow {
+            color: #667eea;
+        }
+
+        .business-select-empty {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-size: 14px;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
@@ -894,6 +965,17 @@
     <!-- Form Container -->
     <div class="container">
         <form id="dentalForm">
+            <!-- Section 0: 업체 선택 -->
+            <div class="form-section">
+                <h2 class="section-title">업체 선택</h2>
+                <div class="section-description">
+                    등록된 업체를 선택하면 아래 정보가 자동으로 채워집니다.
+                </div>
+                <div id="business-select-container" style="display: flex; flex-direction: column; gap: 8px;">
+                    <div class="business-select-empty">불러오는 중...</div>
+                </div>
+            </div>
+
             <!-- Section 1: Basic Info -->
             <div class="form-section">
                 <h2 class="section-title">1. 기본 정보</h2>
@@ -2517,6 +2599,142 @@
                 });
             });
         });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-profiles.js"></script>
+    <script>
+    // 업체 선택 기능
+    (async function() {
+        // Supabase 초기화
+        initProfileSupabase();
+
+        // 프로필 목록 로드
+        const profiles = await loadAllProfiles();
+        const container = document.getElementById('business-select-container');
+
+        if (!profiles || profiles.length === 0) {
+            container.innerHTML = '<div class="business-select-empty">등록된 업체가 없습니다.<br><span style="font-size:12px;color:#aaa;">프로필 등록 후 이용할 수 있습니다.</span></div>';
+            return;
+        }
+
+        container.innerHTML = profiles.map((p, i) => `
+            <div class="business-select-item" onclick="selectRegisteredBusiness(${i})" data-index="${i}">
+                <div class="business-select-avatar">${(p.clinicName || '?').charAt(0)}</div>
+                <div class="business-select-info">
+                    <div class="business-select-name">${p.clinicName || '(이름 없음)'}</div>
+                    <div class="business-select-detail">${p.directorName || ''} · ${p.location || ''} · ${p.specialty || ''}</div>
+                </div>
+                <div class="business-select-arrow">›</div>
+            </div>
+        `).join('');
+
+        // 전역에 프로필 데이터 저장
+        window._loadedProfiles = profiles;
+    })();
+
+    function selectRegisteredBusiness(index) {
+        const profiles = window._loadedProfiles;
+        if (!profiles || !profiles[index]) return;
+
+        const p = profiles[index];
+
+        // 선택 하이라이트
+        document.querySelectorAll('.business-select-item').forEach((el, i) => {
+            el.classList.toggle('selected', i === index);
+        });
+
+        // 기본 정보 자동 채우기
+        const fields = {
+            clinicName: p.clinicName || '',
+            directorName: p.directorName || '',
+            phone: p.phone || '',
+            location: p.location || '',
+            specialty: p.specialty || ''
+        };
+
+        for (const [name, value] of Object.entries(fields)) {
+            const el = document.querySelector(`input[name="${name}"]`);
+            if (el) el.value = value;
+        }
+
+        // 현재 상태 진단 - 우선순위
+        // 기존 선택 초기화
+        document.querySelectorAll('.priority-option').forEach(el => {
+            el.classList.remove('priority-1', 'priority-2');
+        });
+        priorityState.revenueStage = {};
+        priorityState.directorStyle = {};
+
+        if (p.revenueStage1) {
+            const elem = document.querySelector(`#revenueStageGroup .priority-option[data-value="${p.revenueStage1}"]`);
+            if (elem) { elem.classList.add('priority-1'); priorityState.revenueStage[p.revenueStage1] = 1; }
+            document.getElementById('revenueStage1').value = p.revenueStage1;
+        }
+        if (p.revenueStage2) {
+            const elem = document.querySelector(`#revenueStageGroup .priority-option[data-value="${p.revenueStage2}"]`);
+            if (elem) { elem.classList.add('priority-2'); priorityState.revenueStage[p.revenueStage2] = 2; }
+            document.getElementById('revenueStage2').value = p.revenueStage2;
+        }
+        if (p.directorStyle1) {
+            const elem = document.querySelector(`#directorStyleGroup .priority-option[data-value="${p.directorStyle1}"]`);
+            if (elem) { elem.classList.add('priority-1'); priorityState.directorStyle[p.directorStyle1] = 1; }
+            document.getElementById('directorStyle1').value = p.directorStyle1;
+        }
+        if (p.directorStyle2) {
+            const elem = document.querySelector(`#directorStyleGroup .priority-option[data-value="${p.directorStyle2}"]`);
+            if (elem) { elem.classList.add('priority-2'); priorityState.directorStyle[p.directorStyle2] = 2; }
+            document.getElementById('directorStyle2').value = p.directorStyle2;
+        }
+
+        // DF-AI 신뢰 점수 슬라이더
+        const sliderFields = ['empathy', 'understanding', 'decision', 'value', 'trust', 'space'];
+        sliderFields.forEach(name => {
+            const val = p[name];
+            if (val !== undefined && val !== null) {
+                const slider = document.querySelector(`input[name="${name}"]`);
+                if (slider) {
+                    slider.value = val;
+                    updateSlider(name, val);
+                }
+            }
+        });
+
+        // 치과 철학
+        if (p.philosophy) {
+            const el = document.querySelector('textarea[name="philosophy"]');
+            if (el) { el.value = p.philosophy; updateCharCount('philosophy', el); }
+        }
+        if (p.differentiation) {
+            const el = document.querySelector('textarea[name="differentiation"]');
+            if (el) { el.value = p.differentiation; updateCharCount('differentiation', el); }
+        }
+
+        // 콘텐츠 선호도 체크박스
+        document.querySelectorAll('input[name="channel"]').forEach(cb => cb.checked = false);
+        document.querySelectorAll('input[name="content"]').forEach(cb => cb.checked = false);
+        if (p.channel && Array.isArray(p.channel)) {
+            p.channel.forEach(ch => {
+                const cb = document.querySelector(`input[name="channel"][value="${ch}"]`);
+                if (cb) cb.checked = true;
+            });
+        }
+        if (p.content && Array.isArray(p.content)) {
+            p.content.forEach(ct => {
+                const cb = document.querySelector(`input[name="content"][value="${ct}"]`);
+                if (cb) cb.checked = true;
+            });
+        }
+
+        // 비밀번호
+        if (p.accessPassword) {
+            const el = document.querySelector('input[name="accessPassword"]');
+            if (el) el.value = p.accessPassword;
+        }
+
+        // 폼 섹션으로 스크롤
+        document.querySelector('.form-section:nth-child(2)').scrollIntoView({ behavior: 'smooth' });
+    }
     </script>
 
     <!-- Footer -->
