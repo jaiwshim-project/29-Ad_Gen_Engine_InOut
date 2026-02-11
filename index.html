@@ -94,6 +94,23 @@
             border-radius: 2px;
         }
 
+        .header-nav .sample-nav-btn {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white !important;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .header-nav .sample-nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+            color: white !important;
+        }
+
         .header-nav .cardnews-nav-btn {
             background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 100%);
             color: white !important;
@@ -797,6 +814,7 @@
                 <a href="input.html">생성시작</a>
                 <a href="profiles.html">내 프로필</a>
                 <a href="cases.html">내 결과 보기</a>
+                <a href="javascript:void(0)" onclick="loadSampleCase()" class="sample-nav-btn">🎯 샘플 보기</a>
                 <a href="cardnews.html" target="_blank" class="cardnews-nav-btn">🎨 카드뉴스 생성기</a>
             </nav>
         </div>
@@ -854,7 +872,10 @@
         <div class="sample-banner">
             <h3>✨ 실제 케이스로 미리 체험하기</h3>
             <p>화이트서울치과 임영일 원장의 실제 진단 결과를 기반으로 생성된 샘플을 확인해보세요</p>
-            <button class="sample-btn" onclick="loadSampleCase()">🎯 샘플 케이스 보기</button>
+            <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                <button class="sample-btn" onclick="loadSampleCase()">🎯 광고 콘텐츠 샘플</button>
+                <button class="sample-btn" onclick="loadSampleCardnews()" style="background: #fff3e0; color: #e65100;">🎨 카드뉴스 샘플</button>
+            </div>
         </div>
 
         <!-- Performance Section -->
@@ -1009,6 +1030,58 @@
 
             // Redirect to result page
             window.location.href = 'result.html';
+        }
+
+        // Load sample cardnews
+        function loadSampleCardnews() {
+            const sampleCardnewsData = {
+                cards: [
+                    {
+                        type: 'HOOK',
+                        title: '치과가 무섭다고요?',
+                        content: '10명 중 7명이 치과 방문을 미루고 있습니다. 당신도 그중 한 명인가요?'
+                    },
+                    {
+                        type: 'EMPATHY',
+                        title: '그 마음, 충분히 이해합니다',
+                        content: '드릴 소리, 낯선 냄새, 알 수 없는 통증... 화이트서울치과는 환자분의 불안한 마음을 먼저 헤아립니다.'
+                    },
+                    {
+                        type: 'PROBLEM',
+                        title: '미루면 더 큰 비용이 됩니다',
+                        content: '초기 충치 치료비 5만원 → 방치 시 임플란트 200만원. 지금 10분 투자가 미래의 수백만원을 아낍니다.'
+                    },
+                    {
+                        type: 'SOLUTION',
+                        title: '5단계 신뢰 진료 시스템',
+                        content: '3D CT 정밀진단 → 맞춤 치료계획 → 투명한 비용안내 → 무통 진료 → 정기 사후관리. 체계적인 프로세스로 안심 진료를 약속합니다.'
+                    },
+                    {
+                        type: 'CTA',
+                        title: '지금 바로 상담 예약하세요',
+                        content: '첫 방문 시 3D CT 무료 촬영 + 맞춤 치료 상담을 제공합니다. 편안한 첫 걸음을 함께하겠습니다.'
+                    }
+                ],
+                businessName: '화이트서울치과',
+                contactNumber: '042-522-8234',
+                domain: 'hospital',
+                qualityScore: {
+                    overall: 88,
+                    hookStrength: 23,
+                    flowCoherence: 22,
+                    ctaClarity: 22,
+                    domainRelevance: 21,
+                    feedback: [
+                        'Hook 카드의 통계 활용이 효과적입니다.',
+                        '공감에서 문제 제기로의 흐름이 자연스럽습니다.',
+                        'CTA에 구체적인 혜택이 포함되어 행동 유도력이 높습니다.',
+                        '의료 도메인에 적합한 신뢰 기반 메시지 구성입니다.'
+                    ]
+                }
+            };
+
+            sessionStorage.setItem('cardnews_result', JSON.stringify(sampleCardnewsData));
+            window.open('cardnews_results.html', '_blank');
         }
 
         // Clear previous data when starting new case
