@@ -253,7 +253,7 @@ async function downloadCurrentCard() {
 
   try {
     const canvas = await html2canvas(cardElement, {
-      scale: 2,
+      scale: 1,
       backgroundColor: null,
       useCORS: true
     });
@@ -278,7 +278,7 @@ async function downloadAllCards() {
 
     try {
       const canvas = await html2canvas(cardElement, {
-        scale: 2,
+        scale: 1,
         backgroundColor: null,
         useCORS: true
       });
