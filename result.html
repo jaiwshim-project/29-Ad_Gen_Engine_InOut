@@ -2123,23 +2123,26 @@ ${context.philosophy || '"처음 방문했을 때부터 달랐어요. 단순히 
                 initProfileSupabase();
             }
 
-            // Supabase에서 중복 체크
+            // Supabase에서 치과명 기준 중복 체크
             const allProfiles = await loadAllProfiles();
             const existing = allProfiles.find(c =>
-                c.clinicName === formData.clinicName &&
-                c.directorName === formData.directorName &&
-                c.createdAt === formData.createdAt
+                c.clinicName === formData.clinicName
             );
 
             if (existing) {
+                // 기존 프로필이 있으면 해당 번호로 업데이트
+                formData.profileNumber = existing.profileNumber;
+                formData.savedAt = new Date().toISOString();
+                formData.createdAt = existing.createdAt || formData.createdAt;
+                await saveProfileToSupabase(formData);
+                displayProfileNumber(formData.profileNumber);
                 if (!autoSave) {
-                    alert('이미 저장된 케이스입니다!');
+                    alert(`프로필이 업데이트되었습니다!\n프로필 번호: #${formData.profileNumber}`);
                 }
-                displayProfileNumber(existing.profileNumber);
                 return;
             }
 
-            // Add current case
+            // 새 프로필 생성
             formData.savedAt = new Date().toISOString();
             formData.id = Date.now();
 
