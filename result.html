@@ -1540,6 +1540,8 @@
     </div>
 
     <!-- Marketing Engine -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-profiles.js"></script>
     <script src="marketing-engine.js"></script>
 
     <script>
@@ -2077,24 +2079,25 @@ ${context.philosophy || '"처음 방문했을 때부터 달랐어요. 단순히 
         }
 
         // Save case
-        function saveCase(autoSave = false) {
-            // Get existing cases
-            const cases = JSON.parse(localStorage.getItem('dentalCases') || '[]');
+        async function saveCase(autoSave = false) {
+            // Supabase 초기화
+            if (!profileSupabaseReady) {
+                initProfileSupabase();
+            }
 
-            // Check if this case already exists (avoid duplicates)
-            const existingIndex = cases.findIndex(c =>
+            // Supabase에서 중복 체크
+            const allProfiles = await loadAllProfiles();
+            const existing = allProfiles.find(c =>
                 c.clinicName === formData.clinicName &&
                 c.directorName === formData.directorName &&
                 c.createdAt === formData.createdAt
             );
 
-            if (existingIndex !== -1) {
-                // Already saved, skip - but show the profile number
+            if (existing) {
                 if (!autoSave) {
                     alert('이미 저장된 케이스입니다!');
                 }
-                // Display existing profile number
-                displayProfileNumber(cases[existingIndex].profileNumber);
+                displayProfileNumber(existing.profileNumber);
                 return;
             }
 
@@ -2102,29 +2105,12 @@ ${context.philosophy || '"처음 방문했을 때부터 달랐어요. 단순히 
             formData.savedAt = new Date().toISOString();
             formData.id = Date.now();
 
-            // Assign profile number based on creation date order
-            // Get all cases sorted by creation date (oldest first)
-            const sortedByCreation = [...cases].sort((a, b) =>
-                new Date(a.savedAt || a.createdAt) - new Date(b.savedAt || b.createdAt)
-            );
-
-            // Calculate new profile number
-            const newProfileNumber = String(sortedByCreation.length + 1).padStart(4, '0');
+            // Supabase에서 다음 프로필 번호 가져오기
+            const newProfileNumber = await getNextProfileNumber();
             formData.profileNumber = newProfileNumber;
 
-            cases.push(formData);
-
-            // Reassign all profile numbers to maintain consistency
-            const allSortedCases = [...cases].sort((a, b) =>
-                new Date(a.savedAt || a.createdAt) - new Date(b.savedAt || b.createdAt)
-            );
-
-            allSortedCases.forEach((profile, index) => {
-                profile.profileNumber = String(index + 1).padStart(4, '0');
-            });
-
-            // Save back to localStorage
-            localStorage.setItem('dentalCases', JSON.stringify(cases));
+            // Supabase에 저장
+            await saveProfileToSupabase(formData);
 
             // Display the profile number
             displayProfileNumber(formData.profileNumber);
@@ -2144,6 +2130,7 @@ ${context.philosophy || '"처음 방문했을 때부터 달랐어요. 단순히 
         }
 
         // Initialize
+        initProfileSupabase();
         loadData();
 
         // Set initial permission level button as active

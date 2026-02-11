@@ -563,17 +563,39 @@
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-profiles.js"></script>
     <script>
         let allCases = []; // 전체 케이스 저장용
 
-        function loadProfiles(filteredCases = null) {
-            const profileList = document.getElementById('profileList');
-            let cases = filteredCases !== null ? filteredCases : JSON.parse(localStorage.getItem('dentalCases') || '[]');
+        // Supabase 초기화 후 프로필 로드
+        document.addEventListener('DOMContentLoaded', async function() {
+            initProfileSupabase();
 
-            // 전체 케이스 저장 (최초 로드 시)
-            if (filteredCases === null) {
-                allCases = cases;
-            }
+            // 로컬 저장 데이터 정리 (Supabase 전환 완료)
+            localStorage.removeItem('dentalCases');
+
+            // Supabase에서 프로필 로드
+            const profiles = await loadAllProfiles();
+            allCases = profiles;
+            renderProfiles(profiles);
+
+            // Enter 키로 검색 실행
+            const searchInputs = ['searchNumber', 'searchClinic', 'searchDirector'];
+            searchInputs.forEach(id => {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            performSearch();
+                        }
+                    });
+                }
+            });
+        });
+
+        function renderProfiles(cases) {
+            const profileList = document.getElementById('profileList');
 
             if (cases.length === 0) {
                 profileList.innerHTML = `
@@ -585,27 +607,6 @@
                     </div>
                 `;
                 return;
-            }
-
-            // 프로필 번호 자동 부여 (없는 경우만)
-            let needsUpdate = false;
-
-            // 생성일 기준 오래된 순서대로 정렬하여 번호 부여
-            const sortedByCreation = [...cases].sort((a, b) =>
-                new Date(a.savedAt || a.createdAt) - new Date(b.savedAt || b.createdAt)
-            );
-
-            sortedByCreation.forEach((profile, index) => {
-                if (!profile.profileNumber) {
-                    profile.profileNumber = String(index + 1).padStart(4, '0');
-                    needsUpdate = true;
-                }
-            });
-
-            // localStorage 업데이트
-            if (needsUpdate && filteredCases === null) {
-                localStorage.setItem('dentalCases', JSON.stringify(cases));
-                allCases = cases; // 업데이트된 케이스 저장
             }
 
             // 최신순 정렬 (표시용)
@@ -622,31 +623,28 @@
                 grid.appendChild(card);
             });
 
-            profileList.innerHTML = ''; // 기존 내용 제거
+            profileList.innerHTML = '';
             profileList.appendChild(grid);
         }
 
-        function performSearch() {
-            const searchNumber = document.getElementById('searchNumber').value.trim().toLowerCase();
-            const searchClinic = document.getElementById('searchClinic').value.trim().toLowerCase();
-            const searchDirector = document.getElementById('searchDirector').value.trim().toLowerCase();
+        async function performSearch() {
+            const searchNumber = document.getElementById('searchNumber').value.trim();
+            const searchClinic = document.getElementById('searchClinic').value.trim();
+            const searchDirector = document.getElementById('searchDirector').value.trim();
 
-            // 검색어가 모두 비어있는 경우
             if (!searchNumber && !searchClinic && !searchDirector) {
                 alert('검색할 내용을 입력해주세요.');
                 return;
             }
 
-            // 필터링
-            const filtered = allCases.filter(profile => {
-                const matchNumber = !searchNumber || (profile.profileNumber && profile.profileNumber.toLowerCase().includes(searchNumber));
-                const matchClinic = !searchClinic || (profile.clinicName && profile.clinicName.toLowerCase().includes(searchClinic));
-                const matchDirector = !searchDirector || (profile.directorName && profile.directorName.toLowerCase().includes(searchDirector));
+            const filters = {
+                profileNumber: searchNumber || '',
+                clinicName: searchClinic || '',
+                directorName: searchDirector || ''
+            };
 
-                return matchNumber && matchClinic && matchDirector;
-            });
+            const filtered = await searchProfiles(filters);
 
-            // 검색 결과 정보 표시
             const resultsInfo = document.getElementById('searchResultsInfo');
             if (filtered.length === 0) {
                 resultsInfo.innerHTML = '❌ 검색 결과가 없습니다';
@@ -662,37 +660,20 @@
             } else {
                 resultsInfo.innerHTML = `✅ 총 ${filtered.length}개의 프로필을 찾았습니다`;
                 resultsInfo.style.display = 'block';
-                loadProfiles(filtered);
+                renderProfiles(filtered);
             }
         }
 
-        function resetSearch() {
-            // 검색 필드 초기화
+        async function resetSearch() {
             document.getElementById('searchNumber').value = '';
             document.getElementById('searchClinic').value = '';
             document.getElementById('searchDirector').value = '';
-
-            // 검색 결과 정보 숨김
             document.getElementById('searchResultsInfo').style.display = 'none';
 
-            // 전체 프로필 다시 로드
-            loadProfiles(null);
+            const profiles = await loadAllProfiles();
+            allCases = profiles;
+            renderProfiles(profiles);
         }
-
-        // Enter 키로 검색 실행
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInputs = ['searchNumber', 'searchClinic', 'searchDirector'];
-            searchInputs.forEach(id => {
-                const input = document.getElementById(id);
-                if (input) {
-                    input.addEventListener('keypress', function(e) {
-                        if (e.key === 'Enter') {
-                            performSearch();
-                        }
-                    });
-                }
-            });
-        });
 
         function createProfileCard(profile) {
             const card = document.createElement('div');
@@ -728,49 +709,35 @@
             return card;
         }
 
-        function selectProfile(profileNumber) {
-            const cases = JSON.parse(localStorage.getItem('dentalCases') || '[]');
-            const selectedProfile = cases.find(c => c.profileNumber === profileNumber);
+        async function selectProfile(profileNumber) {
+            const selectedProfile = await getProfileByNumber(profileNumber);
 
             if (!selectedProfile) {
                 alert('프로필을 찾을 수 없습니다.');
                 return;
             }
 
-            // 비밀번호 확인
             const savedPassword = selectedProfile.accessPassword;
 
             if (savedPassword) {
-                // 비밀번호가 설정되어 있는 경우
                 const inputPassword = prompt('접속 비밀번호를 입력하세요 (4자리 숫자):');
 
-                if (inputPassword === null) {
-                    // 사용자가 취소를 누른 경우
-                    return;
-                }
+                if (inputPassword === null) return;
 
                 if (inputPassword !== savedPassword) {
                     alert('❌ 비밀번호가 일치하지 않습니다.\n접근이 거부되었습니다.');
                     return;
                 }
 
-                // 비밀번호 일치
                 alert('✅ 비밀번호 확인 완료');
             } else {
-                // 비밀번호가 설정되지 않은 경우 (구버전 프로필)
-                const confirm = window.confirm('이 프로필은 비밀번호가 설정되지 않았습니다.\n계속하시겠습니까?');
-                if (!confirm) return;
+                const confirmResult = window.confirm('이 프로필은 비밀번호가 설정되지 않았습니다.\n계속하시겠습니까?');
+                if (!confirmResult) return;
             }
 
-            // dentalFormData에 복사
             localStorage.setItem('dentalFormData', JSON.stringify(selectedProfile));
-
-            // input.html로 리디렉션 (자동 입력된 폼 확인 및 수정 가능)
             window.location.href = 'input.html';
         }
-
-        // 초기화
-        loadProfiles();
     </script>
 </body>
 </html>

@@ -593,38 +593,36 @@
         <div id="caseList"></div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-profiles.js"></script>
     <script>
-        let allCases = []; // 전체 케이스 저장용
+        let allCases = [];
 
-        function loadCases(filteredCases = null) {
-            const caseList = document.getElementById('caseList');
-            let cases = filteredCases !== null ? filteredCases : JSON.parse(localStorage.getItem('dentalCases') || '[]');
+        // Supabase 초기화 후 케이스 로드
+        document.addEventListener('DOMContentLoaded', async function() {
+            initProfileSupabase();
+            localStorage.removeItem('dentalCases');
 
-            // 전체 케이스 저장 (최초 로드 시)
-            if (filteredCases === null) {
-                allCases = cases;
+            const profiles = await loadAllProfiles();
+            allCases = profiles;
+            renderCases(profiles);
 
-                // 프로필 번호 자동 부여 (없는 경우만)
-                let needsUpdate = false;
-
-                // 생성일 기준 오래된 순서대로 정렬하여 번호 부여
-                const sortedByCreation = [...cases].sort((a, b) =>
-                    new Date(a.savedAt || a.createdAt) - new Date(b.savedAt || b.createdAt)
-                );
-
-                sortedByCreation.forEach((profile, index) => {
-                    if (!profile.profileNumber) {
-                        profile.profileNumber = String(index + 1).padStart(4, '0');
-                        needsUpdate = true;
-                    }
-                });
-
-                // localStorage 업데이트
-                if (needsUpdate) {
-                    localStorage.setItem('dentalCases', JSON.stringify(cases));
-                    allCases = cases;
+            // Enter 키로 검색 실행
+            const searchInputs = ['searchNumber', 'searchClinic', 'searchDirector'];
+            searchInputs.forEach(id => {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            performSearch();
+                        }
+                    });
                 }
-            }
+            });
+        });
+
+        function renderCases(cases) {
+            const caseList = document.getElementById('caseList');
 
             if (cases.length === 0) {
                 caseList.innerHTML = `
@@ -638,7 +636,6 @@
                 return;
             }
 
-            // Sort by date (newest first)
             const displayCases = [...cases].sort((a, b) =>
                 new Date(b.savedAt || b.createdAt) - new Date(a.savedAt || a.createdAt)
             );
@@ -651,7 +648,7 @@
                 casesGrid.appendChild(card);
             });
 
-            caseList.innerHTML = ''; // 기존 내용 제거
+            caseList.innerHTML = '';
             caseList.appendChild(casesGrid);
         }
 
@@ -659,13 +656,11 @@
             const card = document.createElement('div');
             card.className = 'case-card';
 
-            // Calculate average trust score
             const avgTrust = calculateAvgTrust(caseData);
             const stageText = getStageText(caseData.revenueStage1 || caseData.revenueStage);
             const styleText = getStyleText(caseData.directorStyle1 || caseData.directorStyle);
             const profileNumber = caseData.profileNumber || '0000';
 
-            // Format date
             const date = new Date(caseData.savedAt || caseData.createdAt);
             const dateStr = date.toLocaleDateString('ko-KR', {
                 year: 'numeric',
@@ -732,82 +727,62 @@
             return styles[style] || 'E형 - 환자·신뢰형';
         }
 
-        function openCase(profileNumber) {
-            const cases = JSON.parse(localStorage.getItem('dentalCases') || '[]');
-            const caseData = cases.find(c => c.profileNumber === profileNumber);
+        async function openCase(profileNumber) {
+            const caseData = await getProfileByNumber(profileNumber);
 
             if (!caseData) {
                 alert('케이스를 찾을 수 없습니다.');
                 return;
             }
 
-            // 비밀번호 확인
             const savedPassword = caseData.accessPassword;
 
             if (savedPassword) {
                 const inputPassword = prompt('🔒 케이스를 열려면 비밀번호(4자리 숫자)를 입력하세요:');
 
-                // 취소 버튼 클릭 시
-                if (inputPassword === null) {
-                    return;
-                }
+                if (inputPassword === null) return;
 
-                // 비밀번호 일치 확인
                 if (inputPassword !== savedPassword) {
                     alert('❌ 비밀번호가 일치하지 않습니다.');
                     return;
                 }
-
-                // 비밀번호 일치 - 성공 메시지
-                // alert('✅ 비밀번호가 확인되었습니다.');
             } else {
-                // 비밀번호가 설정되지 않은 경우 (이전 버전 호환성)
                 if (!confirm('⚠️ 이 케이스는 비밀번호가 설정되지 않았습니다.\n그래도 열기를 진행하시겠습니까?')) {
                     return;
                 }
             }
 
-            // Load case data into dentalFormData
             localStorage.setItem('dentalFormData', JSON.stringify(caseData));
-
-            // Redirect to result page
             window.location.href = 'result.html';
         }
 
-        function deleteCase(profileNumber) {
+        async function deleteCase(profileNumber) {
             if (!confirm('이 케이스를 삭제하시겠습니까?')) {
                 return;
             }
 
-            let cases = JSON.parse(localStorage.getItem('dentalCases') || '[]');
-            cases = cases.filter(c => c.profileNumber !== profileNumber);
-            localStorage.setItem('dentalCases', JSON.stringify(cases));
-
-            // Reload the page
+            await deleteProfileFromSupabase(profileNumber);
             location.reload();
         }
 
-        function performSearch() {
-            const searchNumber = document.getElementById('searchNumber').value.trim().toLowerCase();
-            const searchClinic = document.getElementById('searchClinic').value.trim().toLowerCase();
-            const searchDirector = document.getElementById('searchDirector').value.trim().toLowerCase();
+        async function performSearch() {
+            const searchNumber = document.getElementById('searchNumber').value.trim();
+            const searchClinic = document.getElementById('searchClinic').value.trim();
+            const searchDirector = document.getElementById('searchDirector').value.trim();
 
-            // 검색어가 모두 비어있는 경우
             if (!searchNumber && !searchClinic && !searchDirector) {
                 alert('검색할 내용을 입력해주세요.');
                 return;
             }
 
-            // 필터링
-            const filtered = allCases.filter(caseData => {
-                const matchNumber = !searchNumber || (caseData.profileNumber && caseData.profileNumber.toLowerCase().includes(searchNumber));
-                const matchClinic = !searchClinic || (caseData.clinicName && caseData.clinicName.toLowerCase().includes(searchClinic));
-                const matchDirector = !searchDirector || (caseData.directorName && caseData.directorName.toLowerCase().includes(searchDirector));
+            const filters = {
+                profileNumber: searchNumber || '',
+                clinicName: searchClinic || '',
+                directorName: searchDirector || ''
+            };
 
-                return matchNumber && matchClinic && matchDirector;
-            });
+            const filtered = await searchProfiles(filters);
 
-            // 검색 결과 정보 표시
             const resultsInfo = document.getElementById('searchResultsInfo');
             if (filtered.length === 0) {
                 resultsInfo.innerHTML = '❌ 검색 결과가 없습니다';
@@ -823,40 +798,20 @@
             } else {
                 resultsInfo.innerHTML = `✅ 총 ${filtered.length}개의 케이스를 찾았습니다`;
                 resultsInfo.style.display = 'block';
-                loadCases(filtered);
+                renderCases(filtered);
             }
         }
 
-        function resetSearch() {
-            // 검색 필드 초기화
+        async function resetSearch() {
             document.getElementById('searchNumber').value = '';
             document.getElementById('searchClinic').value = '';
             document.getElementById('searchDirector').value = '';
-
-            // 검색 결과 정보 숨김
             document.getElementById('searchResultsInfo').style.display = 'none';
 
-            // 전체 케이스 다시 로드
-            loadCases(null);
+            const profiles = await loadAllProfiles();
+            allCases = profiles;
+            renderCases(profiles);
         }
-
-        // Enter 키로 검색 실행
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInputs = ['searchNumber', 'searchClinic', 'searchDirector'];
-            searchInputs.forEach(id => {
-                const input = document.getElementById(id);
-                if (input) {
-                    input.addEventListener('keypress', function(e) {
-                        if (e.key === 'Enter') {
-                            performSearch();
-                        }
-                    });
-                }
-            });
-        });
-
-        // Initialize
-        loadCases();
     </script>
 
     <footer class="footer">

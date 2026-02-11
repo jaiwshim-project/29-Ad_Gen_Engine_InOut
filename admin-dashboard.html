@@ -512,6 +512,8 @@
     </div>
     <!-- End Main Content -->
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-profiles.js"></script>
     <script>
         // Password Protection
         const ADMIN_PASSWORD = '963314';
@@ -564,8 +566,13 @@
             }
         });
 
-        function loadDashboard() {
-            const cases = JSON.parse(localStorage.getItem('dentalCases') || '[]');
+        let dashboardCases = [];
+
+        async function loadDashboard() {
+            initProfileSupabase();
+
+            const cases = await loadAllProfiles();
+            dashboardCases = cases;
 
             // 통계 업데이트
             document.getElementById('totalCases').textContent = cases.length;
@@ -602,11 +609,12 @@
             }
 
             // 최신순으로 정렬
-            cases.sort((a, b) => {
+            const sorted = [...cases].sort((a, b) => {
                 const dateA = new Date(b.savedAt || b.createdAt || 0);
                 const dateB = new Date(a.savedAt || a.createdAt || 0);
                 return dateA - dateB;
             });
+            dashboardCases = sorted;
 
             let tableHTML = `
                 <table>
@@ -623,7 +631,7 @@
                     <tbody>
             `;
 
-            cases.forEach((caseData, index) => {
+            sorted.forEach((caseData, index) => {
                 const date = new Date(caseData.savedAt || caseData.createdAt);
                 const formattedDate = date.toLocaleDateString('ko-KR', {
                     year: 'numeric',
@@ -658,22 +666,9 @@
         }
 
         function viewCase(index) {
-            const cases = JSON.parse(localStorage.getItem('dentalCases') || '[]');
-
-            // 최신순으로 정렬 (loadDashboard와 동일한 순서 유지)
-            cases.sort((a, b) => {
-                const dateA = new Date(b.savedAt || b.createdAt || 0);
-                const dateB = new Date(a.savedAt || a.createdAt || 0);
-                return dateA - dateB;
-            });
-
-            if (index >= 0 && index < cases.length) {
-                const selectedCase = cases[index];
-
-                // dentalFormData에 저장
+            if (index >= 0 && index < dashboardCases.length) {
+                const selectedCase = dashboardCases[index];
                 localStorage.setItem('dentalFormData', JSON.stringify(selectedCase));
-
-                // result.html로 이동
                 window.location.href = 'result.html';
             }
         }

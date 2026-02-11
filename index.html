@@ -992,11 +992,14 @@
     <!-- Sample Data -->
     <script src="sample-data.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-profiles.js"></script>
     <script>
-        // Load statistics
-        function loadStats() {
-            const cases = JSON.parse(localStorage.getItem('dentalCases') || '[]');
-            document.getElementById('totalCases').textContent = cases.length;
+        // Load statistics from Supabase
+        async function loadStats() {
+            initProfileSupabase();
+            const count = await getProfileCount();
+            document.getElementById('totalCases').textContent = count;
         }
 
         // Load sample case
