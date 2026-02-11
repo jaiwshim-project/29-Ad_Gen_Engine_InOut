@@ -93,19 +93,19 @@ function displayQualityScore(qualityScore) {
   const domain = qualityScore.domainRelevance || 0;
 
   document.getElementById('overall-score').textContent = `${overall}점`;
-  document.getElementById('overall-score').className = `text-4xl font-black ${getScoreColor(overall)}`;
+  document.getElementById('overall-score').className = `text-2xl font-black ${getScoreColor(overall)}`;
 
   document.getElementById('hook-score').textContent = `${hook}/25`;
-  document.getElementById('hook-score').className = `text-2xl font-black ${getScoreColor(hook * 4)}`;
+  document.getElementById('hook-score').className = `text-base font-black ${getScoreColor(hook * 4)}`;
 
   document.getElementById('flow-score').textContent = `${flow}/25`;
-  document.getElementById('flow-score').className = `text-2xl font-black ${getScoreColor(flow * 4)}`;
+  document.getElementById('flow-score').className = `text-base font-black ${getScoreColor(flow * 4)}`;
 
   document.getElementById('cta-score').textContent = `${cta}/25`;
-  document.getElementById('cta-score').className = `text-2xl font-black ${getScoreColor(cta * 4)}`;
+  document.getElementById('cta-score').className = `text-base font-black ${getScoreColor(cta * 4)}`;
 
   document.getElementById('domain-score').textContent = `${domain}/25`;
-  document.getElementById('domain-score').className = `text-2xl font-black ${getScoreColor(domain * 4)}`;
+  document.getElementById('domain-score').className = `text-base font-black ${getScoreColor(domain * 4)}`;
 
   // 피드백
   const feedbackList = document.getElementById('feedback-list');
@@ -220,11 +220,11 @@ function showCard(index) {
 function renderAllCardsPreview(cards) {
   const container = document.getElementById('all-cards-container');
   container.innerHTML = cards.map((card, index) => {
-    const imageUrl = getCardImageUrl(card, currentDomain, 240, 300);
+    const imageUrl = getCardImageUrl(card, currentDomain, 200, 250);
 
     return `
       <div onclick="showCard(${index})" class="cursor-pointer transform hover:scale-105 transition">
-        <div class="w-[120px] h-[150px] rounded-lg overflow-hidden shadow text-white relative">
+        <div class="w-[90px] h-[112px] rounded-md overflow-hidden shadow text-white relative">
           <img
             src="${imageUrl}"
             alt=""
@@ -232,11 +232,11 @@ function renderAllCardsPreview(cards) {
             onerror="this.style.display='none'"
           />
           <div class="absolute inset-0 ${CARD_TYPE_COLORS[card.type].gradient} opacity-75"></div>
-          <div class="relative z-10 p-2 h-full flex flex-col">
-            <div class="text-[8px] opacity-70 mb-1">${CARD_TYPE_LABELS[card.type]}</div>
-            <div class="text-[10px] font-bold leading-tight line-clamp-2">${card.title}</div>
+          <div class="relative z-10 p-1.5 h-full flex flex-col">
+            <div class="text-[7px] opacity-70 mb-0.5">${CARD_TYPE_LABELS[card.type]}</div>
+            <div class="text-[9px] font-bold leading-tight line-clamp-2">${card.title}</div>
             <div class="flex-1"></div>
-            <div class="text-[8px] opacity-50 text-center">${index + 1}/5</div>
+            <div class="text-[7px] opacity-50 text-center">${index + 1}/5</div>
           </div>
         </div>
       </div>
