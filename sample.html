@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>샘플 보기 - 치과 광고 콘텐츠 생성기</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+        }
+
+        body {
+            background: #f5f7fa;
+            padding: 80px 0 0 0;
+        }
+
+        /* Header Navigation */
+        .top-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 15px 30px;
+        }
+
+        .top-header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            gap: 12px;
+        }
+
+        .header-logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        .header-logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .header-nav a {
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .header-nav a:hover {
+            color: #667eea;
+        }
+
+        .header-nav a.active {
+            color: #667eea;
+        }
+
+        .header-nav a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #667eea;
+            border-radius: 2px;
+        }
+
+        .header-nav .sample-nav-btn {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white !important;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .header-nav .sample-nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+            color: white !important;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        /* Sample Badge */
+        .sample-badge {
+            background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .sample-badge h2 {
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+
+        .sample-badge p {
+            font-size: 14px;
+            opacity: 0.95;
+        }
+
+        /* Basic Info Card */
+        .info-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            margin-bottom: 25px;
+        }
+
+        .info-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .info-item {
+            background: #f8f9ff;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .info-item .label {
+            font-size: 12px;
+            color: #888;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .info-item .value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .trust-scores {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .trust-score-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 25px;
+            background: #e8eaf6;
+            border-radius: 12px;
+            padding: 4px;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #666;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .tab:not(.active):hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Ad Card Styles */
+        .ad-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .ad-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .ad-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .ad-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .ad-content {
+            padding: 25px;
+            font-size: 15px;
+            line-height: 1.8;
+            color: #444;
+        }
+
+        .ad-reasoning {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8f4fd 100%);
+            padding: 20px 25px;
+            border-top: 1px solid #e8e8e8;
+        }
+
+        .ad-reasoning h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .ad-reasoning p {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .ad-channels {
+            padding: 15px 25px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .channel-tag {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Cardnews Styles */
+        .card-gradient-hook { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card-gradient-empathy { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        .card-gradient-problem { background: linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%); }
+        .card-gradient-solution { background: linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%); }
+        .card-gradient-cta { background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); }
+
+        .cardnews-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .cardnews-item {
+            width: 300px;
+            height: 375px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: transform 0.3s;
+        }
+
+        .cardnews-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .cardnews-item .card-bg {
+            position: absolute;
+            inset: 0;
+        }
+
+        .cardnews-item .card-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cardnews-item .card-bg .overlay-dark {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .cardnews-item .card-bg .overlay-gradient {
+            position: absolute;
+            inset: 0;
+            opacity: 0.6;
+        }
+
+        .cardnews-item .card-top {
+            position: relative;
+            z-index: 10;
+            padding: 16px 20px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cardnews-item .card-type-badge {
+            font-size: 11px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .cardnews-item .card-index {
+            font-size: 13px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .cardnews-item .card-body {
+            position: relative;
+            z-index: 10;
+            flex: 1;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .cardnews-item .card-body h3 {
+            font-size: 22px;
+            font-weight: 900;
+            margin-bottom: 16px;
+            line-height: 1.3;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9), -1px -1px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .cardnews-item .card-body p {
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.6;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+        }
+
+        .cardnews-item .card-footer {
+            position: relative;
+            z-index: 10;
+            padding: 10px 20px 16px;
+            text-align: center;
+        }
+
+        .cardnews-item .card-footer .biz-name {
+            font-size: 16px;
+            font-weight: 900;
+            color: #fde047;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+        }
+
+        .cardnews-item .card-footer .contact {
+            font-size: 16px;
+            font-weight: 900;
+            margin-top: 6px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+        }
+
+        /* Quality Score */
+        .quality-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .quality-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .quality-scores {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .quality-score-item {
+            background: #f8f9ff;
+            border-radius: 12px;
+            padding: 15px 20px;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .quality-score-item .score-label {
+            font-size: 12px;
+            color: #888;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .quality-score-item .score-value {
+            font-size: 24px;
+            font-weight: 900;
+            color: #16a34a;
+        }
+
+        .quality-score-item .score-value.overall {
+            font-size: 32px;
+            color: #667eea;
+        }
+
+        .quality-feedback li {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.8;
+            padding-left: 8px;
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            margin-top: 60px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+
+        .footer-info {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .footer-info-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .footer-brand {
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .footer-link {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .footer-link:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        .footer-admin-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .footer-admin-btn:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .top-header {
+                padding: 10px 15px;
+            }
+
+            .header-nav {
+                gap: 12px;
+                font-size: 13px;
+            }
+
+            .header-logo-text {
+                font-size: 14px;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .cardnews-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .cardnews-item {
+                width: 100%;
+                max-width: 340px;
+            }
+
+            .footer {
+                padding: 30px 15px;
+                margin-top: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Header Navigation -->
+    <header class="top-header">
+        <div class="top-header-content">
+            <a href="index.html" class="header-logo">
+                <img src="로고3.png" alt="치과 맞춤식 광고 콘텐츠 생성기 로고">
+                <span class="header-logo-text">치과 맞춤식 광고 콘텐츠 생성기</span>
+            </a>
+            <nav class="header-nav">
+                <a href="index.html">홈</a>
+                <a href="input.html">생성시작</a>
+                <a href="profiles.html">내 프로필</a>
+                <a href="cases.html">내 결과 보기</a>
+                <a href="sample.html" class="sample-nav-btn active">🎯 샘플 보기</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Sample Badge -->
+        <div class="sample-badge">
+            <h2>📌 샘플 케이스</h2>
+            <p>하얀이치과 홍길동 원장의 실제 진단 결과 기반으로 생성된 샘플입니다</p>
+        </div>
+
+        <!-- Basic Info Card -->
+        <div class="info-card">
+            <h3>📋 기본 정보</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="label">치과명</div>
+                    <div class="value">하얀이치과</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">원장</div>
+                    <div class="value">홍길동</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">지역</div>
+                    <div class="value">서울 강남구</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">주요 진료</div>
+                    <div class="value">임플란트, 심미치료, 일반진료</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">매출 단계</div>
+                    <div class="value">4형 (수익 안정·확장) + 5형 (고수익·브랜드)</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">원장 스타일</div>
+                    <div class="value">D형 (수익·경영) + E형 (환자·신뢰)</div>
+                </div>
+            </div>
+            <div class="trust-scores">
+                <span class="trust-score-item">공감 65</span>
+                <span class="trust-score-item">이해 75</span>
+                <span class="trust-score-item">결정 80</span>
+                <span class="trust-score-item">가치 85</span>
+                <span class="trust-score-item">신뢰 70</span>
+                <span class="trust-score-item">공간 60</span>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab(0)">콘텐츠 생성 결과</div>
+            <div class="tab" onclick="switchTab(1)">카드뉴스 생성 결과</div>
+        </div>
+
+        <!-- Tab 1: Content Results -->
+        <div class="tab-content active" id="tab-content">
+            <!-- Ad 1: Empathy -->
+            <div class="ad-card">
+                <div class="ad-header">
+                    <div class="ad-title">광고 콘텐츠 #1: 공감형 — 환자 중심 스토리</div>
+                </div>
+                <div class="ad-content">
+                    <strong style="font-size: 20px; color: #667eea;">"치과가 무섭다고요? 괜찮습니다."</strong><br><br>
+
+                    많은 분들이 치과 방문을 미루는 이유, 저희 하얀이치과는 잘 알고 있습니다.<br>
+                    그래서 홍길동 원장은 환자분의 불안을 먼저 이해하고 공감하는 것부터 시작합니다.<br><br>
+
+                    <strong>【 하얀이치과만의 약속 】</strong><br>
+                    • 충분한 상담 시간 — 환자분이 편안할 때까지 기다립니다<br>
+                    • 무리한 권유 없는 진료 — 강요 없이 선택권을 존중합니다<br>
+                    • 환자의 속도에 맞춘 치료 — 한 단계씩 천천히 진행합니다<br><br>
+
+                    "10년 만에 치과에 왔는데, 원장님이 제 이야기를 끝까지 들어주셨어요.<br>
+                    무서워하는 저를 이해해 주시고, 제가 준비될 때까지 기다려 주셨습니다."<br>
+                    — 실제 환자 후기<br><br>
+
+                    당신의 구강 건강, 함께 고민하겠습니다.<br><br>
+
+                    <strong style="color: #667eea;">지금 편하게 상담 예약하세요. 첫 방문 시 무료 구강 검진을 제공합니다.</strong><br><br>
+
+                    <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #e0e0e0; color: #667eea; font-size: 14px;">
+                        <span style="margin-right: 8px;">#치과공포증극복</span> <span style="margin-right: 8px;">#편안한치과</span> <span style="margin-right: 8px;">#통증없는치료</span> <span style="margin-right: 8px;">#치과추천</span> <span style="margin-right: 8px;">#두려움없는치료</span>
+                    </div>
+                </div>
+                <div class="ad-reasoning">
+                    <h4>💡 이 광고 콘텐츠를 추천하는 이유</h4>
+                    <p>높은 공감 점수(65)와 환자·신뢰형(E형) 원장 스타일을 반영했습니다. 환자의 불안을 이해하고 신뢰를 구축하는 메시지로, 치과 방문을 망설이는 잠재 고객에게 효과적입니다.</p>
+                </div>
+                <div class="ad-channels">
+                    <span class="channel-tag">네이버 블로그</span>
+                    <span class="channel-tag">인스타그램</span>
+                    <span class="channel-tag">지역 커뮤니티</span>
+                </div>
+            </div>
+
+            <!-- Ad 2: Understanding -->
+            <div class="ad-card">
+                <div class="ad-header">
+                    <div class="ad-title">광고 콘텐츠 #2: 이해형 — 전문 정보 제공</div>
+                </div>
+                <div class="ad-content">
+                    <strong style="font-size: 20px; color: #667eea;">"임플란트, 정확히 알고 결정하세요"</strong><br><br>
+
+                    임플란트를 고민하고 계신가요?<br>
+                    하얀이치과 홍길동 원장이 명확하고 투명하게 설명드립니다.<br><br>
+
+                    <strong>【 임플란트 치료 과정 】</strong><br>
+                    • 1단계: 3D CT 정밀 진단으로 현재 상태를 정확히 파악합니다<br>
+                    • 2단계: 환자별 맞춤 치료 계획을 수립합니다<br>
+                    • 3단계: 모든 비용과 치료 옵션을 투명하게 안내합니다<br>
+                    • 4단계: 환자가 충분히 이해하고 결정할 때까지 기다립니다<br><br>
+
+                    <strong>【 왜 하얀이치과인가? 】</strong><br>
+                    • 20년 경험의 임플란트 전문의<br>
+                    • 최신 디지털 진단 시스템 구비<br>
+                    • 치료 전·후 비교 데이터 제공<br><br>
+
+                    <strong style="color: #667eea;">무료 임플란트 상담을 예약하세요. 정확한 진단부터 시작합니다.</strong><br><br>
+
+                    <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #e0e0e0; color: #667eea; font-size: 14px;">
+                        <span style="margin-right: 8px;">#정확한진단</span> <span style="margin-right: 8px;">#치과상담</span> <span style="margin-right: 8px;">#임플란트정보</span> <span style="margin-right: 8px;">#투명한치료</span> <span style="margin-right: 8px;">#치과전문상담</span>
+                    </div>
+                </div>
+                <div class="ad-reasoning">
+                    <h4>💡 이 광고 콘텐츠를 추천하는 이유</h4>
+                    <p>이해 점수(75)와 수익·경영형(D형) 원장 스타일의 체계적 설명 능력을 반영했습니다. 정보를 충분히 제공하여 환자의 합리적 의사결정을 돕는 접근법입니다.</p>
+                </div>
+                <div class="ad-channels">
+                    <span class="channel-tag">네이버 블로그</span>
+                    <span class="channel-tag">인스타그램</span>
+                    <span class="channel-tag">지역 커뮤니티</span>
+                </div>
+            </div>
+
+            <!-- Ad 3: Value -->
+            <div class="ad-card">
+                <div class="ad-header">
+                    <div class="ad-title">광고 콘텐츠 #3: 가치전달형 — 장기적 투자 가치</div>
+                </div>
+                <div class="ad-content">
+                    <strong style="font-size: 20px; color: #667eea;">"10년 후에도 만족할 치료를 약속합니다"</strong><br><br>
+
+                    치과 치료는 단순한 비용이 아닌, 평생의 건강을 위한 투자입니다.<br>
+                    하얀이치과는 당장의 치료가 아닌, 10년, 20년 후를 내다보는 진료를 합니다.<br><br>
+
+                    <strong>【 하얀이치과의 장기 가치 시스템 】</strong><br>
+                    • 체계적인 상담 프로세스: 5단계 신뢰 구축 시스템 도입<br>
+                    • 투명한 비용 안내: 모든 치료 옵션의 장단점과 비용을 명확히 제시<br>
+                    • 최신 장비 투자: 3D CT 및 디지털 진단 시스템 구비<br>
+                    • 장기 관리 프로그램: 정기 검진 및 사후 관리 체계<br><br>
+
+                    <strong>【 검증된 신뢰 】</strong><br>
+                    • 서울 강남구 지역 환자 만족도 1위<br>
+                    • 재방문율 89% — 한 번 오신 환자분이 다시 찾습니다<br>
+                    • 가족 단위 내원 비율 45%<br><br>
+
+                    <strong style="color: #667eea;">지금 하얀이치과와 함께 시작하세요. 평생 구강 건강의 파트너가 되겠습니다.</strong><br><br>
+
+                    <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #e0e0e0; color: #667eea; font-size: 14px;">
+                        <span style="margin-right: 8px;">#평생투자</span> <span style="margin-right: 8px;">#장기적만족</span> <span style="margin-right: 8px;">#가치보장</span> <span style="margin-right: 8px;">#10년보증</span> <span style="margin-right: 8px;">#확실한투자</span>
+                    </div>
+                </div>
+                <div class="ad-reasoning">
+                    <h4>💡 이 광고 콘텐츠를 추천하는 이유</h4>
+                    <p>가치 점수(85)가 가장 높은 항목으로, D형(수익·경영형) 원장의 ROI 중심 사고를 반영했습니다. 장기적 가치와 투자 관점의 메시지로, 비용 대비 효과를 중시하는 고객에게 효과적입니다.</p>
+                </div>
+                <div class="ad-channels">
+                    <span class="channel-tag">네이버 블로그</span>
+                    <span class="channel-tag">인스타그램</span>
+                    <span class="channel-tag">지역 커뮤니티</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Cardnews Results -->
+        <div class="tab-content" id="tab-cardnews">
+            <!-- Quality Score -->
+            <div class="quality-card">
+                <h3>📊 카드뉴스 품질 점수</h3>
+                <div class="quality-scores">
+                    <div class="quality-score-item">
+                        <div class="score-label">종합 점수</div>
+                        <div class="score-value overall">88점</div>
+                    </div>
+                    <div class="quality-score-item">
+                        <div class="score-label">Hook 강도</div>
+                        <div class="score-value">23/25</div>
+                    </div>
+                    <div class="quality-score-item">
+                        <div class="score-label">흐름 일관성</div>
+                        <div class="score-value">22/25</div>
+                    </div>
+                    <div class="quality-score-item">
+                        <div class="score-label">CTA 명확성</div>
+                        <div class="score-value">22/25</div>
+                    </div>
+                    <div class="quality-score-item">
+                        <div class="score-label">도메인 적합성</div>
+                        <div class="score-value">21/25</div>
+                    </div>
+                </div>
+                <ul class="quality-feedback">
+                    <li>Hook 카드의 통계 활용이 효과적입니다.</li>
+                    <li>공감에서 문제 제기로의 흐름이 자연스럽습니다.</li>
+                    <li>CTA에 구체적인 혜택이 포함되어 행동 유도력이 높습니다.</li>
+                    <li>의료 도메인에 적합한 신뢰 기반 메시지 구성입니다.</li>
+                </ul>
+            </div>
+
+            <!-- Cardnews Cards -->
+            <div class="cardnews-grid" id="cardnewsGrid"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-title">심재우 대표</div>
+            <div class="footer-info">
+                <div class="footer-info-item">
+                    <span class="footer-info-icon">📞</span>
+                    <a href="tel:01023975734" class="footer-link">010-2397-5734</a>
+                </div>
+                <div class="footer-info-item">
+                    <span class="footer-info-icon">📧</span>
+                    <a href="mailto:jaiwshim@gmail.com" class="footer-link">jaiwshim@gmail.com</a>
+                </div>
+            </div>
+            <div class="footer-brand">덴탈 클리닉 파인더</div>
+            <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <a href="user-guide.html" class="footer-admin-btn">📖 사용자 가이드</a>
+                <a href="admin-dashboard.html" class="footer-admin-btn">🎛️ 관리자 대시보드</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Card data
+        const sampleCards = [
+            {
+                type: 'HOOK',
+                title: '치과가 무섭다고요?',
+                content: '10명 중 7명이 치과 방문을 미루고 있습니다. 당신도 그중 한 명인가요?'
+            },
+            {
+                type: 'EMPATHY',
+                title: '그 마음, 충분히 이해합니다',
+                content: '드릴 소리, 낯선 냄새, 알 수 없는 통증... 하얀이치과는 환자분의 불안한 마음을 먼저 헤아립니다.'
+            },
+            {
+                type: 'PROBLEM',
+                title: '미루면 더 큰 비용이 됩니다',
+                content: '초기 충치 치료비 5만원 → 방치 시 임플란트 200만원. 지금 10분 투자가 미래의 수백만원을 아낍니다.'
+            },
+            {
+                type: 'SOLUTION',
+                title: '5단계 신뢰 진료 시스템',
+                content: '3D CT 정밀진단 → 맞춤 치료계획 → 투명한 비용안내 → 무통 진료 → 정기 사후관리. 체계적인 프로세스로 안심 진료를 약속합니다.'
+            },
+            {
+                type: 'CTA',
+                title: '지금 바로 상담 예약하세요',
+                content: '첫 방문 시 3D CT 무료 촬영 + 맞춤 치료 상담을 제공합니다. 편안한 첫 걸음을 함께하겠습니다.'
+            }
+        ];
+
+        const CARD_TYPE_LABELS = {
+            HOOK: '관심 유도',
+            EMPATHY: '공감 형성',
+            PROBLEM: '문제 제기',
+            SOLUTION: '해결책 제시',
+            CTA: '행동 유도'
+        };
+
+        const CARD_GRADIENTS = {
+            HOOK: 'card-gradient-hook',
+            EMPATHY: 'card-gradient-empathy',
+            PROBLEM: 'card-gradient-problem',
+            SOLUTION: 'card-gradient-solution',
+            CTA: 'card-gradient-cta'
+        };
+
+        const domainKeywords = ['dental,clinic', 'dentist,smile', 'medical,health', 'teeth,white', 'doctor,care'];
+
+        // Tab switching
+        function switchTab(index) {
+            document.querySelectorAll('.tab').forEach(function(tab, i) {
+                if (i === index) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+
+            document.querySelectorAll('.tab-content').forEach(function(content, i) {
+                if (i === index) {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
+            });
+        }
+
+        // Render cardnews
+        function renderCardnews() {
+            var grid = document.getElementById('cardnewsGrid');
+            grid.innerHTML = sampleCards.map(function(card, index) {
+                var keywords = domainKeywords[index % domainKeywords.length];
+                var imageUrl = 'https://source.unsplash.com/600x750/?' + keywords + '&sig=sample-' + card.type;
+                var gradient = CARD_GRADIENTS[card.type];
+                var label = CARD_TYPE_LABELS[card.type];
+                var isCTA = card.type === 'CTA';
+
+                return '<div class="cardnews-item">' +
+                    '<div class="card-bg">' +
+                        '<img src="' + imageUrl + '" alt="배경" onerror="this.style.display=\'none\'" />' +
+                        '<div class="overlay-dark"></div>' +
+                        '<div class="overlay-gradient ' + gradient + '"></div>' +
+                    '</div>' +
+                    '<div class="card-top">' +
+                        '<span class="card-type-badge">' + label + '</span>' +
+                        '<span class="card-index">' + (index + 1) + ' / 5</span>' +
+                    '</div>' +
+                    '<div class="card-body">' +
+                        '<h3>' + card.title + '</h3>' +
+                        '<p>' + card.content + '</p>' +
+                    '</div>' +
+                    '<div class="card-footer">' +
+                        '<div class="biz-name">하얀이치과</div>' +
+                        (isCTA ? '<div class="contact">📞 02-1234-5678</div>' : '') +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCardnews();
+        });
+    </script>
+</body>
+</html>

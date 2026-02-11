@@ -1393,7 +1393,7 @@ class MarketingEngine {
         const hashtags = hashtagsByType[contentType] || hashtagsByType.empathy;
         const levelHashtags = hashtags[permissionLevel] || hashtags.L3;
 
-        return levelHashtags.map(tag => `<span style="margin-right: 8px;">${tag}</span>`).join('');
+        return levelHashtags.map(tag => `<span style="margin-right: 8px;">${tag}</span>`).join(' ');
     }
 
     /**
