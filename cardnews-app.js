@@ -1407,13 +1407,22 @@ function renderBusinessInfoList() {
 // ============================================
 // 업체 정보 불러오기
 // ============================================
-function loadBusinessInfo(index) {
+async function loadBusinessInfo(index) {
   const info = savedBusinessInfoList[index];
   if (!info) return;
 
   // 폼으로 이동
   resetForm();
   closeBusinessInfoPanel();
+
+  // API 키 자동 로드
+  const loadedKey = await loadApiKeyFromSupabase();
+  if (loadedKey) {
+    apiKey = loadedKey;
+    document.getElementById('api-key-input').value = apiKey;
+    document.getElementById('api-key-status').textContent = 'API 키가 자동으로 불러와졌습니다.';
+    document.getElementById('api-key-status').className = 'text-xs text-green-600 mt-1';
+  }
 
   // 폼에 데이터 채우기 (업체명, 연락처, 도메인만)
   setTimeout(() => {
