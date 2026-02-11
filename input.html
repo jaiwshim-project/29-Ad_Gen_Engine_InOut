@@ -971,7 +971,19 @@
                 <div class="section-description">
                     등록된 업체를 선택하면 아래 정보가 자동으로 채워집니다.
                 </div>
-                <div id="business-select-container" style="display: flex; flex-direction: column; gap: 8px;">
+
+                <!-- 검색 필터 -->
+                <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                    <select id="business-search-filter" style="padding: 10px 12px; border: 2px solid #e1e4e8; border-radius: 8px; font-size: 14px; color: #555; background: white; cursor: pointer; min-width: 110px;">
+                        <option value="all">전체</option>
+                        <option value="profileNumber">일련번호</option>
+                        <option value="clinicName">병원명</option>
+                        <option value="directorName">원장명</option>
+                    </select>
+                    <input type="text" id="business-search-input" placeholder="검색어를 입력하세요" style="flex: 1; padding: 10px 15px; border: 2px solid #e1e4e8; border-radius: 8px; font-size: 14px; transition: border-color 0.2s;" onfocus="this.style.borderColor='#667eea'" onblur="this.style.borderColor='#e1e4e8'" oninput="filterBusinessList()">
+                </div>
+
+                <div id="business-select-container" style="display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto;">
                     <div class="business-select-empty">불러오는 중...</div>
                 </div>
             </div>
@@ -2606,32 +2618,63 @@
     <script>
     // 업체 선택 기능
     (async function() {
-        // Supabase 초기화
         initProfileSupabase();
 
-        // 프로필 목록 로드
         const profiles = await loadAllProfiles();
+        window._loadedProfiles = profiles || [];
+
+        renderBusinessList(window._loadedProfiles);
+    })();
+
+    function renderBusinessList(profiles) {
         const container = document.getElementById('business-select-container');
 
         if (!profiles || profiles.length === 0) {
-            container.innerHTML = '<div class="business-select-empty">등록된 업체가 없습니다.<br><span style="font-size:12px;color:#aaa;">프로필 등록 후 이용할 수 있습니다.</span></div>';
+            container.innerHTML = '<div class="business-select-empty">검색 결과가 없습니다.</div>';
             return;
         }
 
-        container.innerHTML = profiles.map((p, i) => `
-            <div class="business-select-item" onclick="selectRegisteredBusiness(${i})" data-index="${i}">
+        container.innerHTML = profiles.map((p, i) => {
+            const realIndex = window._loadedProfiles.indexOf(p);
+            return `
+            <div class="business-select-item" onclick="selectRegisteredBusiness(${realIndex})" data-index="${realIndex}">
                 <div class="business-select-avatar">${(p.clinicName || '?').charAt(0)}</div>
                 <div class="business-select-info">
-                    <div class="business-select-name">${p.clinicName || '(이름 없음)'}</div>
+                    <div class="business-select-name">${p.profileNumber ? '<span style="color:#667eea;font-size:12px;margin-right:6px;">#' + p.profileNumber + '</span>' : ''}${p.clinicName || '(이름 없음)'}</div>
                     <div class="business-select-detail">${p.directorName || ''} · ${p.location || ''} · ${p.specialty || ''}</div>
                 </div>
                 <div class="business-select-arrow">›</div>
-            </div>
-        `).join('');
+            </div>`;
+        }).join('');
+    }
 
-        // 전역에 프로필 데이터 저장
-        window._loadedProfiles = profiles;
-    })();
+    function filterBusinessList() {
+        const filter = document.getElementById('business-search-filter').value;
+        const keyword = document.getElementById('business-search-input').value.trim().toLowerCase();
+        const all = window._loadedProfiles || [];
+
+        if (!keyword) {
+            renderBusinessList(all);
+            return;
+        }
+
+        const filtered = all.filter(p => {
+            if (filter === 'profileNumber') {
+                return (p.profileNumber || '').toLowerCase().includes(keyword);
+            } else if (filter === 'clinicName') {
+                return (p.clinicName || '').toLowerCase().includes(keyword);
+            } else if (filter === 'directorName') {
+                return (p.directorName || '').toLowerCase().includes(keyword);
+            } else {
+                // 전체
+                return (p.profileNumber || '').toLowerCase().includes(keyword)
+                    || (p.clinicName || '').toLowerCase().includes(keyword)
+                    || (p.directorName || '').toLowerCase().includes(keyword);
+            }
+        });
+
+        renderBusinessList(filtered);
+    }
 
     function selectRegisteredBusiness(index) {
         const profiles = window._loadedProfiles;
