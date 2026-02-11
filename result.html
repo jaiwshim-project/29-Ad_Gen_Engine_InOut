@@ -936,7 +936,6 @@
                         <button class="sample-dropdown-item" onclick="loadSampleCardnewsNav()">🎨 카드뉴스 샘플</button>
                     </div>
                 </div>
-                <a href="cardnews.html" target="_blank" class="cardnews-nav-btn">🎨 카드뉴스 생성기</a>
             </nav>
         </div>
     </header>
@@ -2114,17 +2113,38 @@ ${context.philosophy || '"처음 방문했을 때부터 달랐어요. 단순히 
             generateAllAdContents(currentContentLength, level);
         }
 
-        // Copy ad
+        // Copy ad (WYSIWYG - HTML + plain text)
         function copyAd(adNumber) {
             const contents = document.querySelectorAll('.ad-content');
-            const content = contents[adNumber - 1].textContent.trim();
+            const el = contents[adNumber - 1];
+            const htmlContent = el.innerHTML;
+            const textContent = el.textContent.trim();
 
-            navigator.clipboard.writeText(content).then(() => {
-                alert('광고 콘텐츠 문구가 클립보드에 복사되었습니다!');
-            }).catch(err => {
-                console.error('복사 실패:', err);
-                alert('복사에 실패했습니다. 다시 시도해주세요.');
-            });
+            // ClipboardItem API로 HTML + 텍스트 동시 복사
+            if (navigator.clipboard && window.ClipboardItem) {
+                const htmlBlob = new Blob([htmlContent], { type: 'text/html' });
+                const textBlob = new Blob([textContent], { type: 'text/plain' });
+                const item = new ClipboardItem({
+                    'text/html': htmlBlob,
+                    'text/plain': textBlob
+                });
+                navigator.clipboard.write([item]).then(() => {
+                    alert('광고 콘텐츠가 서식 포함하여 복사되었습니다!\n워드, 한글, 이메일 등에 붙여넣기 하면 서식이 유지됩니다.');
+                }).catch(err => {
+                    // 폴백: 텍스트만 복사
+                    navigator.clipboard.writeText(textContent).then(() => {
+                        alert('광고 콘텐츠 문구가 클립보드에 복사되었습니다!');
+                    });
+                });
+            } else {
+                // 구형 브라우저 폴백
+                navigator.clipboard.writeText(textContent).then(() => {
+                    alert('광고 콘텐츠 문구가 클립보드에 복사되었습니다!');
+                }).catch(err => {
+                    console.error('복사 실패:', err);
+                    alert('복사에 실패했습니다. 다시 시도해주세요.');
+                });
+            }
         }
 
         // Download ad
